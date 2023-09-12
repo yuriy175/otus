@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15.4-alpine3.18
+    environment:
+      POSTGRES_DB: "otusdb"
+      POSTGRES_USER: "sa"
+      POSTGRES_PASSWORD: "medtex"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ../migrations:/docker-entrypoint-initdb.d
+      - otusdb-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  profile:
+    container_name: profile
+    image: profile:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/profile.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
+    ports:
+      - "8001:80"
+    depends_on:
+      - postgres
+
+volumes:
+  otusdb-data:

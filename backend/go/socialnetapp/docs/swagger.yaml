@@ -1,0 +1,142 @@
+basePath: /
+definitions:
+  dto.LoginDto:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+    type: object
+  dto.NewUserDto:
+    properties:
+      age:
+        type: integer
+      city:
+        type: string
+      info:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      sex:
+        type: string
+      surname:
+        type: string
+    type: object
+  model.User:
+    properties:
+      age:
+        type: integer
+      city:
+        type: string
+      id:
+        type: integer
+      info:
+        type: string
+      name:
+        type: string
+      sex:
+        type: integer
+      surname:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a serice for managing users
+  title: Social Net API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login properties
+        in: body
+        name: properties
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginDto'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Login user
+      tags:
+      - auth
+  /user/get/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get user by id
+      tags:
+      - users
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User properties
+        in: body
+        name: properties
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewUserDto'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Register new user
+      tags:
+      - users
+  /users:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "500":
+          description: Internal Server Error
+      summary: Get all users
+      tags:
+      - users
+swagger: "2.0"
