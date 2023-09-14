@@ -14,12 +14,12 @@ services:
     ports:
       - "5433:5432"
 
-  profile:
-    container_name: profile
-    image: profile:$APP_VERSION
+  profile_go:
+    container_name: profile_go
+    image: profile_go:$APP_VERSION
     build:
       context: ..
-      dockerfile: docker/profile.Dockerfile
+      dockerfile: docker/go/profile.Dockerfile
       target: final
       args:
         APP_VERSION: $APP_VERSION
@@ -28,6 +28,23 @@ services:
       - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
     ports:
       - "8001:80"
+    depends_on:
+      - postgres
+
+  profile_cs:
+    container_name: profile_cs
+    image: profile_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/profile.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS	
+    ports:
+      - "8002:80"
     depends_on:
       - postgres
 

@@ -1,3 +1,11 @@
-# VS Code settings
+# VS Code settings for go
 /backend/go/socialnetapp/.vscode/*.*
 
+
+# VS settings for c#
+/backend/cs/SocialNetApp/.vs
+/backend/cs/SocialNetApp/Profile/bin
+/backend/cs/SocialNetApp/Profile/obj
+
+#csv data
+/csvdata
