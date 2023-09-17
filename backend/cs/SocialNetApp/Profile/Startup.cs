@@ -32,6 +32,10 @@ namespace SocialNetApp
             _ = services.AddSingleton<DataContext>(p => new DataContext(
                 Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ILoadDataRepository, LoadDataRepository>();
+
+            services.AddScoped<ILoadDataService, LoadDataService>();
+            
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
 

@@ -26,7 +26,7 @@ namespace Profile.Infrastructure.Repositories
             using var connection = _context.CreateConnection();
             var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name " +
         "FROM public.users u " +
-        "JOIN public.cities c on c.ID = u.city_id " +
+        "LEFT OUTER JOIN public.cities c on c.ID = u.city_id " +
         "WHERE u.id = @userId LIMIT 1;";
             return await connection.QuerySingleAsync<User>(sql, new{ userId = (int)userId });
         }
@@ -36,7 +36,7 @@ namespace Profile.Infrastructure.Repositories
             using var connection = _context.CreateConnection();
             var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name " +
         "FROM public.users u " +
-        "JOIN public.cities c on c.ID = u.city_id;";
+        "LEFT OUTER JOIN public.cities c on c.ID = u.city_id;";
             return await connection.QueryAsync<User>(sql);
         }
 
