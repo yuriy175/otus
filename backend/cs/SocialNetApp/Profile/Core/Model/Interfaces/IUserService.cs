@@ -7,5 +7,6 @@ namespace Profile.Core.Model.Interfaces
         Task<IEnumerable<User>> GetUsersAsync();
         Task<User> GetUserByIdAsync(uint userId);
         Task<int> PutUserAsync(User user, string password);
+        Task<IEnumerable<User>> GetUsersByNameAsync(string name, string surname);
     }
 }

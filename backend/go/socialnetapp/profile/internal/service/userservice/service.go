@@ -27,3 +27,7 @@ func (s *userServiceImp) GetUserById(ctx context.Context, userId uint) (*model.U
 func (s *userServiceImp) PutUser(ctx context.Context, user *model.User, password string) error {
 	return s.repository.PutUser(ctx, user, password)
 }
+
+func (s *userServiceImp) GetUsersByName(ctx context.Context, name string, surname string) ([]model.User, error) {
+	return s.repository.GetUsersByName(ctx, name, surname)
+}

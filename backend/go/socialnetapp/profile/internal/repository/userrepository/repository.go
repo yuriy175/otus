@@ -24,7 +24,7 @@ func (r *userRepositoryImp) GetUsers(_ context.Context) ([]model.User, error) {
 	defer db.Close()
 	rows, err := db.Query("SELECT u.id, u.name, surname, age, sex, info, c.name " +
 		"FROM public.users u " +
-		"JOIN public.cities c on c.ID = u.city_id;")
+		"LEFT OUTER JOIN public.cities c on c.ID = u.city_id;")
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (r *userRepositoryImp) GetUserById(_ context.Context, userId uint) (*model.
 	defer db.Close()
 	rows, err := db.Query("SELECT u.id, u.name, surname, age, sex, info, c.name "+
 		"FROM public.users u "+
-		"JOIN public.cities c on c.ID = u.city_id "+
+		"LEFT OUTER JOIN public.cities c on c.ID = u.city_id "+
 		"WHERE u.id = $1 LIMIT 1;", userId)
 	if err != nil {
 		return nil, err
@@ -131,4 +131,32 @@ func (r *userRepositoryImp) CheckUser(_ context.Context, userId uint, hash model
 		}
 	}
 	return exists, nil
+}
+
+func (s *userRepositoryImp) GetUsersByName(ctx context.Context, name string, surname string) ([]model.User, error) {
+	db, err := sql.Open("postgres", os.Getenv("POSTGRESQL_CONNECTION"))
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	rows, err := db.Query("SELECT u.id, u.name, surname, age, sex, info, c.name "+
+		"FROM public.users u "+
+		"LEFT OUTER JOIN public.cities c on c.ID = u.city_id "+
+		"WHERE u.name LIKE $1 and surname LIKE $2 "+
+		"ORDER BY id", name, surname)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	users := []model.User{}
+
+	for rows.Next() {
+		p := model.User{}
+		err := rows.Scan(&p.ID, &p.Name, &p.Surname, &p.Age, &p.Sex, &p.Info, &p.City)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, p)
+	}
+	return users, nil
 }

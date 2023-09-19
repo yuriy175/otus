@@ -121,6 +121,33 @@ paths:
       summary: Register new user
       tags:
       - users
+  /user/search:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: first_name
+        type: string
+      - in: query
+        name: last_name
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Find user
+      tags:
+      - users
   /users:
     get:
       consumes:

@@ -38,5 +38,11 @@ namespace SocialNetApp.API.Controllers
         {
             return Ok(new {id = await _userService.PutUserAsync(_mapper.Map<User>(dto), dto.Password)} );
         }
+
+        [HttpGet("/user/search")]
+        public async Task<ActionResult> FindUsers([FromQuery] SearchUserDto dto, CancellationToken cancellationToken)
+        {
+            return Ok(await _userService.GetUsersByNameAsync(dto.Name, dto.Surname));
+        }
     }
 }

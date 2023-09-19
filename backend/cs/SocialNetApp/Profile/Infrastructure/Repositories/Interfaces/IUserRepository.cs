@@ -8,5 +8,6 @@ namespace Profile.Infrastructure.Repositories.Interfaces
         Task<User> GetUserByIdAsync(uint userId);
         Task<int> PutUserAsync(User user, string password);
         Task<bool> CheckUserAsync(uint userId, string password);
+        Task<IEnumerable<User>> GetUsersByNameAsync(string name, string surname);
     }
 }
