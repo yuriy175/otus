@@ -24,7 +24,7 @@ namespace Profile.Infrastructure.Repositories
         public async Task<User> GetUserByIdAsync(uint userId)
         {
             using var connection = _context.CreateConnection();
-            var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name " +
+            var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name as city " +
         "FROM public.users u " +
         "LEFT OUTER JOIN public.cities c on c.ID = u.city_id " +
         "WHERE u.id = @userId LIMIT 1;";
@@ -34,7 +34,7 @@ namespace Profile.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetUsersAsync()
         {
             using var connection = _context.CreateConnection();
-            var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name " +
+            var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name as city " +
         "FROM public.users u " +
         "LEFT OUTER JOIN public.cities c on c.ID = u.city_id;";
             return await connection.QueryAsync<User>(sql);
@@ -49,6 +49,17 @@ namespace Profile.Infrastructure.Repositories
             "(SELECT id FROM public.cities WHERE name = @City)) RETURNING id;";
             return await connection.QuerySingleAsync<int>(sql,
                 new { user.Name, user.Surname, user.Age, user.Sex, user.Info, password, user.City });
+        }
+
+        public async Task<IEnumerable<User>> GetUsersByNameAsync(string name, string surname)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name as city " +
+        "FROM public.users u " +
+        "LEFT OUTER JOIN public.cities c on c.ID = u.city_id " +
+        "WHERE u.name LIKE @name and surname LIKE @surname " +
+        "ORDER BY id";
+            return await connection.QueryAsync<User>(sql, new { name, surname });
         }
     }
 }

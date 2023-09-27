@@ -19,5 +19,7 @@ namespace Profile.Core.Services
         public Task<IEnumerable<User>> GetUsersAsync() => _userRepository.GetUsersAsync();
 
         public Task<int> PutUserAsync(User user, string password) => _userRepository.PutUserAsync(user, password);
+
+        public Task<IEnumerable<User>> GetUsersByNameAsync(string name, string surname) => _userRepository.GetUsersByNameAsync(name, surname);
     }
 }

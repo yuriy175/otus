@@ -7,6 +7,9 @@ services:
       POSTGRES_DB: "otusdb"
       POSTGRES_USER: "sa"
       POSTGRES_PASSWORD: "medtex"
+      POSTGRESQL_REPLICATION_MODE: "master"
+      POSTGRESQL_REPLICATION_USER: "repl_user"
+      POSTGRESQL_REPLICATION_PASSWORD: "repl_password"
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - ../migrations:/docker-entrypoint-initdb.d
@@ -47,6 +50,26 @@ services:
       - "8002:80"
     depends_on:
       - postgres
+
+  pgbouncer:
+    image: edoburu/pgbouncer
+    restart: always
+    user: postgres
+    depends_on:
+      - postgres
+    ports:
+      - "6432:6432"
+    environment:
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE: otusdb
+      POSTGRESQL_USERNAME: sa
+      POSTGRESQL_PASSWORD: medtex
+      AUTH_TYPE: md5
+      AUTH_FILE: /etc/pgbouncer/userlist.txt
+    volumes:
+      - ./config/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./config/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
 
 volumes:
   otusdb-data:

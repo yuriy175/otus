@@ -58,22 +58,22 @@ func (h *userHandlerImp) GetUserById(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		log.Printf("User repository error: %v\n", err)
+		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	user, err := h.service.GetUserById(ctx, uint(id))
 	if _, ok := err.(model.NotFoundError); ok {
-		log.Printf("User repository error: %v\n", err)
+		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 	if err != nil {
-		log.Printf("User repository error: %v\n", err)
+		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if err := json.NewEncoder(w).Encode(user); err != nil {
-		log.Printf("User repository error: %v\n", err)
+		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
@@ -153,6 +153,46 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 	}{UserId: user.ID}
 	if err := json.NewEncoder(w).Encode(u); err != nil {
 		log.Printf("User repository error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+// RegisterUser godoc
+// @Summary Find user
+// @Tags         users
+// @Accept  json
+// @Param properties query dto.SearchUserDto true "Search user properties"
+// @Success 200 {array} model.User
+// @Failure      400
+// @Failure      404
+// @Failure      500
+// @Router /user/search [get]
+func (h *userHandlerImp) FindUser(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	vars := req.URL.Query()
+	name := vars.Get("first_name")
+	if name == "" {
+		log.Printf("User handler error: empty name")
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	surname := vars.Get("last_name")
+	if surname == "" {
+		log.Printf("User handler error: empty surname")
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	users, err := h.service.GetUsersByName(ctx, name, surname)
+	if _, ok := err.(model.NotFoundError); ok {
+		log.Printf("User handler error: %v\n", err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		log.Printf("User handler error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(users); err != nil {
+		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }

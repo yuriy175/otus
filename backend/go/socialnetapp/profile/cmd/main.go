@@ -47,6 +47,7 @@ func main() {
 	router.HandleFunc("/users", userHandler.GetUsers)
 	router.HandleFunc("/user/get/{id}", userHandler.GetUserById)
 	router.HandleFunc("/user/register", userHandler.RegisterUser)
+	router.HandleFunc("/user/search", userHandler.FindUser)
 	router.HandleFunc("/login", authHandler.Login)
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.Handle("/", router)
