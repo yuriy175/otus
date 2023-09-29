@@ -58,6 +58,17 @@ services:
       - redis-server
 
 
+  front:
+    container_name: front
+    build:
+      context: ..
+      dockerfile: docker/front/front.Dockerfile
+    ports:
+      - '1337:80'
+    depends_on:
+      - postgres
+
+
   pgbouncer:
     image: edoburu/pgbouncer
     restart: always
