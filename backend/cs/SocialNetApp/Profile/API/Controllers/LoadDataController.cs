@@ -23,13 +23,23 @@ namespace SocialNetApp.API.Controllers
         [HttpPost("cities")]
         public async Task<ActionResult> LoadCities(CancellationToken cancellationToken)
         {            
-            return Ok(await _loadDataService.LoadCitiesAsync());
+            return Ok(await _loadDataService.LoadCitiesAsync(cancellationToken));
         }
 
         [HttpPost("users")]
         public async Task<ActionResult> LoadUsers(CancellationToken cancellationToken)
         {            
-            return Ok(await _loadDataService.LoadUsersAsync());
+            return Ok(await _loadDataService.LoadUsersAsync(cancellationToken));
+        }
+
+        [HttpPost("posts")]
+        public async Task<ActionResult> LoadPosts([FromBody]IEnumerable<int> userIds, CancellationToken cancellationToken)
+        {
+            if (!userIds.Any())
+            {
+                return BadRequest();
+            }
+            return Ok(await _loadDataService.LoadPostAsync(userIds.ToArray(), cancellationToken));
         }
     }
 }

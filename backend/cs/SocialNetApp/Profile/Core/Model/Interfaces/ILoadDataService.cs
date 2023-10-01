@@ -4,7 +4,8 @@ namespace Profile.Core.Model.Interfaces
 {
     public interface ILoadDataService
     {
-        Task<int> LoadCitiesAsync();
-        Task<int> LoadUsersAsync();
+        Task<int> LoadCitiesAsync(CancellationToken cancellationToken);
+        Task<int> LoadPostAsync(int[] userIds, CancellationToken cancellationToken);
+        Task<int> LoadUsersAsync(CancellationToken cancellationToken);
     }
 }
