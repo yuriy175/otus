@@ -3,6 +3,14 @@ using Profile.Infrastructure.Repositories;
 using Profile.Core.Model.Interfaces;
 using Profile.Core.Services;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.OpenApi.Models;
+
 namespace SocialNetApp
 {
     public class Startup
@@ -33,14 +41,19 @@ namespace SocialNetApp
                 Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ILoadDataRepository, LoadDataRepository>();
+            services.AddScoped<IFriendsRepository, FriendsRepository>();
 
             services.AddScoped<ILoadDataService, LoadDataService>();
-            
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IFriendsService, FriendsService>();
 
-            services.AddSwaggerGen();
+            services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddAuthorization();
+            services.ConfigureAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +63,9 @@ namespace SocialNetApp
             app.UseCors(CorsPolicy);
             app.UseRouting();
             UseSwaggerDocumentation(app, "/swagger/v1/swagger.json", "Social Net v1");
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

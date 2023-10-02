@@ -1,4 +1,3 @@
-basePath: /
 definitions:
   dto.LoginDto:
     properties:
@@ -67,6 +66,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Login user
       tags:
       - auth
@@ -166,4 +167,9 @@ paths:
       summary: Get all users
       tags:
       - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

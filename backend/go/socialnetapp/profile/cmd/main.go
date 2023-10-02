@@ -30,6 +30,9 @@ func init() {
 // @title Social Net API
 // @version 1.0
 // @description This is a serice for managing users
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 // @BasePath /
 func main() {
 	log.Println("Started Go!")

@@ -2,6 +2,8 @@ package authservice
 
 import (
 	"context"
+	"os"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
 	_ "github.com/google/uuid"
@@ -18,7 +20,7 @@ type authServiceImp struct {
 }
 
 func NewAuthService(repository repository.UserRepository) service.AuthService {
-	return &authServiceImp{repository: repository, jwtSecret: "qweqrty1975!"}
+	return &authServiceImp{repository: repository, jwtSecret: os.Getenv("SECURITY_KEY")}
 }
 
 func (s *authServiceImp) Login(ctx context.Context, userId uint, password string) (string, error) {
@@ -38,8 +40,9 @@ func (s *authServiceImp) Login(ctx context.Context, userId uint, password string
 }
 
 func (s *authServiceImp) createToken(userId uint) string {
-	claims := &model.UserClaims{ID: uint(userId)}
+	claims := &model.UserClaims{UserId: strconv.Itoa(int(userId))}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), claims)
 	tokenString, _ := token.SignedString([]byte(s.jwtSecret))
+
 	return tokenString
 }

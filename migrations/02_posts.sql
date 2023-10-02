@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS public.friends
 (
     user_id integer NOT NULL,
     friend_id integer NOT NULL,
+    "isDeleted" boolean,
     CONSTRAINT friends_pkey PRIMARY KEY (user_id, friend_id),
     CONSTRAINT user_friends_id_fk FOREIGN KEY (friend_id)
         REFERENCES public.users (id) MATCH SIMPLE
