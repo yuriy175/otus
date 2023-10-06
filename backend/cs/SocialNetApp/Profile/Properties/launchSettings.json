@@ -7,7 +7,8 @@
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development",
             "POSTGRESQL_CONNECTION": "Server=localhost;Port=6432;User Id=sa;Password=medtex;Database=otusdb;",
-            "SECURITY_KEY": "mysupersecret_secretkey!123"
+            "SECURITY_KEY": "mysupersecret_secretkey!123",
+            "REDIS_HOST": "localhost"
         },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5266"

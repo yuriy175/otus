@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Profile.Infrastructure.Caches;
 
 namespace SocialNetApp
 {
@@ -39,6 +40,7 @@ namespace SocialNetApp
             });
             _ = services.AddSingleton<DataContext>(p => new DataContext(
                 Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty));
+            services.AddSingleton<ICacheService, RedisService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ILoadDataRepository, LoadDataRepository>();
             services.AddScoped<IFriendsRepository, FriendsRepository>();

@@ -39,7 +39,9 @@ namespace Profile.Core.Services
             return !exists ? string.Empty : new JwtSecurityTokenHandler().WriteToken(jwt);
         }
 
-        public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey!));
+        public static SymmetricSecurityKey GetSymmetricSecurityKey()
+        {
+            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey!));
+        }
     }
 }

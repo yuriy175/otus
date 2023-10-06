@@ -29,10 +29,13 @@ services:
     environment:
       - EXPOSE_PORT=$EXPOSE_PORT
       - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
     ports:
       - "8001:80"
     depends_on:
       - postgres
+      - redis-server
 
   profile_cs:
     container_name: profile_cs
@@ -46,10 +49,13 @@ services:
     environment:
       - EXPOSE_PORT=$EXPOSE_PORT
       - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
     ports:
       - "8002:80"
     depends_on:
       - postgres
+      - redis-server
 
   pgbouncer:
     image: edoburu/pgbouncer
@@ -71,5 +77,17 @@ services:
       - ./config/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
       - ./config/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
 
+  redis-server:
+    image: "redis:alpine"
+    hostname: "redis-server"
+    container_name: redis-server
+
+    ports:
+     - "6379:6379"
+
+    volumes:
+     - redis-data:/var/lib/redis
+
 volumes:
   otusdb-data:
+  redis-data:

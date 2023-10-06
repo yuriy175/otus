@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.IdentityModel.Tokens;
 using Profile.Core.Model;
 using Profile.Core.Model.Interfaces;
+using Profile.Infrastructure.Caches;
 using Profile.Infrastructure.Repositories;
 using Profile.Infrastructure.Repositories.Interfaces;
 using SocialNetApp.Core.Model;
@@ -15,10 +16,14 @@ namespace Profile.Core.Services
     public class PostsService : IPostsService
     {        
         private readonly IPostsRepository _postsRepository;
+        private readonly ICacheService _cacheService;
 
-        public PostsService(IPostsRepository postsRepository)
+        public PostsService(
+            IPostsRepository postsRepository,
+            ICacheService cacheService)
         {
             _postsRepository = postsRepository;
+            _cacheService = cacheService;
         }
 
         public Task<int> CreatePostAsync(uint userId, string text, CancellationToken cancellationToken) =>
@@ -30,8 +35,11 @@ namespace Profile.Core.Services
         public Task<int> DeletePostAsync(uint userId, uint postId, CancellationToken cancellationToken) =>
             _postsRepository.DeletePostAsync(userId, postId, cancellationToken);
 
-        public Task<Post> GetPostAsync(uint userId, uint postId, CancellationToken cancellationToken) =>
-            _postsRepository.GetPostAsync(userId, postId, cancellationToken);
+        public Task<Post> GetPostAsync(uint userId, uint postId, CancellationToken cancellationToken)
+        {
+            _cacheService.GetNext();
+            return _postsRepository.GetPostAsync(userId, postId, cancellationToken);
+        }
 
         public Task<IEnumerable<Post>> FeedPostsAsync(uint userId, uint offset, uint limit, CancellationToken cancellationToken) =>
             _postsRepository.GetPostsAsync(userId, offset, limit, cancellationToken);
