@@ -49,8 +49,8 @@ namespace Profile.Infrastructure.Repositories
         public async Task<int> LoadPostsAsync(IEnumerable<NewPostDao> posts, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
-            var seed = new StringBuilder("INSERT INTO public.posts(user_id, message) VALUES");
-            var sql = posts.Aggregate(seed, (s, c) => s.Append($" ('{c.UserId}', '{c.Message}'),"), s => s.Remove(s.Length - 1, 1).ToString());
+            var seed = new StringBuilder("INSERT INTO public.posts(user_id, message, \"isDeleted\") VALUES");
+            var sql = posts.Aggregate(seed, (s, c) => s.Append($" ('{c.UserId}', '{c.Message}', false),"), s => s.Remove(s.Length - 1, 1).ToString());
 
             return await connection.ExecuteAsync(new CommandDefinition(sql, cancellationToken));
         }

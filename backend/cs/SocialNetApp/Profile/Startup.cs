@@ -42,12 +42,14 @@ namespace SocialNetApp
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ILoadDataRepository, LoadDataRepository>();
             services.AddScoped<IFriendsRepository, FriendsRepository>();
+            services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddScoped<ILoadDataService, LoadDataService>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFriendsService, FriendsService>();
+            services.AddScoped<IPostsService, PostsService>();            
 
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS public.posts
     user_id integer,
     message text COLLATE pg_catalog."default",
     created timestamp without time zone DEFAULT now(),
+    "isDeleted" boolean,
     CONSTRAINT posts_pkey PRIMARY KEY (id),
     CONSTRAINT user_id_fk FOREIGN KEY (user_id)
         REFERENCES public.users (id) MATCH SIMPLE
