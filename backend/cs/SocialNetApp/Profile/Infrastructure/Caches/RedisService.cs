@@ -1,55 +1,137 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using Profile.Infrastructure.Repositories.Interfaces;
+using SocialNetApp.Core.Model;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace Profile.Infrastructure.Caches
 {
-    public class RedisService : ICacheService
+    public class RedisService : ICacheService, IAsyncDisposable
     {
         private readonly static string? _host = Environment.GetEnvironmentVariable("REDIS_HOST");
+        private readonly static uint _cacheItemsCount = Convert.ToUInt32(Environment.GetEnvironmentVariable("CACHE_ITEMS_COUNT"));
+
+        private readonly IDatabase? _db = default;
+        private readonly ConnectionMultiplexer _redis = default!;
+
         public RedisService()
         {
-            /*var configOption = new ConfigurationOptions();
-            //configOption.EndPoints.Add("127.0.0.1:6379");
-            configOption.EndPoints.Add("172.18.0.5:6379");
-            configOption.AllowAdmin = true;
-            //configOption.AbortOnConnectFail = false;
-            //var redis2 = ConnectionMultiplexer.Connect(configOption);
-            //ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("redis-server");
-            IDatabase db = redis.GetDatabase();
+            if (string.IsNullOrEmpty(_host))
+            {
+                throw new ApplicationException("Пустой redis host");
+            }
+            _redis = ConnectionMultiplexer.Connect(_host!);
+            if (_redis is null)
+            {
+                throw new ApplicationException("Пустой redis");
+            }
 
-            var hash = new HashEntry[] {
-    new HashEntry("name", "John"),
-    new HashEntry("surname", "Smith"),
-    new HashEntry("company", "Redis"),
-    new HashEntry("age", new Random(100).Next().ToString()),
-    };
-            db.HashSet("user-session:123", hash);
-
-            var hashFields = db.HashGetAll("user-session:123");
-            Console.WriteLine(String.Join("; ", hashFields));
-
-            int y = 0;*/
+            _db = _redis.GetDatabase();
+            if (_db is null)
+            {
+                throw new ApplicationException("Пустой redis db");
+            }
         }
-        private Random _rnd = new Random(100);
-        public void GetNext()
+
+        public async Task AddPostAsync(uint userId, Post post)
         {
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(_host);// "redis-server");
-            IDatabase db = redis.GetDatabase();
+            var userKey = $"user:{userId}";
+            if (_db is null)
+            {
+                throw new ApplicationException("Пустой redis db");
+            }
 
-            var hash = new HashEntry[] {
-    new HashEntry("name", "John"),
-    new HashEntry("surname", "Smith"),
-    new HashEntry("company", "Redis"),
-    new HashEntry("age", _rnd.Next().ToString()),
-    };
-            db.HashSet("user-session:123", hash);
+            await _db.ListLeftPushAsync(userKey, new RedisValue(JsonSerializer.Serialize<Post>(post)));
+            await _db.ListTrimAsync(userKey, 0, _cacheItemsCount-1);
+        }
 
-            var hashFields = db.HashGetAll("user-session:123");
-            Console.WriteLine(String.Join("; ", hashFields));
+        public async Task<IEnumerable<Post>> GetPostsAsync(uint userId, uint offset, uint limit)
+        {
+            var userKey = $"user:{userId}";
+            if (_db is null)
+            {
+                throw new ApplicationException("Пустой redis db");
+            }
+
+            var values = await _db.ListRangeAsync(userKey, offset, limit);
+            return values.Select(v => JsonSerializer.Deserialize<Post>(v));
+        }
+
+        public async Task WarmupCacheAsync(uint userId, IEnumerable<Post> posts)
+        {
+            var userKey = $"user:{userId}";
+            
+            if (_db is null)
+            {
+                throw new ApplicationException("Пустой redis db");
+            }
+
+            await _db.KeyExpireAsync(userKey, TimeSpan.FromHours(24));
+            var items = posts.Select(p =>
+            {
+                var json = JsonSerializer.Serialize<Post>(p);
+                return new RedisValue(json);
+            }).ToArray();
+
+            await _db.ListRightPushAsync(userKey, items);
+        }
+        /*
+         * 
+        public Task<bool> AddPostAsync(Post post)
+        {
+            var authorKey = $"author:{post.AuthorId}";
+            if (_db is null)
+            {
+                throw new ApplicationException("Пустой redis db");
+            }
+            
+            var value = new RedisValue( post.Message );
+
+            return _db.SortedSetAddAsync(authorKey, value, post.Id);
+        }
+
+        public async Task<IEnumerable<Post>> GetPostsAsync(uint userId, uint offset, uint limit)
+        {
+            var allKey = $"author:all";
+            var y = await _db.SortedSetCombineAndStoreAsync(SetOperation.Union, allKey, 
+                new []{"author:1218263", "author:1218274", "author:1218275" }.Select(i => new RedisKey(i)).ToArray(), 
+                aggregate: Aggregate.Max,
+                weights: new[] {1.0,1.0, 1.0});
+
+            var authorKey = $"author:{userId}";
+            if (_db is null)
+            { 
+                throw new ApplicationException("Пустой redis db");
+            }
+
+            var values2 = await _db.SortedSetRangeByScoreWithScoresAsync("author:1218274");
+
+            var values = await _db.SortedSetRangeByScoreWithScoresAsync(allKey,
+                order: Order.Descending,
+                skip: offset,
+                take: limit);// authorKey);
+            return values.Select(v => new Post { AuthorId = userId, Id = Convert.ToUInt32(v.Score), Message = v.Element.ToString()});
+        }
+        
+        public Task WarmupCacheAsync(uint userId, IEnumerable<Post> posts)
+        {
+            var authorKey = $"author:{userId}";
+            if (_db is null)
+            {
+                throw new ApplicationException("Пустой redis db");
+            }
+
+            return _db.SortedSetAddAsync(authorKey, posts.Select(p => new SortedSetEntry(new RedisValue(p.Message), p.Id)).ToArray());
+        }*/
+
+        public ValueTask DisposeAsync()
+        {
+            using (_redis) { }
+
+            return ValueTask.CompletedTask;
         }
     }
 }

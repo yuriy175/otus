@@ -20,7 +20,7 @@ namespace SocialNetApp.API.Controllers
         [HttpPost("/login")]
         public async Task<ActionResult> Login([FromBody]LoginDto dto, CancellationToken cancellationToken)
         {
-            return Ok(await _authService.LoginAsync(dto.Id, dto.Password));
+            return Ok(await _authService.LoginAsync(dto.Id, dto.Password, cancellationToken));
         }
     }
 }

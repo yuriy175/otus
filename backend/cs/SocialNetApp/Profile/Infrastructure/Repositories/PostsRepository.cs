@@ -1,9 +1,11 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic;
 using Profile.Infrastructure.Repositories.Interfaces;
 using SocialNetApp.API.Daos;
 using SocialNetApp.Core.Model;
+using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,12 +20,13 @@ namespace Profile.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<int> AddPostAsync(uint userId, string text, CancellationToken cancellationToken)
+        public async Task<Post> AddPostAsync(uint userId, string text, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
-            var sql = "INSERT INTO public.posts(user_id, message, \"isDeleted\") VALUES(@userId, @text, false)";
+            var sql = "INSERT INTO public.posts(user_id, message, \"isDeleted\") VALUES(@userId, @text, false) "+
+                      "RETURNING id, user_id as authorId, message, created";
 
-            return await connection.ExecuteAsync(new CommandDefinition(
+            return await connection.QueryFirstAsync<Post>(new CommandDefinition(
                 sql,
                 new { userId = (int)userId, text },
                 cancellationToken: cancellationToken));
@@ -77,6 +80,38 @@ namespace Profile.Infrastructure.Repositories
             return await connection.QueryAsync<Post>(new CommandDefinition(
                 sql,
                 new { offset = (int)offset, limit = (int)limit },
+                cancellationToken: cancellationToken));
+        }
+
+        public async Task<IEnumerable<Post>> GetLatestPostsAsync(uint userId, uint limit, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "SELECT id, user_id as authorId, message, created " +
+                      "FROM public.posts " +
+                      "WHERE user_id = @userId and \"isDeleted\"!=true " +
+                      "ORDER BY id DESC LIMIT @limit";
+
+            return await connection.QueryAsync<Post>(new CommandDefinition(
+                sql,
+                new { userId = (int)userId, limit = (int)limit },
+                cancellationToken: cancellationToken));
+        }
+
+        public async Task<IEnumerable<Post>> GetLatestFriendsPostsAsync(uint userId, uint limit, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "SELECT id, user_id as authorId, message, created " +
+                      "FROM public.posts p " +
+                      "WHERE user_id IN( " +
+                        "SELECT friend_id " +
+                        "FROM public.friends f " +
+                        "WHERE f.user_id = @userId and f.\"isDeleted\" = false " +
+                       ") and p.\"isDeleted\" = false " +
+                       "ORDER BY id DESC LIMIT @limit";
+
+            return await connection.QueryAsync<Post>(new CommandDefinition(
+                sql,
+                new { userId = (int)userId, limit = (int)limit },
                 cancellationToken: cancellationToken));
         }
     }

@@ -40,5 +40,31 @@ namespace Profile.Infrastructure.Repositories
                 new { userId = (int)userId, friendId = (int)friendId },
                 cancellationToken: cancellationToken));
         }
+
+        public async Task<IEnumerable<int>> GetFriendIdsAsync(uint userId, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "SELECT friend_id " +
+                      "FROM public.friends " +
+                      "WHERE user_id = @userId and \"isDeleted\" = false";
+
+            return await connection.QueryAsync<int>(new CommandDefinition(
+                sql,
+                new { userId = (int)userId },
+                cancellationToken: cancellationToken));
+        }
+
+        public async Task<IEnumerable<int>> GetSubscriberIdsAsync(uint userId, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "SELECT user_id " +
+                      "FROM public.friends "+
+                      "WHERE friend_id = @userId and \"isDeleted\" = false";
+
+            return await connection.QueryAsync<int>(new CommandDefinition(
+                sql,
+                new { userId = (int)userId },
+                cancellationToken: cancellationToken));
+        }
     }
 }

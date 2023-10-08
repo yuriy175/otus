@@ -37,6 +37,15 @@ CREATE INDEX IF NOT EXISTS fki_user_id_fk
     (user_id ASC NULLS LAST)
     TABLESPACE pg_default;
 
+-- Index: friends_friend_id_idx
+
+-- DROP INDEX IF EXISTS public.friends_friend_id_idx;
+
+CREATE INDEX IF NOT EXISTS friends_friend_id_idx
+    ON public.friends USING btree
+    (friend_id ASC NULLS LAST)
+    WITH (deduplicate_items=True)
+    TABLESPACE pg_default;
 
 -- Table: public.posts
 

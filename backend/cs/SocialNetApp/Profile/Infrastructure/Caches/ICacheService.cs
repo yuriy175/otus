@@ -1,7 +1,11 @@
-﻿namespace Profile.Infrastructure.Caches
+﻿using SocialNetApp.Core.Model;
+
+namespace Profile.Infrastructure.Caches
 {
     public interface ICacheService
     {
-        void GetNext();
+        Task AddPostAsync(uint userId, Post post);
+        Task<IEnumerable<Post>> GetPostsAsync(uint userId, uint offset, uint limit);
+        Task WarmupCacheAsync(uint userId, IEnumerable<Post> posts);
     }
 }
