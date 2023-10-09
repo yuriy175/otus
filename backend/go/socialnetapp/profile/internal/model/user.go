@@ -20,7 +20,7 @@ type UserClaims struct {
 
 // Valid checks if claim is valid
 func (c *UserClaims) Valid() error {
-	if c.UserId == "" {
+	if c.UserId != "" {
 		return nil
 	}
 

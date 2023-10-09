@@ -46,6 +46,58 @@ info:
   title: Social Net API
   version: "1.0"
 paths:
+  /friend/delete/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Friend id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Delete user's friend
+      tags:
+      - friends
+  /friend/set/{user_id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Friend id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Add user's friend
+      tags:
+      - friends
   /login:
     post:
       consumes:
@@ -66,8 +118,6 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
-      security:
-      - BearerAuth: []
       summary: Login user
       tags:
       - auth

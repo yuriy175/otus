@@ -46,3 +46,16 @@ func (s *authServiceImp) createToken(userId uint) string {
 
 	return tokenString
 }
+
+func (s *authServiceImp) GetAuthorizedUserId(tokenString string) string {
+	claims := &model.UserClaims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(s.jwtSecret), nil
+	})
+
+	if token == nil || err != nil {
+		return ""
+	}
+
+	return claims.UserId
+}

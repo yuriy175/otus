@@ -21,7 +21,6 @@ func NewAuthHandler(service service.AuthService) handler.AuthHandler {
 // @Summary Login user
 // @Tags         auth
 // @Accept  json
-// @Security BearerAuth
 // @Param properties body dto.LoginDto true "Login properties"
 // @Success 200 {object} string
 // @Failure      400
