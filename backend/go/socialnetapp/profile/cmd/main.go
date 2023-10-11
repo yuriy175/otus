@@ -8,6 +8,7 @@ import (
 	"socialnerworkapp.com/profile/internal/cache/redis"
 	"socialnerworkapp.com/profile/internal/handler/authhandler"
 	"socialnerworkapp.com/profile/internal/handler/friendhandler"
+	"socialnerworkapp.com/profile/internal/handler/posthandler"
 	"socialnerworkapp.com/profile/internal/handler/userhandler"
 	"socialnerworkapp.com/profile/internal/repository/friendrepository"
 	"socialnerworkapp.com/profile/internal/repository/postrepository"

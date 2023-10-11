@@ -98,19 +98,19 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 		return
 	}
 
-	p, ok := handler.CheckParam(w, payload, "name", "User repository error: name\n")
+	p, ok := handler.CheckParam(w, payload, "name", "User handler error: name\n")
 	if !ok {
 		return
 	}
 	name := p.(string)
 
-	p, ok = handler.CheckParam(w, payload, "surname", "User repository error: surname\n")
+	p, ok = handler.CheckParam(w, payload, "surname", "User handler error: surname\n")
 	if !ok {
 		return
 	}
 	surname := p.(string)
 
-	p, ok = handler.CheckParam(w, payload, "password", "User repository error: password\n")
+	p, ok = handler.CheckParam(w, payload, "password", "User handler error: password\n")
 	if !ok {
 		return
 	}
@@ -144,7 +144,7 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 
 	err = h.service.PutUser(ctx, user, password)
 	if err != nil {
-		log.Printf("User repository error: %v\n", err)
+		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -152,7 +152,7 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 		UserId uint `json:"user_id"`
 	}{UserId: user.ID}
 	if err := json.NewEncoder(w).Encode(u); err != nil {
-		log.Printf("User repository error: %v\n", err)
+		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }

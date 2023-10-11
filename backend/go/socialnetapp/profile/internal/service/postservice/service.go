@@ -74,8 +74,8 @@ func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint
 }
 
 // GetPost implements service.PostService.
-func (s *postServiceImp) GetPost(ctx context.Context, userId uint, postId uint) (*model.Post, error) {
-	return s.repository.GetPost(ctx, userId, postId)
+func (s *postServiceImp) GetPost(ctx context.Context, postId uint) (*model.Post, error) {
+	return s.repository.GetPost(ctx, postId)
 }
 
 // UpdatePost implements service.PostService.

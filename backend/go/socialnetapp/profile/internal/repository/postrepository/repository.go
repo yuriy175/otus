@@ -69,7 +69,7 @@ func (r *postRepositoryImp) DeletePost(_ context.Context, userId uint, postId ui
 	return err
 }
 
-func (r *postRepositoryImp) GetPost(_ context.Context, userId uint, postId uint) (*model.Post, error) {
+func (r *postRepositoryImp) GetPost(_ context.Context, postId uint) (*model.Post, error) {
 	db, err := r.connectSql()
 	if err != nil {
 		return nil, err
