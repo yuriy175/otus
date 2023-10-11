@@ -31,6 +31,7 @@ func NewRedisService() cache.CacheService {
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
 
+	client.Del(fmt.Sprintf("user:%d", 2218262))
 	return &redisServiceImp{client: client, itemsCount: itemsCount}
 }
 
@@ -76,9 +77,9 @@ func (s *redisServiceImp) WarmupCache(_ context.Context, userId uint, posts []mo
 	}
 
 	values := make([]string, len(posts))
-	for _, v := range posts {
+	for i, v := range posts {
 		value, _ := json.Marshal(v)
-		values = append(values, string(value))
+		values[i] = string(value)
 	}
 
 	cmd := s.client.RPush(userKey, values)
