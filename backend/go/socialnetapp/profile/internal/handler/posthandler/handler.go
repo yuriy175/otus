@@ -2,6 +2,7 @@ package posthandler
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -43,16 +44,14 @@ func (h *postHandlerImp) CreatePost(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload struct {
-		Text string `json:"text"`
-	}
-	err = json.NewDecoder(req.Body).Decode(&payload)
+	body, err := io.ReadAll(req.Body)
+	text := string(body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = h.service.CreatePost(ctx, userId, payload.Text) //text)
+	err = h.service.CreatePost(ctx, userId, text)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
