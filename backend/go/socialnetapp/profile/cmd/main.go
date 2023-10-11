@@ -44,7 +44,7 @@ func init() {
 func main() {
 	log.Println("Started Go!")
 	log.Println(os.LookupEnv("POSTGRESQL_CONNECTION"))
-	log.Println(os.LookupEnv("GOPATH"))
+	log.Println(os.LookupEnv("REDIS_HOST"))
 
 	// TODO: use fasthttp
 	repo := userrepository.NewUserRepository()

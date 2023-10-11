@@ -31,7 +31,6 @@ func NewRedisService() cache.CacheService {
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
 
-	client.Del(fmt.Sprintf("user:%d", 2218262))
 	return &redisServiceImp{client: client, itemsCount: itemsCount}
 }
 

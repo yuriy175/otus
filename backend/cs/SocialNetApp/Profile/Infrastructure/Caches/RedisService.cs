@@ -57,7 +57,7 @@ namespace Profile.Infrastructure.Caches
             }
 
             var values = await _db.ListRangeAsync(userKey, offset, limit);
-            return values.Select(v => JsonSerializer.Deserialize<Post>(v));
+            return values.Select(v => JsonSerializer.Deserialize<Post>(v)).ToArray();
         }
 
         public async Task WarmupCacheAsync(uint userId, IEnumerable<Post> posts)
