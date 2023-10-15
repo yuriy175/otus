@@ -2,6 +2,7 @@
 using Profile.Infrastructure.Repositories.Interfaces;
 using SocialNetApp.API.Daos;
 using SocialNetApp.Core.Model;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
@@ -17,7 +18,7 @@ namespace Profile.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<int> LoadCitiesAsync(IEnumerable<string> cityNames)
+        public async Task<int> LoadCitiesAsync(IEnumerable<string> cityNames, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
             var seed = new StringBuilder("INSERT INTO public.cities(name) VALUES");
@@ -26,7 +27,7 @@ namespace Profile.Infrastructure.Repositories
             return await connection.ExecuteAsync(sql);
         }
 
-        public async Task<int> LoadUsersAsync(IEnumerable<NewUserDao> users)
+        public async Task<int> LoadUsersAsync(IEnumerable<NewUserDao> users, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
             //too slow case
@@ -43,6 +44,15 @@ namespace Profile.Infrastructure.Repositories
 
 
             return await connection.ExecuteAsync(sql);
+        }
+
+        public async Task<int> LoadPostsAsync(IEnumerable<NewPostDao> posts, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateConnection();
+            var seed = new StringBuilder("INSERT INTO public.posts(user_id, message, \"isDeleted\") VALUES");
+            var sql = posts.Aggregate(seed, (s, c) => s.Append($" ('{c.UserId}', '{c.Message}', false),"), s => s.Remove(s.Length - 1, 1).ToString());
+
+            return await connection.ExecuteAsync(new CommandDefinition(sql, cancellationToken));
         }
     }
 }

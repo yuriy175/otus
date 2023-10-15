@@ -14,13 +14,13 @@ type User struct {
 }
 
 type UserClaims struct {
-	ID   uint
-	Role string
+	UserId string
+	//Role string
 }
 
 // Valid checks if claim is valid
 func (c *UserClaims) Valid() error {
-	if c.ID == 0 {
+	if c.UserId != "" {
 		return nil
 	}
 

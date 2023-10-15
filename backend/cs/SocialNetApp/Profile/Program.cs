@@ -14,7 +14,10 @@ public static class Program
             .CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                Console.WriteLine(Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION"));
+                Console.WriteLine(
+                    "POSTGRESQL_CONNECTION: "+Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION")+
+                    Environment.NewLine+
+                    "REDIS_HOST: "+Environment.GetEnvironmentVariable("REDIS_HOST"));
                 webBuilder.UseStartup<Startup>();
             });
     }
