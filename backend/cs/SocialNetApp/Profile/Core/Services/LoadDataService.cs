@@ -98,7 +98,7 @@ namespace Profile.Core.Services
                 {
                     return 0;
                 }
-                tasks.Add(Task.Run(async () =>
+                await Task.Run(async () =>
                 {
                     var rowsAffected = await loader(entities.Skip(currentCount).Take(ChunkSize));
 
@@ -106,9 +106,18 @@ namespace Profile.Core.Services
                     {
                         rows += rowsAffected;
                     }
-                }));
+                });
+                //tasks.Add(Task.Run(async () =>
+                //{
+                //    var rowsAffected = await loader(entities.Skip(currentCount).Take(ChunkSize));
+
+                //    lock (_locker)
+                //    {
+                //        rows += rowsAffected;
+                //    }
+                //}));
             }
-            await Task.WhenAll(tasks);
+            //await Task.WhenAll(tasks);
 
             return rows;
         }
