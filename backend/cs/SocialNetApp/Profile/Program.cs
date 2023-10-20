@@ -17,7 +17,9 @@ public static class Program
                 Console.WriteLine(
                     "POSTGRESQL_CONNECTION: "+Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION")+
                     Environment.NewLine+
-                    "REDIS_HOST: "+Environment.GetEnvironmentVariable("REDIS_HOST"));
+                    "POSTGRESQL_READ_CONNECTION: " + Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") +
+                    Environment.NewLine +
+                    "REDIS_HOST: " +Environment.GetEnvironmentVariable("REDIS_HOST"));
                 webBuilder.UseStartup<Startup>();
             });
     }

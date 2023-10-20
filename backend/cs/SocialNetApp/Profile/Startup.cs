@@ -39,7 +39,8 @@ namespace SocialNetApp
                 );
             });
             _ = services.AddSingleton<DataContext>(p => new DataContext(
-                Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty));
+                Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
+                Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
             services.AddSingleton<ICacheService, RedisService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ILoadDataRepository, LoadDataRepository>();
