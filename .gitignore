@@ -7,6 +7,10 @@
 /backend/cs/SocialNetApp/.vs
 /backend/cs/SocialNetApp/Profile/bin
 /backend/cs/SocialNetApp/Profile/obj
+/backend/cs/SocialNetApp/Common/bin
+/backend/cs/SocialNetApp/Common/obj
+/backend/cs/SocialNetApp/Dialogs/bin
+/backend/cs/SocialNetApp/Dialogs/obj
 
 #docker
 /docker/pgslave

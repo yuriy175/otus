@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Runtime;
 
-namespace Profile.Infrastructure.Repositories
+namespace Dialogs.Infrastructure.Repositories
 {
     public class DataContext
     {

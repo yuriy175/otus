@@ -1,11 +1,10 @@
-﻿using Profile.Core.Services;
+﻿using Microsoft.OpenApi.Models;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Common.Core.Model;
 
-namespace SocialNetApp
+namespace Dialogs
 {
     public static class ConfigureServicesExtensions
     {

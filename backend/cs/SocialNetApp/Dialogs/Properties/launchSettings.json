@@ -1,0 +1,44 @@
+{
+  "profiles": {
+    "Dialogs": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "POSTGRESQL_DIALOGDB_CONNECTION": "Server=localhost;Port=6432;User Id=sa;Password=medtex;Database=dialogdb;",
+            "SECURITY_KEY": "mysupersecret_secretkey!123",
+            "REDIS_HOST": "localhost:6379",
+            "CACHE_ITEMS_COUNT": "5"
+        },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5092"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "http://+:80"
+      },
+      "publishAllPorts": true
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:52955",
+      "sslPort": 0
+    }
+  }
+}
