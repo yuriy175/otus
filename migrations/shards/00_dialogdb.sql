@@ -1,16 +1,12 @@
+-- wrap in transaction to ensure Docker flag always visible
+BEGIN;
+CREATE EXTENSION citus;
+
+-- add Docker flag to node metadata
+UPDATE pg_dist_node_metadata SET metadata=jsonb_insert(metadata, '{docker}', 'true');
+COMMIT;
+
 -- Database: dialogdb
-
--- DROP DATABASE IF EXISTS dialogdb;
-
-CREATE DATABASE dialogdb
-    WITH
-    OWNER = sa
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.utf8'
-    LC_CTYPE = 'en_US.utf8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
 
 -- Table: public.dialogs
 
@@ -27,8 +23,6 @@ CREATE TABLE IF NOT EXISTS public.dialogs
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.dialogs
-    OWNER to sa;
 -- Index: idx_users
 
 -- DROP INDEX IF EXISTS public.idx_users;

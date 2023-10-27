@@ -106,13 +106,6 @@ services:
 
     volumes:
      - redis-data:/var/lib/redis
-  citus-worker:
-    image: "citusdata/citus:12.0.0"
-    labels: ["com.citusdata.role=Worker"]
-    depends_on: [postgres]
-    command: "/wait-for-manager.sh"
-    volumes:
-      - healthcheck-volume:/healthcheck
 
 volumes:                     
   otusdb-data:

@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  master:
+    container_name: "citus_master"
+    image: "citusdata/citus:12.0.0"
+    ports: 
+      - "5434:5432"
+    labels: ["com.citusdata.role=Master"]
+    environment:
+      POSTGRES_PASSWORD: "medtex"
+    volumes:
+      - ../migrations/shards:/docker-entrypoint-initdb.d
+
+  worker:
+    image: "citusdata/citus:12.0.0"
+    labels: ["com.citusdata.role=Worker"]
+    depends_on: [manager]
+    environment:
+      POSTGRES_PASSWORD: "medtex"
+
+  manager:
+    container_name: "citus_manager"
+    image: 'citusdata/membership-manager:0.3.0'
+    depends_on:
+      - master
+    environment:
+      POSTGRES_PASSWORD: "medtex"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - healthcheck-volume:/healthcheck
+
+volumes:                     
+  healthcheck-volume:
