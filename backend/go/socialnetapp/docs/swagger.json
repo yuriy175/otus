@@ -7,6 +7,99 @@
         "version": "1.0"
     },
     "paths": {
+        "/dialog/{user_id}/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dialogs"
+                ],
+                "summary": "Get dialog with user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Message"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/dialog/{user_id}/send": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dialogs"
+                ],
+                "summary": "Send message to user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Text",
+                        "name": "text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/friend/delete/{user_id}": {
             "delete": {
                 "security": [
@@ -550,6 +643,26 @@
                 },
                 "text": {
                     "type": "string"
+                }
+            }
+        },
+        "model.Message": {
+            "type": "object",
+            "properties": {
+                "authorId": {
+                    "type": "integer"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "userId1": {
+                    "type": "integer"
+                },
+                "userId2": {
+                    "type": "integer"
                 }
             }
         },

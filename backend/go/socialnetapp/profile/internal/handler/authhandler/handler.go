@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	commonhandler "socialnerworkapp.com/pkg/common/handler"
 	"socialnerworkapp.com/profile/internal/handler"
 	"socialnerworkapp.com/profile/internal/service"
 )
@@ -34,13 +35,13 @@ func (h *authHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	ctx := req.Context()
-	p, ok := handler.CheckParam(w, payload, "id", "Auth repository error: id\n")
+	p, ok := commonhandler.CheckParam(w, payload, "id", "Auth repository error: id\n")
 	if !ok {
 		return
 	}
 	id := uint(p.(float64))
 
-	p, ok = handler.CheckParam(w, payload, "password", "Auth repository error: password\n")
+	p, ok = commonhandler.CheckParam(w, payload, "password", "Auth repository error: password\n")
 	if !ok {
 		return
 	}

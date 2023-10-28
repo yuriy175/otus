@@ -1,6 +1,7 @@
 # VS Code settings for go
 /backend/go/socialnetapp/.vscode/*.*
 /backend/go/socialnetapp/profile/cmd/*.exe
+/backend/go/socialnetapp/dialogs/cmd/*.exe
 
 
 # VS settings for c#

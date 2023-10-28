@@ -9,8 +9,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"socialnerworkapp.com/profile/internal/handler"
-	"socialnerworkapp.com/profile/internal/model"
 	"socialnerworkapp.com/profile/internal/service"
+
+	commonhandler "socialnerworkapp.com/pkg/common/handler"
+	commonmodel "socialnerworkapp.com/pkg/common/model"
 )
 
 type postHandlerImp struct {
@@ -39,7 +41,7 @@ func NewPostHandler(authService service.AuthService, service service.PostService
 func (h *postHandlerImp) CreatePost(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	userId, err := handler.CheckAuthorizationAndGetUserId(w, req, h.authService)
+	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}
@@ -70,7 +72,7 @@ func (h *postHandlerImp) CreatePost(w http.ResponseWriter, req *http.Request) {
 // @Failure      500
 // @Router /post/update [put]
 func (h *postHandlerImp) UpdatePost(w http.ResponseWriter, req *http.Request) {
-	userId, err := handler.CheckAuthorizationAndGetUserId(w, req, h.authService)
+	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}
@@ -84,13 +86,13 @@ func (h *postHandlerImp) UpdatePost(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	p, ok := handler.CheckParam(w, payload, "id", "Post handler error: name\n")
+	p, ok := commonhandler.CheckParam(w, payload, "id", "Post handler error: name\n")
 	if !ok {
 		return
 	}
 	postId := uint(p.(float64))
 
-	p, ok = handler.CheckParam(w, payload, "text", "Post handler error: surname\n")
+	p, ok = commonhandler.CheckParam(w, payload, "text", "Post handler error: surname\n")
 	if !ok {
 		return
 	}
@@ -118,7 +120,7 @@ func (h *postHandlerImp) UpdatePost(w http.ResponseWriter, req *http.Request) {
 // @Router /post/delete/{id} [delete]
 func (h *postHandlerImp) DeletePost(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	userId, err := handler.CheckAuthorizationAndGetUserId(w, req, h.authService)
+	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}
@@ -162,7 +164,7 @@ func (h *postHandlerImp) GetPost(w http.ResponseWriter, req *http.Request) {
 
 	post, err := h.service.GetPost(ctx, uint(postId))
 
-	if _, ok := err.(model.NotFoundError); ok {
+	if _, ok := err.(commonmodel.NotFoundError); ok {
 		log.Printf("Post handler error: %v\n", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -191,7 +193,7 @@ func (h *postHandlerImp) GetPost(w http.ResponseWriter, req *http.Request) {
 // @Failure      500
 // @Router /post/feed [get]
 func (h *postHandlerImp) FeedPosts(w http.ResponseWriter, req *http.Request) {
-	userId, err := handler.CheckAuthorizationAndGetUserId(w, req, h.authService)
+	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}

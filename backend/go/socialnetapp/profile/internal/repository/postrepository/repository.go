@@ -6,6 +6,7 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
+	commonmodel "socialnerworkapp.com/pkg/common/model"
 	"socialnerworkapp.com/profile/internal/model"
 	"socialnerworkapp.com/profile/internal/repository"
 )
@@ -38,7 +39,7 @@ func (r *postRepositoryImp) AddPost(_ context.Context, userId uint, text string)
 		return post, nil
 	}
 
-	return nil, model.NotFoundError{}
+	return nil, commonmodel.NotFoundError{}
 }
 
 func (r *postRepositoryImp) UpdatePost(_ context.Context, userId uint, postId uint, text string) error {
@@ -92,7 +93,7 @@ func (r *postRepositoryImp) GetPost(_ context.Context, postId uint) (*model.Post
 		return post, nil
 	}
 
-	return nil, model.NotFoundError{}
+	return nil, commonmodel.NotFoundError{}
 }
 
 func (r *postRepositoryImp) GetPosts(_ context.Context, userId uint, offset uint, limit uint) ([]model.Post, error) {

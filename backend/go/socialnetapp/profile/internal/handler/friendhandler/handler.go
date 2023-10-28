@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	commonhandler "socialnerworkapp.com/pkg/common/handler"
 	"socialnerworkapp.com/profile/internal/handler"
 	"socialnerworkapp.com/profile/internal/service"
 )
@@ -41,11 +42,11 @@ func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 		log.Printf("Friend handler error: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 	}
-	token, err := handler.GetAuthorizationToken(w, req)
+	token, err := commonhandler.GetAuthorizationToken(w, req)
 	if err != nil {
 		return
 	}
-	userId, err := handler.GetAuthorizedUserId(w, req, token, h.authService)
+	userId, err := commonhandler.GetAuthorizedUserId(w, req, token)
 	if err != nil {
 		return
 	}
@@ -72,11 +73,11 @@ func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 // @Router /friend/delete/{user_id} [delete]
 func (h *friendHandlerImp) DeleteFriend(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	token, err := handler.GetAuthorizationToken(w, req)
+	token, err := commonhandler.GetAuthorizationToken(w, req)
 	if err != nil {
 		return
 	}
-	userId, err := handler.GetAuthorizedUserId(w, req, token, h.authService)
+	userId, err := commonhandler.GetAuthorizedUserId(w, req, token)
 	if err != nil {
 		return
 	}

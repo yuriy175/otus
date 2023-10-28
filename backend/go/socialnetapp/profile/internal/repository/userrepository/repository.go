@@ -6,6 +6,7 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
+	commonmodel "socialnerworkapp.com/pkg/common/model"
 	"socialnerworkapp.com/profile/internal/model"
 	"socialnerworkapp.com/profile/internal/repository"
 
@@ -82,7 +83,7 @@ func (r *userRepositoryImp) GetUserById(ctx context.Context, userId uint) (*mode
 		return user, nil
 	}
 
-	return nil, model.NotFoundError{}
+	return nil, commonmodel.NotFoundError{}
 }
 
 func (r *userRepositoryImp) PutUser(_ context.Context, user *model.User, hash model.PasswordType) error {
@@ -92,12 +93,6 @@ func (r *userRepositoryImp) PutUser(_ context.Context, user *model.User, hash mo
 	}
 	defer db.Close()
 
-	// rows, err := db.Query("INSERT INTO public.cities(name)	VALUES ($1) ON CONFLICT DO NOTHING; "+
-	// 	"INSERT INTO public.users(name, surname, age, sex, info, password_hash, city_id) "+
-	// 	"VALUES ($2, 'Ежов', NULL, NULL, NULL, 'пасьва',"+
-	// 	"(SELECT id FROM public.cities WHERE name = $1)) RETURNING*;", "Тверь", "Чапай")
-
-	// postgres limitation - impossible to use parameters in multiple statement
 	// TODO: make one SAFE string here
 	if user.City != nil {
 		_, err := db.Exec("INSERT INTO public.cities(name)	VALUES ($1) ON CONFLICT DO NOTHING;", user.City)

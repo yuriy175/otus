@@ -33,18 +33,6 @@ namespace Dialogs.Infrastructure.Repositories
                 cancellationToken: cancellationToken));
         }
 
-        [JsonPropertyName("userId1")]
-        public ulong UserId1 { get; init; }
-
-        [JsonPropertyName("userId2")]
-        public ulong UserId2 { get; init; }
-
-        [JsonPropertyName("authorId")]
-        public uint AuthorId { get; init; }
-
-        [JsonPropertyName("message")]
-        public string Text { get; init; }
-
         public async Task<IEnumerable<Message>> GetMessagesAsync(uint userId1, uint userId2, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
