@@ -14,9 +14,8 @@ COMMIT;
 
 CREATE TABLE IF NOT EXISTS public.dialogs
 (
-    user_id_1 bigint NOT NULL,
-    user_id_2 bigint NOT NULL,
-    author_id bigint,
+    author_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     message text COLLATE pg_catalog."default",
     created timestamp without time zone DEFAULT now()
 )
@@ -29,6 +28,6 @@ TABLESPACE pg_default;
 
 CREATE INDEX IF NOT EXISTS idx_users
     ON public.dialogs USING btree
-    (user_id_1 ASC NULLS LAST, user_id_2 ASC NULLS LAST)
+    (author_id ASC NULLS LAST, user_id ASC NULLS LAST)
     WITH (deduplicate_items=True)
     TABLESPACE pg_default;

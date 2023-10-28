@@ -29,5 +29,25 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - healthcheck-volume:/healthcheck
 
+  dialogs_go:
+    container_name: dialogs_go
+    image: dialogs_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/dialogs.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION_DB=$POSTGRESQL_DIALOGDB_CONNECTION
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+    ports:
+      - "8003:80"
+    depends_on:
+      - manager
+      - master
+
 volumes:                     
   healthcheck-volume:
