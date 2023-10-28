@@ -5,14 +5,11 @@ namespace Dialogs.Core.Model
 {
     public readonly record  struct Message
     {
-        [JsonPropertyName("userId1")]
-        public ulong UserId1 { get; init; }
-
-        [JsonPropertyName("userId2")]
-        public ulong UserId2 { get; init; }
-
         [JsonPropertyName("authorId")]
         public uint AuthorId { get; init; }
+
+        [JsonPropertyName("userId")]
+        public ulong UserId { get; init; }
 
         [JsonPropertyName("message")]
         public string Text { get; init; }

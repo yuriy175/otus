@@ -55,26 +55,6 @@ services:
       - postgres
       - redis-server
 
-  dialogs_cs:
-    container_name: dialogs_cs
-    image: dialogs_cs:$APP_VERSION
-    build:
-      context: ..
-      dockerfile: docker/cs/dialogs.Dockerfile
-      target: final
-      args:
-        APP_VERSION: $APP_VERSION
-    environment:
-      - EXPOSE_PORT=$EXPOSE_PORT
-      - POSTGRESQL_DIALOGDB_CONNECTION=$POSTGRESQL_DIALOGDB_CONNECTION_CS
-      - SECURITY_KEY=$SECURITY_KEY
-      - REDIS_HOST=$REDIS_HOST
-      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
-    ports:
-      - "8004:80"
-    depends_on:
-      - postgres
-      - redis-server
 
   pgbouncer:
     image: edoburu/pgbouncer

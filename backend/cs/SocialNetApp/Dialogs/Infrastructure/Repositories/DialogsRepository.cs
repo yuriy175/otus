@@ -23,9 +23,9 @@ namespace Dialogs.Infrastructure.Repositories
         public async Task<Message> AddMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
-            var sql = "INSERT INTO public.dialogs(user_id_1, user_id_2, author_id, message) "+
-                      "VALUES (@authorId, @userId, @authorId, @text) " +
-                      "RETURNING user_id_1, user_id_2, author_id, message, created";                      
+            var sql = "INSERT INTO public.dialogs(author_id, user_id, message) " +
+                      "VALUES (@authorId, @userId, @text) " +
+                      "RETURNING author_id, user_id, message, created";                      
 
             return await connection.QueryFirstAsync<Message>(new CommandDefinition(
                 sql,
@@ -36,13 +36,13 @@ namespace Dialogs.Infrastructure.Repositories
         public async Task<IEnumerable<Message>> GetMessagesAsync(uint userId1, uint userId2, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
-            var sql = "SELECT user_id_1 as userId1, user_id_2 as userId2, author_id as authorId, message as text, created " +
+            var sql = "SELECT author_id as authorId, user_id as userId, message as text, created " +
                       "FROM public.dialogs "+
-                      "where user_id_1 = @userId1 and user_id_2 = @userId2 " +
+                      "where author_id = @userId1 and user_id = @userId2 " +
                       "UNION ALL "+
-                      "SELECT user_id_1 as userId1, user_id_2 as userId2, author_id as authorId, message as text, created " +
+                      "SELECT author_id as authorId, user_id as userId, message as text, created " +
                       "FROM public.dialogs "+
-                      "where user_id_1 = @userId2 and user_id_2 = @userId1;";
+                      "where author_id = @userId2 and user_id = @userId1;";
 
             return await connection.QueryAsync<Message>(new CommandDefinition(
                 sql,
