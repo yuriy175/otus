@@ -8,3 +8,5 @@
 Отчет по репликациям находится в otus\results\replica\replica_report.pdf
 
 Реализован функционал кеширования постов друзей в redis для C# и golang
+
+Реализован функционал шардирования диалогов в citus для C# и golang в отдельных микросервисах. Отчет по шардированию находится в otus\results\shards\shards_report.pdf
