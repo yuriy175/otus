@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+  websockets_cs:
+    container_name: websockets_cs
+    image: websockets_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/websockets.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION_CS
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+    ports:
+      - "8006:80"

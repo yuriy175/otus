@@ -1,0 +1,34 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:39112",
+      "sslPort": 44350
+    }
+  },
+  "profiles": {
+    "WebSockets": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5230",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "SECURITY_KEY": "mysupersecret_secretkey!123",
+            "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/",
+            "POSTGRESQL_CONNECTION": "Server=localhost;Port=6432;User Id=sa;Password=medtex;Database=otusdb;"
+        }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

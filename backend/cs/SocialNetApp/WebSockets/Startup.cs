@@ -1,18 +1,12 @@
-﻿using Profile.Infrastructure.Repositories.Interfaces;
-using Profile.Infrastructure.Repositories;
-using Profile.Core.Model.Interfaces;
-using Profile.Core.Services;
-
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Net.WebSockets;
 using System.Text;
-using Microsoft.OpenApi.Models;
-using Profile.Infrastructure.Caches;
+using Websockets.Core.Model.Interfaces;
+using WebSockets;
+using WebSockets.Core.Services;
+using WebSockets.Infrastructure.Repositories;
+using WebSockets.Infrastructure.Repositories.Interfaces;
 
-namespace SocialNetApp
+namespace WebSockets
 {
     public class Startup
     {
@@ -38,27 +32,18 @@ namespace SocialNetApp
                         .AllowAnyOrigin()
                 );
             });
-            _ = services.AddSingleton<DataContext>(p => new DataContext(
-                Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
-                Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
-            services.AddSingleton<ICacheService, RedisService>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ILoadDataRepository, LoadDataRepository>();
-            services.AddScoped<IFriendsRepository, FriendsRepository>();
-            services.AddScoped<IPostsRepository, PostsRepository>();
-
-            services.AddScoped<ILoadDataService, LoadDataService>();
-
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IFriendsService, FriendsService>();
-            services.AddScoped<IPostsService, PostsService>();            
 
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddAuthorization();
             services.ConfigureAuthentication();
+
+            _ = services.AddSingleton<DataContext>(p => new DataContext(
+                Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
+                Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
+            services.AddSingleton<IWebsocketsService, WebsocketsService>(); 
+            services.AddSingleton<IFriendsRepository, FriendsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,11 +56,15 @@ namespace SocialNetApp
 
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseWebSockets();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
+            app.Run(async (context) => {
+                var webService = app.ApplicationServices.GetRequiredService<IWebsocketsService>();
+                if (context.Request.Path == "/post/feed")
+                {
+                    await webService.OnWebSocketConnectAsync(context);
+                }
             });
         }
         public static IApplicationBuilder UseSwaggerDocumentation(IApplicationBuilder app, string url, string name)
