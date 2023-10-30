@@ -7,15 +7,11 @@ services:
       POSTGRES_DB: "otusdb"
       POSTGRES_USER: "sa"
       POSTGRES_PASSWORD: "medtex"
-      POSTGRESQL_REPLICATION_MODE: "master"
-      POSTGRESQL_REPLICATION_USER: "repl_user"
-      POSTGRESQL_REPLICATION_PASSWORD: "repl_password"
-      PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - ../migrations:/docker-entrypoint-initdb.d
       - otusdb-data:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
 
   profile_go:
     container_name: profile_go
@@ -31,6 +27,7 @@ services:
       - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
       - SECURITY_KEY=$SECURITY_KEY
       - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
     ports:
       - "8001:80"
     depends_on:
@@ -51,6 +48,7 @@ services:
       - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS	
       - SECURITY_KEY=$SECURITY_KEY
       - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
     ports:
       - "8002:80"
     depends_on:
@@ -88,6 +86,7 @@ services:
     volumes:
      - redis-data:/var/lib/redis
 
-volumes:
+
+volumes:                     
   otusdb-data:
   redis-data:

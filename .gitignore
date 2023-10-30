@@ -8,3 +8,6 @@
 /backend/cs/SocialNetApp/Profile/bin
 /backend/cs/SocialNetApp/Profile/obj
 
+#docker
+/docker/pgslave
+/docker/pgslave2

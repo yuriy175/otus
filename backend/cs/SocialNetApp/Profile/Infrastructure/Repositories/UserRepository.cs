@@ -23,7 +23,7 @@ namespace Profile.Infrastructure.Repositories
 
         public async Task<User> GetUserByIdAsync(uint userId)
         {
-            using var connection = _context.CreateConnection();
+            using var connection = _context.CreateReadConnection();
             var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name as city " +
         "FROM public.users u " +
         "LEFT OUTER JOIN public.cities c on c.ID = u.city_id " +
@@ -53,7 +53,7 @@ namespace Profile.Infrastructure.Repositories
 
         public async Task<IEnumerable<User>> GetUsersByNameAsync(string name, string surname)
         {
-            using var connection = _context.CreateConnection();
+            using var connection = _context.CreateReadConnection();
             var sql = "SELECT u.id, u.name, surname, age, sex, info, c.name as city " +
         "FROM public.users u " +
         "LEFT OUTER JOIN public.cities c on c.ID = u.city_id " +
