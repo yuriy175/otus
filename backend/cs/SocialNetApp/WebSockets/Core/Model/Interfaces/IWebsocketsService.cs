@@ -2,6 +2,6 @@
 {
     public interface IWebsocketsService
     {
-        Task OnWebSocketConnectAsync(HttpContext context);
+        Task<Task> OnWebSocketConnectAsync(HttpContext context);
     }
 }

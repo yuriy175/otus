@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSockets", "WebSockets\WebSockets.csproj", "{15290D95-C2BD-4674-9946-986F4DF8AD7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.MQ", "Common.MQ\Common.MQ.csproj", "{18C817C1-A0DB-49AA-AC31-479A73A9C774}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.MQ", "Common.MQ\Common.MQ.csproj", "{647AFD2C-2AB5-447C-9CE5-BB4D6145C828}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{15290D95-C2BD-4674-9946-986F4DF8AD7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15290D95-C2BD-4674-9946-986F4DF8AD7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15290D95-C2BD-4674-9946-986F4DF8AD7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18C817C1-A0DB-49AA-AC31-479A73A9C774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18C817C1-A0DB-49AA-AC31-479A73A9C774}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18C817C1-A0DB-49AA-AC31-479A73A9C774}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18C817C1-A0DB-49AA-AC31-479A73A9C774}.Release|Any CPU.Build.0 = Release|Any CPU
+		{647AFD2C-2AB5-447C-9CE5-BB4D6145C828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{647AFD2C-2AB5-447C-9CE5-BB4D6145C828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{647AFD2C-2AB5-447C-9CE5-BB4D6145C828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{647AFD2C-2AB5-447C-9CE5-BB4D6145C828}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

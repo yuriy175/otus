@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.OAuth;
+﻿using Common.MQ.Core.Services;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.IdentityModel.Tokens;
 using Profile.Core.Model;
@@ -34,6 +35,7 @@ namespace Profile.Core.Services
         public async Task<int> CreatePostAsync(uint userId, string text, CancellationToken cancellationToken)
         {
             var post = await _postsRepository.AddPostAsync(userId, text, cancellationToken);
+            new MQSender().SendPost(userId, text);
             var subscriberIds = await _friendsRepository.GetSubscriberIdsAsync(userId, cancellationToken);
             foreach (var subscriberId in subscriberIds)
             {

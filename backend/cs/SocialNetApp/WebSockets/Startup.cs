@@ -63,7 +63,8 @@ namespace WebSockets
                 var webService = app.ApplicationServices.GetRequiredService<IWebsocketsService>();
                 if (context.Request.Path == "/post/feed")
                 {
-                    await webService.OnWebSocketConnectAsync(context);
+                    var t = await webService.OnWebSocketConnectAsync(context);
+                    await t;
                 }
             });
         }
