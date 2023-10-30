@@ -55,6 +55,7 @@ services:
       - postgres
       - redis-server
 
+
   pgbouncer:
     image: edoburu/pgbouncer
     restart: always
@@ -86,7 +87,7 @@ services:
     volumes:
      - redis-data:/var/lib/redis
 
-
 volumes:                     
   otusdb-data:
   redis-data:
+  healthcheck-volume:

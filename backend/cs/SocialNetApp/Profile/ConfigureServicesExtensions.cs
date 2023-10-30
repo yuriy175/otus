@@ -1,15 +1,9 @@
-﻿using Profile.Infrastructure.Repositories.Interfaces;
-using Profile.Infrastructure.Repositories;
-using Profile.Core.Model.Interfaces;
-using Profile.Core.Services;
+﻿using Profile.Core.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.OpenApi.Models;
+using Common.Core.Model;
 
 namespace SocialNetApp
 {
@@ -50,7 +44,7 @@ namespace SocialNetApp
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = false,
-                        IssuerSigningKey = AuthService.GetSymmetricSecurityKey(),
+                        IssuerSigningKey = AuthUtils.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true,
                     };
                 });

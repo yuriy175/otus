@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"socialnerworkapp.com/profile/internal/model"
-	"socialnerworkapp.com/profile/internal/service"
+	commonmodel "socialnerworkapp.com/pkg/common/model"
+	"socialnerworkapp.com/pkg/common/service"
 )
 
 func CheckParam(w http.ResponseWriter, payload map[string]interface{}, paramName string, errorMessage string) (interface{}, bool) {
@@ -26,7 +26,7 @@ func GetAuthorizationToken(w http.ResponseWriter, r *http.Request) (string, erro
 	if tokenHeader == "" { //Токен отсутствует, возвращаем  403 http-код Unauthorized
 		w.WriteHeader(http.StatusForbidden)
 		w.Header().Add("Content-Type", "application/json")
-		return "", model.NotAuthorizedError{}
+		return "", commonmodel.NotAuthorizedError{}
 	}
 
 	return tokenHeader, nil
@@ -35,14 +35,13 @@ func GetAuthorizationToken(w http.ResponseWriter, r *http.Request) (string, erro
 func GetAuthorizedUserId(
 	w http.ResponseWriter,
 	r *http.Request,
-	token string,
-	authService service.AuthService) (uint, error) {
-	userId := authService.GetAuthorizedUserId(token)
+	token string) (uint, error) {
+	userId := service.GetAuthorizedUserId(token)
 
 	if userId == "" {
 		w.WriteHeader(http.StatusForbidden)
 		w.Header().Add("Content-Type", "application/json")
-		return 0, model.NotAuthorizedError{}
+		return 0, commonmodel.NotAuthorizedError{}
 	}
 	val, _ := strconv.Atoi(userId)
 	return uint(val), nil
@@ -50,13 +49,12 @@ func GetAuthorizedUserId(
 
 func CheckAuthorizationAndGetUserId(
 	w http.ResponseWriter,
-	r *http.Request,
-	authService service.AuthService) (uint, error) {
+	r *http.Request) (uint, error) {
 	token, err := GetAuthorizationToken(w, r)
 	if err != nil {
 		return 0, err
 	}
-	userId, err := GetAuthorizedUserId(w, r, token, authService)
+	userId, err := GetAuthorizedUserId(w, r, token)
 	if err != nil {
 		return 0, err
 	}

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.OAuth;
+﻿using Common.Core.Model;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.IdentityModel.Tokens;
 using Profile.Core.Model;
@@ -21,7 +22,6 @@ namespace Profile.Core.Services
         private readonly IPostsRepository _postsRepository;
         private readonly IFriendsRepository _friendsRepository;
 
-        private readonly static string? _securityKey = Environment.GetEnvironmentVariable("SECURITY_KEY");
         private readonly static uint _cacheItemsCount = Convert.ToUInt32(Environment.GetEnvironmentVariable("CACHE_ITEMS_COUNT"));        
 
         public AuthService(
@@ -34,10 +34,6 @@ namespace Profile.Core.Services
             _userRepository = userRepository;
             _postsRepository = postsRepository;
             _friendsRepository = friendsRepository;
-            if (_securityKey is null)
-            {
-                throw new ApplicationException("Пустой секьюрити ключ");
-            }
         }
 
         public async Task<string> LoginAsync(uint userId, string password, CancellationToken cancellationToken)
@@ -48,30 +44,10 @@ namespace Profile.Core.Services
             var jwt = new JwtSecurityToken(
                     claims: claims,
                     signingCredentials: new SigningCredentials(
-                        GetSymmetricSecurityKey(),
+                        AuthUtils.GetSymmetricSecurityKey(),
                         SecurityAlgorithms.HmacSha256));
 
-            if (exists)
-            {
-                //var friendIds = await _friendsRepository.GetFriendIdsAsync(userId, cancellationToken);
-                //var posts = await _postsRepository.GetLatestPostsAsync(userId, _cacheItemsCount, cancellationToken);
-                //await _cacheService.WarmupCacheAsync(userId, posts);
-
-                //userId = 1218274;
-                //var posts2 = await _postsRepository.GetLatestPostsAsync(userId, _cacheItemsCount, cancellationToken);
-                //await _cacheService.WarmupCacheAsync(userId, posts2);
-
-                //userId = 1218275;
-                //var posts3 = await _postsRepository.GetLatestPostsAsync(userId, _cacheItemsCount, cancellationToken);
-                //await _cacheService.WarmupCacheAsync(userId, posts3);
-            }
-
             return !exists ? string.Empty : new JwtSecurityTokenHandler().WriteToken(jwt);
-        }
-
-        public static SymmetricSecurityKey GetSymmetricSecurityKey()
-        {
-            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey!));
         }
     }
 }

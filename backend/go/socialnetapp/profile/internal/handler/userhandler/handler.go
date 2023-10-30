@@ -7,6 +7,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	commonhandler "socialnerworkapp.com/pkg/common/handler"
+	commonmodel "socialnerworkapp.com/pkg/common/model"
 	"socialnerworkapp.com/profile/internal/handler"
 	"socialnerworkapp.com/profile/internal/model"
 	"socialnerworkapp.com/profile/internal/service"
@@ -62,7 +64,7 @@ func (h *userHandlerImp) GetUserById(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	user, err := h.service.GetUserById(ctx, uint(id))
-	if _, ok := err.(model.NotFoundError); ok {
+	if _, ok := err.(commonmodel.NotFoundError); ok {
 		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -98,19 +100,19 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 		return
 	}
 
-	p, ok := handler.CheckParam(w, payload, "name", "User handler error: name\n")
+	p, ok := commonhandler.CheckParam(w, payload, "name", "User handler error: name\n")
 	if !ok {
 		return
 	}
 	name := p.(string)
 
-	p, ok = handler.CheckParam(w, payload, "surname", "User handler error: surname\n")
+	p, ok = commonhandler.CheckParam(w, payload, "surname", "User handler error: surname\n")
 	if !ok {
 		return
 	}
 	surname := p.(string)
 
-	p, ok = handler.CheckParam(w, payload, "password", "User handler error: password\n")
+	p, ok = commonhandler.CheckParam(w, payload, "password", "User handler error: password\n")
 	if !ok {
 		return
 	}
@@ -181,7 +183,7 @@ func (h *userHandlerImp) FindUser(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	users, err := h.service.GetUsersByName(ctx, name, surname)
-	if _, ok := err.(model.NotFoundError); ok {
+	if _, ok := err.(commonmodel.NotFoundError); ok {
 		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusNotFound)
 		return

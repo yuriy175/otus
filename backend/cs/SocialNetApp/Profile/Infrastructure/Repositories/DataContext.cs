@@ -27,6 +27,7 @@ namespace Profile.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _canUseReadConnection = false;
+                Console.WriteLine($"{readConnection}: {ex.ToString()}");
             }
         }
 

@@ -30,6 +30,19 @@ definitions:
       text:
         type: string
     type: object
+  model.Message:
+    properties:
+      authorId:
+        type: integer
+      created:
+        type: string
+      message:
+        type: string
+      userId1:
+        type: integer
+      userId2:
+        type: integer
+    type: object
   model.Post:
     properties:
       authorId:
@@ -64,6 +77,64 @@ info:
   title: Social Net API
   version: "1.0"
 paths:
+  /dialog/{user_id}/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Message'
+            type: array
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Get dialog with user
+      tags:
+      - dialogs
+  /dialog/{user_id}/send:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Text
+        in: body
+        name: text
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Send message to user
+      tags:
+      - dialogs
   /friend/delete/{user_id}:
     delete:
       consumes:
