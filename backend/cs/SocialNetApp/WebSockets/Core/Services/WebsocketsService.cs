@@ -38,7 +38,7 @@ namespace WebSockets.Core.Services
             {
                 _mqReceiver.ReceivePosts((uint)friendId, async (id, post) =>
                 {
-                    byte[] bytes = Encoding.UTF8.GetBytes($"{friendId}: {post}");
+                    byte[] bytes = Encoding.UTF8.GetBytes($"{id}: {post}");
                     await webSocket.SendAsync(
                         bytes,
                         WebSocketMessageType.Text,

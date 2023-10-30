@@ -29,11 +29,11 @@ namespace Common.MQ.Core.Services
 
             Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
 
-            _consumer = new EventingBasicConsumer(_channel);
+            //_consumer = new EventingBasicConsumer(_channel);
             
-            _channel.BasicConsume(queue: _queueName,
-                                 autoAck: true,
-                                 consumer: _consumer);
+            //_channel.BasicConsume(queue: _queueName,
+            //                     autoAck: true,
+            //                     consumer: _consumer);
         }
 
         public void ReceivePosts(uint userId, Action<uint, string> action)
@@ -43,14 +43,22 @@ namespace Common.MQ.Core.Services
                               exchange: ChannelName,
                               routingKey: bindingKey);
 
+            _consumer = new EventingBasicConsumer(_channel);
             _consumer.Received += (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 var routingKey = ea.RoutingKey;
-                action(Convert.ToUInt32(routingKey), message);
+                var id = Convert.ToUInt32(routingKey);
+                if (id == userId)
+                {
+                    action(id, message);
+                }
                 Console.WriteLine($" [x] Received '{routingKey}':'{message}'");
             };
+            _channel.BasicConsume(queue: _queueName,
+                                 autoAck: true,
+                                 consumer: _consumer);
         }
     }
 }
