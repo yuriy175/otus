@@ -1,15 +1,13 @@
 package websocketsservice
 
 import (
+	"context"
 	"fmt"
 	"log"
-	"net/http"
-	"strconv"
 	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
-	commonservice "socialnerworkapp.com/pkg/common/service"
 	"socialnerworkapp.com/pkg/mq"
 	"socialnerworkapp.com/websockets/internal/repository"
 	"socialnerworkapp.com/websockets/internal/service"
@@ -30,47 +28,17 @@ func NewWebsocketsService(
 		mqReceiver: mqReceiver}
 }
 
-func (s *websocketsServiceImp) Start() {
-
-	var upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-	}
-
-	http.HandleFunc("/post/feed", func(w http.ResponseWriter, r *http.Request) {
-		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-		websocket, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		log.Println("Websocket Connected!")
-		tokens, ok := r.URL.Query()["token"]
-
-		if !ok {
-			log.Println("Url Param 'token' is missing")
-			return
-		}
-		token := commonservice.GetAuthorizedUserId(tokens[0])
-		if token == "" {
-			return
-		}
-
-		userId, _ := strconv.Atoi(token)
-
-		ctx := r.Context()
-
+func (s *websocketsServiceImp) OnUserConnected(ctx context.Context, conn *websocket.Conn, userId uint) {
+	go func() {
 		s.mqReceiver.CreateReceiver(ctx)
-		go func() {
-			friends, _ := s.repository.GetFriendIdsAsync(ctx, uint(userId))
-			for _, v := range friends {
-				s.mqReceiver.ReceivePosts(ctx, v, func(friendId uint, post string) {
-					log.Println(post)
-				})
-			}
-			s.listen(websocket, uint(userId))
-		}()
-	})
+		friends, _ := s.repository.GetFriendIdsAsync(ctx, uint(userId))
+		for _, v := range friends {
+			s.mqReceiver.ReceivePosts(ctx, v, func(friendId uint, post string) {
+				log.Println(post)
+			})
+		}
+		s.listen(conn, uint(userId))
+	}()
 }
 
 func (s *websocketsServiceImp) listen(conn *websocket.Conn, userId uint) {

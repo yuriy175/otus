@@ -1,5 +1,11 @@
 package service
 
+import (
+	"context"
+
+	"github.com/gorilla/websocket"
+)
+
 type WebsocketsService interface {
-	Start()
+	OnUserConnected(ctx context.Context, conn *websocket.Conn, userId uint)
 }

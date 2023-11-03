@@ -9,6 +9,7 @@ import (
 
 	_ "socialnerworkapp.com/docs"
 	"socialnerworkapp.com/pkg/mq"
+	"socialnerworkapp.com/websockets/internal/handler/websocketshandler"
 	"socialnerworkapp.com/websockets/internal/repository/friendrepository"
 	"socialnerworkapp.com/websockets/internal/service/websocketsservice"
 )
@@ -37,7 +38,10 @@ func main() {
 	friendRepo := friendrepository.NewFriendRepository()
 
 	wsSrv := websocketsservice.NewWebsocketsService(friendRepo, mqReceiver)
-	wsSrv.Start()
+	wsHandler := websocketshandler.NewWebsocketsHandler(wsSrv)
+	http.HandleFunc("/post/feed", wsHandler.SendPosts)
+
+	//wsSrv.Start()
 	if err := http.ListenAndServe(":80", nil); err != nil {
 		panic(err)
 	}
