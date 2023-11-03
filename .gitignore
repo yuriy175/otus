@@ -2,6 +2,7 @@
 /backend/go/socialnetapp/.vscode/*.*
 /backend/go/socialnetapp/profile/cmd/*.exe
 /backend/go/socialnetapp/dialogs/cmd/*.exe
+/backend/go/socialnetapp/websockets/cmd/*.exe
 
 
 # VS settings for c#

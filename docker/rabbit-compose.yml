@@ -10,6 +10,23 @@ services:
         - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
 
+  websockets_go:
+    container_name: websockets_go
+    image: websockets_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/websockets.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
+      - SECURITY_KEY=$SECURITY_KEY
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+    ports:
+      - "8005:80"
+
   websockets_cs:
     container_name: websockets_cs
     image: websockets_cs:$APP_VERSION

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"socialnerworkapp.com/pkg/mq"
 	"socialnerworkapp.com/profile/internal/cache/redis"
 	"socialnerworkapp.com/profile/internal/handler/authhandler"
 	"socialnerworkapp.com/profile/internal/handler/friendhandler"
@@ -58,9 +59,10 @@ func main() {
 	friendHandler := friendhandler.NewFriendHandler(authSrv, friendSrv)
 
 	cacheSrv := redis.NewRedisService()
+	mqSender := mq.NewMqSender()
 
 	postRepo := postrepository.NewPostRepository()
-	postSrv := postservice.NewPostService(postRepo, friendRepo, cacheSrv)
+	postSrv := postservice.NewPostService(postRepo, friendRepo, cacheSrv, mqSender)
 	postHandler := posthandler.NewPostHandler(authSrv, postSrv)
 
 	router := mux.NewRouter()
