@@ -11,6 +11,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Profile.Infrastructure.Caches;
+using Common.MQ.Core.Services;
+using Common.MQ.Core.Model.Interfaces;
 
 namespace SocialNetApp
 {
@@ -52,7 +54,8 @@ namespace SocialNetApp
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFriendsService, FriendsService>();
-            services.AddScoped<IPostsService, PostsService>();            
+            services.AddScoped<IPostsService, PostsService>();
+            services.AddScoped<IMQSender, MQSender>();            
 
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

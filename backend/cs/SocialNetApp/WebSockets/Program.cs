@@ -15,8 +15,9 @@ public static class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 Console.WriteLine(
-                    "RABBITMQ_CONNECTION: " + Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION") +
-                    "POSTGRESQL_CONNECTION: " + Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION")
+                    "POSTGRESQL_CONNECTION: " + Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION")+
+                    Environment.NewLine +
+                    "RABBITMQ_CONNECTION: " + Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION")
                     );
                 webBuilder.UseStartup<Startup>();
             });

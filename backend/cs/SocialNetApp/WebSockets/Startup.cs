@@ -1,4 +1,6 @@
-﻿using System.Net.WebSockets;
+﻿using Common.MQ.Core.Model.Interfaces;
+using Common.MQ.Core.Services;
+using System.Net.WebSockets;
 using System.Text;
 using Websockets.Core.Model.Interfaces;
 using WebSockets;
@@ -42,6 +44,8 @@ namespace WebSockets
             _ = services.AddSingleton<DataContext>(p => new DataContext(
                 Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
                 Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
+
+            services.AddSingleton<IMQReceiver, MQReceiver>();
             services.AddSingleton<IWebsocketsService, WebsocketsService>(); 
             services.AddSingleton<IFriendsRepository, FriendsRepository>();
         }

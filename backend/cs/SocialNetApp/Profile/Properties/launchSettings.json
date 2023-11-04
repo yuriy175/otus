@@ -10,7 +10,8 @@
             "POSTGRESQL_READ_CONNECTION": "Server=localhost;Port=15433;User Id=sa;Password=medtex;Database=otusdb;",
             "SECURITY_KEY": "mysupersecret_secretkey!123",
             "REDIS_HOST": "localhost:6379",
-            "CACHE_ITEMS_COUNT": "5"
+            "CACHE_ITEMS_COUNT": "5",
+            "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/"
         },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5266"
