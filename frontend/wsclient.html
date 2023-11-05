@@ -1,0 +1,77 @@
+<html ng-app="app">
+<head>
+    <script type="text/javascript">
+
+    var myWebSocket;
+
+
+    function connectToWS(endpoint, token) {
+        var endpoint = document.getElementById(endpoint).value;
+        if (myWebSocket !== undefined) {
+            myWebSocket.close()
+        }
+
+        myWebSocket = new WebSocket(endpoint); //,[null,token]); //'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxNjQ1ODAxIn0.YtBssxfyHC3yw5QxPmKqjaoXFqXAtWn161hDB3I_1cQ');
+
+        myWebSocket.onmessage = function(event) {
+            var leng;
+            if (event.data.size === undefined) {
+                leng = event.data.length
+            } else {
+                leng = event.data.size
+            }
+            console.log("onmessage. size: " + leng + ", content: " + event.data);
+            var element = document.getElementById("receivedMsg");
+	    element.setAttribute("value", event.data)
+        }
+
+        myWebSocket.onopen = function(evt) {
+            console.log("onopen.");
+        };
+
+        myWebSocket.onclose = function(evt) {
+            console.log("onclose.");
+        };
+
+        myWebSocket.onerror = function(evt) {
+            console.log("Error!");
+        };
+    }
+
+    function sendMsg() {
+        var message = document.getElementById("myMessage").value;
+        myWebSocket.send(message);
+    }
+
+    function closeConn() {
+        myWebSocket.close();
+    }
+
+    </script>
+</head>
+<body>
+
+    <form>
+        connection to: <input type="text" id="endpoint" name="endpoint" value="ws://localhost/post/feed?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxNjQ1ODAxIn0.YtBssxfyHC3yw5QxPmKqjaoXFqXAtWn161hDB3I_1cQ"  style="width: 1000px" ><br>
+    </form>
+
+    <input type="button" onclick="connectToWS('endpoint', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxNjQ1ODAxIn0.YtBssxfyHC3yw5QxPmKqjaoXFqXAtWn161hDB3I_1cQ')" value="connect to WebSocket endpoint" /><br><br>
+
+    <form>
+        connection to: <input type="text" id="endpoint2" name="endpoint2" value="ws://localhost/post/feed?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxNjQ1ODAyIn0.9UMhEZxqa-2j8gKk-9r8TZVAh3ODDtksGyhrQs8rqKU"  style="width: 1000px" ><br>
+    </form>
+
+    <input type="button" onclick="connectToWS('endpoint2','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxNjQ1ODAyIn0.9UMhEZxqa-2j8gKk-9r8TZVAh3ODDtksGyhrQs8rqKU')" value="connect to WebSocket endpoint2" /><br><br>
+
+    <form>
+        message: <input type="text" id="myMessage" name="myMessage" value="hi there!"><br>
+    </form>
+
+    <input type="button" onclick="sendMsg()" value="Send message" />
+
+    <input type="button" onclick="closeConn()" value="Close connection" />
+
+    <input type="text" id="receivedMsg" name="endpoint" value=""  style="width: 1000px" >
+
+</body>
+</html>

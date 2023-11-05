@@ -44,6 +44,8 @@ func (h *wsHandlerImp) SendPosts(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	token := commonservice.GetAuthorizedUserId(tokens[0])
+	//protocols := strings.Split(req.Header.Get("Sec-WebSocket-Protocol"), ", ")
+	//token := commonservice.GetAuthorizedUserId(protocols[1])
 	if token == "" {
 		return
 	}

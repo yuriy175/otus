@@ -11,4 +11,5 @@ type MqSender interface {
 type MqReceiver interface {
 	CreateReceiver(_ context.Context) error
 	ReceivePosts(_ context.Context, userId uint, action func(friendId uint, post string)) error
+	CloseReceiver(_ context.Context) error
 }

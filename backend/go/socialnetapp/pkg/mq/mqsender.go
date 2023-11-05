@@ -18,7 +18,7 @@ func NewMqSender() MqSender {
 }
 
 func (s *mqSenderImp) SendPost(_ context.Context, userId uint, post string) error {
-	conn, err := amqp.Dial(os.Getenv("RABBITMQ_CONNECTION")) //"amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial(os.Getenv("RABBITMQ_CONNECTION"))
 	if err != nil {
 		return err
 	}

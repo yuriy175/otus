@@ -2,10 +2,8 @@ package websocketsservice
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"sync"
-	"time"
 
 	"github.com/gorilla/websocket"
 	"socialnerworkapp.com/pkg/mq"
@@ -17,7 +15,8 @@ type websocketsServiceImp struct {
 	repository repository.FriendRepository
 	mqReceiver mq.MqReceiver
 
-	mtx sync.RWMutex
+	mtx        sync.RWMutex
+	websockets map[uint][]*websocket.Conn
 }
 
 func NewWebsocketsService(
@@ -25,42 +24,36 @@ func NewWebsocketsService(
 	mqReceiver mq.MqReceiver) service.WebsocketsService {
 	return &websocketsServiceImp{
 		repository: repository,
-		mqReceiver: mqReceiver}
+		mqReceiver: mqReceiver,
+		websockets: make(map[uint][]*websocket.Conn)}
 }
 
 func (s *websocketsServiceImp) OnUserConnected(ctx context.Context, conn *websocket.Conn, userId uint) {
 	go func() {
 		s.mqReceiver.CreateReceiver(ctx)
 		friends, _ := s.repository.GetFriendIdsAsync(ctx, uint(userId))
-		for _, v := range friends {
-			s.mqReceiver.ReceivePosts(ctx, v, func(friendId uint, post string) {
-				log.Println(post)
+		for _, friendId := range friends {
+			s.mtx.Lock()
+			conns, ok := s.websockets[friendId]
+			if !ok {
+				conns = make([]*websocket.Conn, 1)
+				conns[0] = conn
+			} else {
+				conns = append(conns, conn)
+			}
+			s.websockets[friendId] = conns
+			s.mtx.Unlock()
+			s.mqReceiver.ReceivePosts(ctx, friendId, func(friendId uint, post string) {
+				websockets := s.websockets[friendId]
+				for _, ws := range websockets {
+					s.mtx.Lock()
+					if err := ws.WriteMessage(websocket.TextMessage, []byte(post)); err != nil {
+						log.Println(err)
+					}
+
+					s.mtx.Unlock()
+				}
 			})
 		}
-		s.listen(conn, uint(userId))
 	}()
-}
-
-func (s *websocketsServiceImp) listen(conn *websocket.Conn, userId uint) {
-	for {
-		// read a message
-		messageType, messageContent, err := conn.ReadMessage()
-		timeReceive := time.Now()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		// print out that message
-		fmt.Println(string(messageContent))
-
-		// reponse message
-		messageResponse := fmt.Sprintf("Your message is: %s. Time received : %v from %v !!!", messageContent, timeReceive, userId)
-
-		if err := conn.WriteMessage(messageType, []byte(messageResponse)); err != nil {
-			log.Println(err)
-			return
-		}
-
-	}
 }
