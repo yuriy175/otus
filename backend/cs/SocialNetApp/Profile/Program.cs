@@ -19,7 +19,9 @@ public static class Program
                     Environment.NewLine+
                     "POSTGRESQL_READ_CONNECTION: " + Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") +
                     Environment.NewLine +
-                    "REDIS_HOST: " +Environment.GetEnvironmentVariable("REDIS_HOST"));
+                    "REDIS_HOST: " +Environment.GetEnvironmentVariable("REDIS_HOST")+
+                    Environment.NewLine +
+                    "RABBITMQ_CONNECTION: " + Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION"));
                 webBuilder.UseStartup<Startup>();
             });
     }

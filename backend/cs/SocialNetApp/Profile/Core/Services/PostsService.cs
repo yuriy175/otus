@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.OAuth;
+﻿using Common.MQ.Core.Model.Interfaces;
+using Common.MQ.Core.Services;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.IdentityModel.Tokens;
 using Profile.Core.Model;
@@ -19,21 +21,26 @@ namespace Profile.Core.Services
         private readonly IPostsRepository _postsRepository;
         private readonly ICacheService _cacheService;
         private readonly IFriendsRepository _friendsRepository;
+        private readonly IMQSender _mqSender;
+        
         private readonly static uint _cacheItemsCount = Convert.ToUInt32(Environment.GetEnvironmentVariable("CACHE_ITEMS_COUNT"));
 
         public PostsService(
             IPostsRepository postsRepository,
             IFriendsRepository friendsRepository,
-            ICacheService cacheService)
+            ICacheService cacheService,
+            IMQSender mqSender)
         {
             _postsRepository = postsRepository;
             _friendsRepository = friendsRepository;
             _cacheService = cacheService;
+            _mqSender = mqSender;
         }
 
         public async Task<int> CreatePostAsync(uint userId, string text, CancellationToken cancellationToken)
         {
             var post = await _postsRepository.AddPostAsync(userId, text, cancellationToken);
+            _mqSender.SendPost(userId, text);
             var subscriberIds = await _friendsRepository.GetSubscriberIdsAsync(userId, cancellationToken);
             foreach (var subscriberId in subscriberIds)
             {

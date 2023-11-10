@@ -3,6 +3,7 @@ package postservice
 import (
 	"context"
 
+	"socialnerworkapp.com/pkg/mq"
 	"socialnerworkapp.com/profile/internal/cache"
 	"socialnerworkapp.com/profile/internal/model"
 	"socialnerworkapp.com/profile/internal/repository"
@@ -13,16 +14,19 @@ type postServiceImp struct {
 	repository       repository.PostRepository
 	friendRepository repository.FriendRepository
 	cacheService     cache.CacheService
+	mqSender         mq.MqSender
 }
 
 func NewPostService(
 	repository repository.PostRepository,
 	friendRepository repository.FriendRepository,
-	cacheService cache.CacheService) service.PostService {
+	cacheService cache.CacheService,
+	mqSender mq.MqSender) service.PostService {
 	return &postServiceImp{
 		repository:       repository,
 		friendRepository: friendRepository,
-		cacheService:     cacheService}
+		cacheService:     cacheService,
+		mqSender:         mqSender}
 }
 
 // CreatePost implements service.PostService.
@@ -32,6 +36,7 @@ func (s *postServiceImp) CreatePost(ctx context.Context, userId uint, text strin
 		return err
 	}
 
+	s.mqSender.SendPost(ctx, userId, text)
 	subscriberIds, err := s.friendRepository.GetSubscriberIds(ctx, userId)
 	if err != nil {
 		return err

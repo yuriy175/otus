@@ -1,6 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -23,6 +25,16 @@ namespace Common.Core.Model
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {
             return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey!));
+        }
+
+        public static uint? GetAuthorizedUserId(string tokenString)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(tokenString);
+
+            var userId = jwtSecurityToken.Claims.First(claim => claim.Type == Constants.UserIdClaimType).Value;
+
+            return string.IsNullOrEmpty(userId) ? null : Convert.ToUInt32(userId);
         }
     }
 }
