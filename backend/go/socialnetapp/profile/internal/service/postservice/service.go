@@ -67,12 +67,14 @@ func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint
 			return nil, err
 		}
 
-		err = s.cacheService.WarmupCache(ctx, userId, posts)
-		if err != nil {
-			return nil, err
-		}
+		if len(posts) > 0 {
+			err = s.cacheService.WarmupCache(ctx, userId, posts)
+			if err != nil {
+				return nil, err
+			}
 
-		posts, err = s.cacheService.GetPosts(ctx, userId, offset, limit)
+			posts, err = s.cacheService.GetPosts(ctx, userId, offset, limit)
+		}
 	}
 
 	return posts, err

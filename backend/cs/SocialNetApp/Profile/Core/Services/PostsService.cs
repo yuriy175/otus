@@ -67,10 +67,19 @@ namespace Profile.Core.Services
             if (!posts.Any())
             {
                 posts = await _postsRepository.GetLatestFriendsPostsAsync(userId, _cacheItemsCount, cancellationToken);
-                await _cacheService.WarmupCacheAsync(userId, posts);
-                posts = await _cacheService.GetPostsAsync(userId, offset, limit);
+                if (posts.Any())
+                {
+                    await _cacheService.WarmupCacheAsync(userId, posts);
+                    posts = await _cacheService.GetPostsAsync(userId, offset, limit);
+                }
             }
 
+            return posts;
+        }
+
+        public async Task<IEnumerable<Post>> FeedPostsNoCacheAsync(uint userId, uint offset, uint limit, CancellationToken cancellationToken)
+        {
+            var posts = await _postsRepository.GetLatestFriendsPostsAsync(userId, _cacheItemsCount, cancellationToken);
             return posts;
         }
     }

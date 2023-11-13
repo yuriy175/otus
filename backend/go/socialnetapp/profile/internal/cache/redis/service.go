@@ -101,29 +101,6 @@ func (s *redisServiceImp) WarmupCache(_ context.Context, userId uint, posts []mo
 	//return cmd.Err()
 }
 
-func (s *redisServiceImp) CheckCache(_ context.Context, userId uint) error {
-	userKey := s.getKey(userId)
-	//cmd := s.client.Do()
-	// Defind the function code..
-	//ctx := context.Background()
-	fcode := `#!lua name=mylib 
-	redis.register_function('myfunc', 
-	function (keys, args) 
-		return args[1]..'23'..keys[1]
-	end)`
-
-	// Load or replace the function
-	val, err := s.client.Do("function", "load", "replace", fcode).Result()
-
-	_ = val
-	// later in the code... call the function
-	va, err := s.client.Do("fcall", "myfunc", 1, userKey, "hello").Result()
-	//va, err := s.client.Do("fcall", "knockknock", 0).Result()
-	_ = err
-	_ = va
-	return nil //cmd.Err()
-}
-
 func (s *redisServiceImp) getKey(userId uint) string {
 	return fmt.Sprintf("user:%d", userId)
 }
