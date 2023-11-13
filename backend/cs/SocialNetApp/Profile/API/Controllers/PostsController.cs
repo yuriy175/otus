@@ -76,5 +76,17 @@ namespace SocialNetApp.API.Controllers
             }
             return Ok(await _friendsService.FeedPostsAsync(userId.Value, offset, limit, cancellationToken));
         }
+
+        [Authorize]
+        [HttpGet("/post/feed-nocache")]
+        public async Task<ActionResult> FeedPostsNoCache([FromQuery] uint offset, [FromQuery] uint limit, CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+            if (userId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await _friendsService.FeedPostsNoCacheAsync(userId.Value, offset, limit, cancellationToken));
+        }
     }
 }

@@ -5,6 +5,7 @@ using NRedisStack.RedisStackCommands;
 using Profile.Infrastructure.Repositories.Interfaces;
 using SocialNetApp.Core.Model;
 using StackExchange.Redis;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace Profile.Infrastructure.Caches
@@ -44,8 +45,13 @@ namespace Profile.Infrastructure.Caches
                 throw new ApplicationException("Пустой redis db");
             }
 
-            await _db.ListLeftPushAsync(userKey, new RedisValue(JsonSerializer.Serialize<Post>(post)));
-            await _db.ListTrimAsync(userKey, 0, _cacheItemsCount-1);
+            //await _db.ListLeftPushAsync(userKey, new RedisValue(JsonSerializer.Serialize<Post>(post)));
+            //await _db.ListTrimAsync(userKey, 0, _cacheItemsCount-1);
+            var args = new object[] { 
+                "addpost", 
+                1, userKey,
+                new RedisValue(JsonSerializer.Serialize<Post>(post)), _cacheItemsCount-1};
+            var count = await _db.ExecuteAsync("FCALL", args);
         }
 
         public async Task<IEnumerable<Post>> GetPostsAsync(uint userId, uint offset, uint limit)
@@ -56,8 +62,14 @@ namespace Profile.Infrastructure.Caches
                 throw new ApplicationException("Пустой redis db");
             }
 
-            var values = await _db.ListRangeAsync(userKey, offset, limit);
-            return values.Select(v => JsonSerializer.Deserialize<Post>(v)).ToArray();
+            //var values = await _db.ListRangeAsync(userKey, offset, limit);
+            //return values.Select(v => JsonSerializer.Deserialize<Post>(v)).ToArray();
+            var values = await _db.ExecuteAsync("FCALL", new object[] { "getposts", 1, userKey, offset, limit });
+            if(values.Type == ResultType.MultiBulk)
+            {
+                return ((RedisResult[])values!).Select(v => JsonSerializer.Deserialize<Post>(v.ToString()!)).ToArray();
+            }
+            return Array.Empty<Post>();
         }
 
         public async Task WarmupCacheAsync(uint userId, IEnumerable<Post> posts)
@@ -70,62 +82,20 @@ namespace Profile.Infrastructure.Caches
             }
 
             await _db.KeyExpireAsync(userKey, TimeSpan.FromHours(24));
-            var items = posts.Select(p =>
-            {
-                var json = JsonSerializer.Serialize<Post>(p);
-                return new RedisValue(json);
-            }).ToArray();
+            //var items = posts.Select(p =>
+            //{
+            //    var json = JsonSerializer.Serialize<Post>(p);
+            //    return new RedisValue(json);
+            //}).ToArray();
 
-            await _db.ListRightPushAsync(userKey, items);
+            //await _db.ListRightPushAsync(userKey, items);
+            var args = new object[] { "warmupposts", 1, userKey }
+                .Union(posts.Select(p =>JsonSerializer.Serialize<Post>(p)))
+                .ToArray();
+            var count = await _db.ExecuteAsync("FCALL", args);
+
+            return;
         }
-        /*
-         * 
-        public Task<bool> AddPostAsync(Post post)
-        {
-            var authorKey = $"author:{post.AuthorId}";
-            if (_db is null)
-            {
-                throw new ApplicationException("Пустой redis db");
-            }
-            
-            var value = new RedisValue( post.Message );
-
-            return _db.SortedSetAddAsync(authorKey, value, post.Id);
-        }
-
-        public async Task<IEnumerable<Post>> GetPostsAsync(uint userId, uint offset, uint limit)
-        {
-            var allKey = $"author:all";
-            var y = await _db.SortedSetCombineAndStoreAsync(SetOperation.Union, allKey, 
-                new []{"author:1218263", "author:1218274", "author:1218275" }.Select(i => new RedisKey(i)).ToArray(), 
-                aggregate: Aggregate.Max,
-                weights: new[] {1.0,1.0, 1.0});
-
-            var authorKey = $"author:{userId}";
-            if (_db is null)
-            { 
-                throw new ApplicationException("Пустой redis db");
-            }
-
-            var values2 = await _db.SortedSetRangeByScoreWithScoresAsync("author:1218274");
-
-            var values = await _db.SortedSetRangeByScoreWithScoresAsync(allKey,
-                order: Order.Descending,
-                skip: offset,
-                take: limit);// authorKey);
-            return values.Select(v => new Post { AuthorId = userId, Id = Convert.ToUInt32(v.Score), Message = v.Element.ToString()});
-        }
-        
-        public Task WarmupCacheAsync(uint userId, IEnumerable<Post> posts)
-        {
-            var authorKey = $"author:{userId}";
-            if (_db is null)
-            {
-                throw new ApplicationException("Пустой redis db");
-            }
-
-            return _db.SortedSetAddAsync(authorKey, posts.Select(p => new SortedSetEntry(new RedisValue(p.Message), p.Id)).ToArray());
-        }*/
 
         public ValueTask DisposeAsync()
         {

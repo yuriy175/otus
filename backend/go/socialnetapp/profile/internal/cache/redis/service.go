@@ -39,31 +39,41 @@ func (s *redisServiceImp) AddPost(_ context.Context, userId uint, post *model.Po
 	userKey := s.getKey(userId)
 	value, _ := json.Marshal(post)
 
-	cmd := s.client.LPush(userKey, value)
+	_, err := s.client.Do("fcall", "addpost", 1, userKey, value, int64(s.itemsCount)-1).Result()
+	return err
+
+	/*cmd := s.client.LPush(userKey, value)
 	if cmd.Err() != nil {
 		return cmd.Err()
 	}
 
 	status := s.client.LTrim(userKey, 0, int64(s.itemsCount)-1)
-	return status.Err()
+	return status.Err()*/
 }
 
 // GetPosts implements cache.CacheService.
 func (s *redisServiceImp) GetPosts(_ context.Context, userId uint, offset uint, limit uint) ([]model.Post, error) {
 	userKey := s.getKey(userId)
-	values, err := s.client.LRange(userKey, int64(offset), int64(limit)).Result()
+	/*values, err := s.client.LRange(userKey, int64(offset), int64(limit)).Result()
+	if err != nil {
+		return nil, err
+	}*/
+	result, err := s.client.Do("fcall", "getposts", 1, userKey, offset, limit).Result()
 	if err != nil {
 		return nil, err
 	}
-
+	values, ok := result.([]interface{})
+	if !ok {
+		return nil, nil
+	}
 	posts := make([]model.Post, 0)
 	for _, v := range values {
 		post := model.Post{}
-		err = json.Unmarshal([]byte(v), &post)
+		err = json.Unmarshal([]byte(v.(string)), &post)
 		posts = append(posts, post)
 	}
 
-	return posts, err
+	return posts, nil
 }
 
 // WarmupCache implements cache.CacheService.
@@ -75,14 +85,20 @@ func (s *redisServiceImp) WarmupCache(_ context.Context, userId uint, posts []mo
 		return ok.Err()
 	}
 
-	values := make([]string, len(posts))
+	values := make([]interface{}, 4+len(posts))
+	values[0] = "fcall"
+	values[1] = "warmupposts"
+	values[2] = 1
+	values[3] = userKey
 	for i, v := range posts {
 		value, _ := json.Marshal(v)
-		values[i] = string(value)
+		values[i+4] = string(value)
 	}
+	_, err := s.client.Do(values).Result()
+	return err
 
-	cmd := s.client.RPush(userKey, values)
-	return cmd.Err()
+	//cmd := s.client.RPush(userKey, values)
+	//return cmd.Err()
 }
 
 func (s *redisServiceImp) getKey(userId uint) string {

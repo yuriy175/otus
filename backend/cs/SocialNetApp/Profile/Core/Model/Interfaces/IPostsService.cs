@@ -9,5 +9,6 @@ namespace Profile.Core.Model.Interfaces
         Task<int> DeletePostAsync(uint userId, uint postId, CancellationToken cancellationToken);
         Task<Post> GetPostAsync(uint userId, uint postId, CancellationToken cancellationToken);
         Task<IEnumerable<Post>> FeedPostsAsync(uint userId, uint offset, uint limit, CancellationToken cancellationToken);
+        Task<IEnumerable<Post>> FeedPostsNoCacheAsync(uint userId, uint offset, uint limit, CancellationToken cancellationToken);
     }
 }
