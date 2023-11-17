@@ -1,21 +1,24 @@
 import React, { lazy, Suspense } from 'react';
-import {
-  FriendsComponent,
-  LoginComponent,
-  PostsComponent,
-  UsersComponent,
-} from './components';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import css from './App.css';
+import {
+  LoginComponent,
+  UsersComponent,
+  FriendsComponent,
+  PostsComponent,
+  DialogsComponent,
+} from './components';
+import { MainPage } from './pages';
 
 const App: React.FC = () => {
   return (
-    <div className="App">
+    <div className={css.mainDiv}>
       <BrowserRouter>
         <Routes>
           <Route path="/" Component={LoginComponent} />
-          <Route path="/users" Component={UsersComponent} />
-          <Route path="/friends" Component={FriendsComponent} />
-          <Route path="/posts" Component={PostsComponent} />
+          <Route path="/main" Component={MainPage} />
         </Routes>{' '}
       </BrowserRouter>
     </div>

@@ -1,23 +1,6 @@
 
-.app { 
+.mainDiv { 
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
-
-.app__main {
-   flex-grow: 1;
-    height: 0;
-    display: flex;
-    flex-direction: column;
-}    
-.app__snackbars{
-    display: flex;
-    justify-content: center;
     width: 100%;
-    position: fixed;
-    bottom: 2rem;
-}
-.app__snackbars_width {
-    width: 40rem;
+    height: 100%;
 }
