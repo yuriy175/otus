@@ -1,6 +1,6 @@
 ﻿using SocialNetApp.Core.Model;
 
-namespace Profile.Core.Model.Interfaces
+namespace Posts.Core.Model.Interfaces
 {
     public interface IPostsService
     {

@@ -1,17 +1,9 @@
 ﻿using Common.API.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
-using Profile.Core.Model.Interfaces;
-using SocialNetApp.API.Dtos;
-using System.ComponentModel;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using Posts.Core.Model.Interfaces;
 
-namespace SocialNetApp.API.Controllers
+namespace Posts.API.Controllers
 {
     [ApiController]
     public class FriendsController : AuthorizedControllerBase

@@ -15,9 +15,17 @@
 /backend/cs/SocialNetApp/Common.MQ/obj
 /backend/cs/SocialNetApp/Dialogs/bin
 /backend/cs/SocialNetApp/Dialogs/obj
+/backend/cs/SocialNetApp/Posts/bin
+/backend/cs/SocialNetApp/Posts/obj
 /backend/cs/SocialNetApp/WebSockets/bin
 /backend/cs/SocialNetApp/WebSockets/obj
 
 #docker
 /docker/pgslave
 /docker/pgslave2
+
+#frontend
+/frontend/socialnetfrontend/node_modules
+/frontend/socialnetfrontend/build
+/frontend/socialnetfrontend/dist
+/frontend/socialnetfrontend/.npmrc

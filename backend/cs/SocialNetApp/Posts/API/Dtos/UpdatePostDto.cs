@@ -1,7 +1,6 @@
-﻿using Profile.Core.Model;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace SocialNetApp.API.Dtos
+namespace Posts.API.Dtos
 {
     public readonly record  struct UpdatePostDto
     {

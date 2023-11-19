@@ -1,75 +1,73 @@
 version: "3.9"
 services:
   postgres:
-    container_name: postgres
+    container_name: post_postgres
     image: postgres:15.4-alpine3.18
     environment:
-      POSTGRES_DB: "otusdb"
+      POSTGRES_DB: "postdb"
       POSTGRES_USER: "sa"
       POSTGRES_PASSWORD: "medtex"
     volumes:
-      - ../migrations/profile:/docker-entrypoint-initdb.d
-      - otusdb-data:/var/lib/postgresql/data
+      - ../migrations/posts:/docker-entrypoint-initdb.d
+      - postdb-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
-  profile_go:
-    container_name: profile_go
-    image: profile_go:$APP_VERSION
+  posts_go:
+    container_name: posts_go
+    image: posts_go:$APP_VERSION
     build:
       context: ..
-      dockerfile: docker/go/profile.Dockerfile
+      dockerfile: docker/go/posts.Dockerfile
       target: final
       args:
         APP_VERSION: $APP_VERSION
     environment:
       - EXPOSE_PORT=$EXPOSE_PORT
-      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_POSTDB_CONNECTION	
       - SECURITY_KEY=$SECURITY_KEY
       - REDIS_HOST=$REDIS_HOST
-      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
       - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
     ports:
       - "8001:80"
     depends_on:
-      - postgres
-      - redis-server
+      - post_postgres
 
-  profile_cs:
-    container_name: profile_cs
-    image: profile_cs:$APP_VERSION
+  posts_cs:
+    container_name: posts_cs
+    image: posts_cs:$APP_VERSION
     build:
       context: ..
-      dockerfile: docker/cs/profile.Dockerfile
+      dockerfile: docker/cs/posts.Dockerfile
       target: final
       args:
         APP_VERSION: $APP_VERSION
     environment:
       - EXPOSE_PORT=$EXPOSE_PORT
-      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS	
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_POSTDB_CONNECTION_CS	
       - SECURITY_KEY=$SECURITY_KEY
       - REDIS_HOST=$REDIS_HOST
-      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
       - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
     ports:
       - "8002:80"
     depends_on:
-      - postgres
-      - redis-server
+      - post_postgres
 
-
-  pgbouncer:
+  posts_pgbouncer:
+    container_name: post_pgbouncer
     image: edoburu/pgbouncer
     restart: always
     user: postgres
     depends_on:
-      - postgres
+      - post_postgres
     ports:
-      - "6432:6432"
+      - "6433:6432"
     environment:
-      POSTGRESQL_HOST: postgres
-      POSTGRESQL_PORT: 5432
-      POSTGRESQL_DATABASE: otusdb
+      POSTGRESQL_HOST: post_postgres
+      POSTGRESQL_PORT: 5433
+      POSTGRESQL_DATABASE: postdb
       POSTGRESQL_USERNAME: sa
       POSTGRESQL_PASSWORD: medtex
       AUTH_TYPE: md5
@@ -78,18 +76,5 @@ services:
       - ./config/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
       - ./config/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
 
-  redis-server:
-    image: "redis:alpine"
-    hostname: "redis-server"
-    container_name: redis-server
-
-    ports:
-     - "6379:6379"
-
-    volumes:
-     - redis-data:/var/lib/redis
-
 volumes:                     
-  otusdb-data:
-  redis-data:
-  healthcheck-volume:
+  postdb-data:

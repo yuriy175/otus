@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_PASSWORD: "medtex"
     volumes:
-      - ../migrations/shards:/docker-entrypoint-initdb.d
+      - ../migrations/dialogs:/docker-entrypoint-initdb.d
 
   worker:
     image: "citusdata/citus:12.0.0"

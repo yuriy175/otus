@@ -1,12 +1,7 @@
 ﻿using Dapper;
-using Microsoft.VisualBasic;
-using Profile.Infrastructure.Repositories.Interfaces;
-using SocialNetApp.API.Daos;
-using SocialNetApp.Core.Model;
-using System.Collections.Generic;
-using System.Text;
+using Posts.Infrastructure.Repositories.Interfaces;
 
-namespace Profile.Infrastructure.Repositories
+namespace Posts.Infrastructure.Repositories
 {
     public class FriendsRepository : IFriendsRepository
     {

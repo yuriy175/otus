@@ -1,4 +1,4 @@
-﻿namespace SocialNetApp.API.Daos
+﻿namespace Posts.API.Daos
 {
     public readonly record  struct NewPostDao
     {

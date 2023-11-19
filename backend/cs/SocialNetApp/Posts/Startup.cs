@@ -1,11 +1,13 @@
-﻿using Profile.Infrastructure.Repositories.Interfaces;
-using Profile.Infrastructure.Repositories;
-using Profile.Core.Model.Interfaces;
-using Profile.Core.Services;
+﻿using Common.MQ.Core.Model.Interfaces;
 using Common.MQ.Core.Services;
-using Common.MQ.Core.Model.Interfaces;
+using Posts.Core.Model.Interfaces;
+using Posts.Core.Services;
+using Posts.Infrastructure.Caches;
+using Posts.Infrastructure.Repositories;
+using Posts.Infrastructure.Repositories.Interfaces;
+using Profile.Core.Services;
 
-namespace SocialNetApp
+namespace Posts
 {
     public class Startup
     {
@@ -34,13 +36,12 @@ namespace SocialNetApp
             _ = services.AddSingleton<DataContext>(p => new DataContext(
                 Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
                 Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ILoadDataRepository, LoadDataRepository>();
+            services.AddSingleton<ICacheService, RedisService>();
+            services.AddScoped<IFriendsRepository, FriendsRepository>();
+            services.AddScoped<IPostsRepository, PostsRepository>();
 
-            services.AddScoped<ILoadDataService, LoadDataService>();
-
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IFriendsService, FriendsService>();
+            services.AddScoped<IPostsService, PostsService>();
             services.AddScoped<IMQSender, MQSender>();            
 
             services.ConfigureSwaggerGen();

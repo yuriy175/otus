@@ -1,16 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.IdentityModel.Tokens;
-using Profile.Core.Model;
-using Profile.Core.Model.Interfaces;
-using Profile.Infrastructure.Repositories;
-using Profile.Infrastructure.Repositories.Interfaces;
-using SocialNetApp.Core.Model;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using Posts.Core.Model.Interfaces;
+using Posts.Infrastructure.Repositories.Interfaces;
 
-namespace Profile.Core.Services
+namespace Posts.Core.Services
 {
     public class FriendsService : IFriendsService
     {        

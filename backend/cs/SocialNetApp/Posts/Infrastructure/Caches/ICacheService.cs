@@ -1,6 +1,6 @@
 ﻿using SocialNetApp.Core.Model;
 
-namespace Profile.Infrastructure.Caches
+namespace Posts.Infrastructure.Caches
 {
     public interface ICacheService
     {

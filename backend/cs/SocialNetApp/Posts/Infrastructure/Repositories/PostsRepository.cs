@@ -1,15 +1,8 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Hosting;
-using Microsoft.VisualBasic;
-using Profile.Infrastructure.Repositories.Interfaces;
-using SocialNetApp.API.Daos;
+using Posts.Infrastructure.Repositories.Interfaces;
 using SocialNetApp.Core.Model;
-using StackExchange.Redis;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Profile.Infrastructure.Repositories
+namespace Posts.Infrastructure.Repositories
 {
     public class PostsRepository : IPostsRepository
     {

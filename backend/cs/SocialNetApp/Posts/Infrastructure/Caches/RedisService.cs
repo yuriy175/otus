@@ -1,13 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
-using Profile.Infrastructure.Repositories.Interfaces;
+﻿using NRedisStack;
 using SocialNetApp.Core.Model;
 using StackExchange.Redis;
 using System.Text.Json;
 
-namespace Profile.Infrastructure.Caches
+namespace Posts.Infrastructure.Caches
 {
     public class RedisService : ICacheService, IAsyncDisposable
     {

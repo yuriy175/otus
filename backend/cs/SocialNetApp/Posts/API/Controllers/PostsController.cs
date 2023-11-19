@@ -1,11 +1,10 @@
 ﻿using Common.API.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Profile.Core.Model.Interfaces;
-using SocialNetApp.API.Dtos;
+using Posts.API.Dtos;
+using Posts.Core.Model.Interfaces;
 
-namespace SocialNetApp.API.Controllers
+namespace Posts.API.Controllers
 {
     [ApiController]
     public class PostsController : AuthorizedControllerBase
