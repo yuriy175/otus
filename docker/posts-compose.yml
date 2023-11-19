@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  postgres:
+  post_postgres:
     container_name: post_postgres
     image: postgres:15.4-alpine3.18
     environment:
@@ -66,14 +66,14 @@ services:
       - "6433:6432"
     environment:
       POSTGRESQL_HOST: post_postgres
-      POSTGRESQL_PORT: 5433
+      POSTGRESQL_PORT: 5432
       POSTGRESQL_DATABASE: postdb
       POSTGRESQL_USERNAME: sa
       POSTGRESQL_PASSWORD: medtex
       AUTH_TYPE: md5
       AUTH_FILE: /etc/pgbouncer/userlist.txt
     volumes:
-      - ./config/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./config/pgbouncer/pgbouncer_posts.ini:/etc/pgbouncer/pgbouncer.ini
       - ./config/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
 
 volumes:                     

@@ -7,17 +7,7 @@ CREATE TABLE IF NOT EXISTS public.friends
     user_id integer NOT NULL,
     friend_id integer NOT NULL,
     "isDeleted" boolean,
-    CONSTRAINT friends_pkey PRIMARY KEY (user_id, friend_id),
-    CONSTRAINT user_friends_id_fk FOREIGN KEY (friend_id)
-        REFERENCES public.users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID,
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id)
-        REFERENCES public.users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
+    CONSTRAINT friends_pkey PRIMARY KEY (user_id, friend_id)
 );
 
 -- Index: fki_user_friends_id_fk
@@ -58,10 +48,5 @@ CREATE TABLE IF NOT EXISTS public.posts
     message text COLLATE pg_catalog."default",
     created timestamp without time zone DEFAULT now(),
     "isDeleted" boolean,
-    CONSTRAINT posts_pkey PRIMARY KEY (id),
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id)
-        REFERENCES public.users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
+    CONSTRAINT posts_pkey PRIMARY KEY (id)
 );
