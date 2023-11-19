@@ -6,7 +6,7 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
-	"socialnerworkapp.com/profile/internal/repository"
+	"socialnerworkapp.com/posts/internal/repository"
 )
 
 type friendRepositoryImp struct{}

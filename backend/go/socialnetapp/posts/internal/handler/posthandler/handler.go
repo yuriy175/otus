@@ -8,22 +8,20 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"socialnerworkapp.com/profile/internal/handler"
-	"socialnerworkapp.com/profile/internal/service"
+	"socialnerworkapp.com/posts/internal/handler"
+	"socialnerworkapp.com/posts/internal/service"
 
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
 	commonmodel "socialnerworkapp.com/pkg/common/model"
 )
 
 type postHandlerImp struct {
-	authService service.AuthService
-	service     service.PostService
+	service service.PostService
 }
 
-func NewPostHandler(authService service.AuthService, service service.PostService) handler.PostHandler {
+func NewPostHandler(service service.PostService) handler.PostHandler {
 	return &postHandlerImp{
-		authService: authService,
-		service:     service}
+		service: service}
 }
 
 // CreatePost godoc

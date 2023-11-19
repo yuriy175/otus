@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"socialnerworkapp.com/pkg/mq"
-	"socialnerworkapp.com/profile/internal/cache"
-	"socialnerworkapp.com/profile/internal/model"
-	"socialnerworkapp.com/profile/internal/repository"
-	"socialnerworkapp.com/profile/internal/service"
+	"socialnerworkapp.com/posts/internal/cache"
+	"socialnerworkapp.com/posts/internal/model"
+	"socialnerworkapp.com/posts/internal/repository"
+	"socialnerworkapp.com/posts/internal/service"
 )
 
 type postServiceImp struct {

@@ -7,19 +7,17 @@ import (
 
 	"github.com/gorilla/mux"
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
-	"socialnerworkapp.com/profile/internal/handler"
-	"socialnerworkapp.com/profile/internal/service"
+	"socialnerworkapp.com/posts/internal/handler"
+	"socialnerworkapp.com/posts/internal/service"
 )
 
 type friendHandlerImp struct {
-	authService service.AuthService
-	service     service.FriendService
+	service service.FriendService
 }
 
-func NewFriendHandler(authService service.AuthService, service service.FriendService) handler.FriendHandler {
+func NewFriendHandler(service service.FriendService) handler.FriendHandler {
 	return &friendHandlerImp{
-		authService: authService,
-		service:     service}
+		service: service}
 }
 
 // AddFriend godoc

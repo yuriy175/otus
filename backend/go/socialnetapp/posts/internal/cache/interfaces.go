@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 
-	"socialnerworkapp.com/profile/internal/model"
+	"socialnerworkapp.com/posts/internal/model"
 )
 
 type CacheService interface {

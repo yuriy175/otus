@@ -3,8 +3,8 @@ package friendservice
 import (
 	"context"
 
-	"socialnerworkapp.com/profile/internal/repository"
-	"socialnerworkapp.com/profile/internal/service"
+	"socialnerworkapp.com/posts/internal/repository"
+	"socialnerworkapp.com/posts/internal/service"
 )
 
 type friendServiceImp struct {

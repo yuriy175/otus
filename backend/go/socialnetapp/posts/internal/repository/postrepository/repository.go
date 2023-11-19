@@ -7,8 +7,8 @@ import (
 
 	_ "github.com/lib/pq"
 	commonmodel "socialnerworkapp.com/pkg/common/model"
-	"socialnerworkapp.com/profile/internal/model"
-	"socialnerworkapp.com/profile/internal/repository"
+	"socialnerworkapp.com/posts/internal/model"
+	"socialnerworkapp.com/posts/internal/repository"
 )
 
 type postRepositoryImp struct{}

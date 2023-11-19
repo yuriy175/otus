@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
-	"socialnerworkapp.com/profile/internal/cache"
-	"socialnerworkapp.com/profile/internal/model"
+	"socialnerworkapp.com/posts/internal/cache"
+	"socialnerworkapp.com/posts/internal/model"
 )
 
 type redisServiceImp struct {
