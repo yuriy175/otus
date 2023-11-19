@@ -6,6 +6,7 @@ using Posts.Infrastructure.Caches;
 using Posts.Infrastructure.Repositories;
 using Posts.Infrastructure.Repositories.Interfaces;
 using Profile.Core.Services;
+using System.Reflection;
 
 namespace Posts
 {
@@ -49,6 +50,7 @@ namespace Posts
 
             services.AddAuthorization();
             services.ConfigureAuthentication();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
