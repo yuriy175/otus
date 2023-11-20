@@ -2,15 +2,6 @@
 using Profile.Infrastructure.Repositories;
 using Profile.Core.Model.Interfaces;
 using Profile.Core.Services;
-
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using Profile.Infrastructure.Caches;
 using Common.MQ.Core.Services;
 using Common.MQ.Core.Model.Interfaces;
 
@@ -43,18 +34,13 @@ namespace SocialNetApp
             _ = services.AddSingleton<DataContext>(p => new DataContext(
                 Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
                 Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
-            services.AddSingleton<ICacheService, RedisService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ILoadDataRepository, LoadDataRepository>();
-            services.AddScoped<IFriendsRepository, FriendsRepository>();
-            services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddScoped<ILoadDataService, LoadDataService>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IFriendsService, FriendsService>();
-            services.AddScoped<IPostsService, PostsService>();
             services.AddScoped<IMQSender, MQSender>();            
 
             services.ConfigureSwaggerGen();

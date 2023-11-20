@@ -1,7 +1,4 @@
-﻿using Profile.Core.Model;
-using System.ComponentModel.DataAnnotations;
-
-namespace SocialNetApp.API.Daos
+﻿namespace SocialNetApp.API.Daos
 {
     public readonly record  struct NewPostDao
     {

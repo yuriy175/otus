@@ -1,0 +1,80 @@
+version: "3.9"
+services:
+  post_postgres:
+    container_name: post_postgres
+    image: postgres:15.4-alpine3.18
+    environment:
+      POSTGRES_DB: "postdb"
+      POSTGRES_USER: "sa"
+      POSTGRES_PASSWORD: "medtex"
+    volumes:
+      - ../migrations/posts:/docker-entrypoint-initdb.d
+      - postdb-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  posts_go:
+    container_name: posts_go
+    image: posts_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/posts.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_POSTDB_CONNECTION	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+    ports:
+      - "8001:80"
+    depends_on:
+      - post_postgres
+
+  posts_cs:
+    container_name: posts_cs
+    image: posts_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/posts.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_POSTDB_CONNECTION_CS	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+    ports:
+      - "8002:80"
+    depends_on:
+      - post_postgres
+
+  posts_pgbouncer:
+    container_name: post_pgbouncer
+    image: edoburu/pgbouncer
+    restart: always
+    user: postgres
+    depends_on:
+      - post_postgres
+    ports:
+      - "6433:6432"
+    environment:
+      POSTGRESQL_HOST: post_postgres
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE: postdb
+      POSTGRESQL_USERNAME: sa
+      POSTGRESQL_PASSWORD: medtex
+      AUTH_TYPE: md5
+      AUTH_FILE: /etc/pgbouncer/userlist.txt
+    volumes:
+      - ./config/pgbouncer/pgbouncer_posts.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./config/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
+
+volumes:                     
+  postdb-data:
