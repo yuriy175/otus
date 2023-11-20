@@ -51,7 +51,7 @@ namespace Posts.Infrastructure.Repositories
 
         public async Task<Post> GetPostAsync(uint userId, uint postId, CancellationToken cancellationToken)
         {
-            using var connection = _context.CreateConnection();
+            using var connection = _context.CreateReadConnection();
             var sql = "SELECT id, user_id as authorId, message, created " +
                       "FROM public.posts "+
                       "WHERE id = @postId and \"isDeleted\"!=true";
@@ -64,7 +64,7 @@ namespace Posts.Infrastructure.Repositories
 
         public async Task<IEnumerable<Post>> GetPostsAsync(uint userId, uint offset, uint limit, CancellationToken cancellationToken)
         {
-            using var connection = _context.CreateConnection();
+            using var connection = _context.CreateReadConnection();
             var sql = "SELECT id, user_id as authorId, message, created " +
                       "FROM public.posts " +
                       "WHERE \"isDeleted\"!=true " +
@@ -78,7 +78,7 @@ namespace Posts.Infrastructure.Repositories
 
         public async Task<IEnumerable<Post>> GetLatestPostsAsync(uint userId, uint limit, CancellationToken cancellationToken)
         {
-            using var connection = _context.CreateConnection();
+            using var connection = _context.CreateReadConnection();
             var sql = "SELECT id, user_id as authorId, message, created " +
                       "FROM public.posts " +
                       "WHERE user_id = @userId and \"isDeleted\"!=true " +
@@ -92,7 +92,7 @@ namespace Posts.Infrastructure.Repositories
 
         public async Task<IEnumerable<Post>> GetLatestFriendsPostsAsync(uint userId, uint limit, CancellationToken cancellationToken)
         {
-            using var connection = _context.CreateConnection();
+            using var connection = _context.CreateReadConnection();
             var sql = "SELECT id, user_id as authorId, message, created " +
                       "FROM public.posts p " +
                       "WHERE user_id IN( " +

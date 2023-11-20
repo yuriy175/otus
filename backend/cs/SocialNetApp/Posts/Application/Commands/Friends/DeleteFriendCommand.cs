@@ -18,7 +18,7 @@ namespace Posts.Application.Commands.Friends
                 _friendsRepository = friendsRepository;
             }
             public Task<int> Handle(DeleteFriendCommand command, CancellationToken cancellationToken) =>
-                _friendsRepository.UpsertFriendAsync(command.UserId, command.FriendId, cancellationToken);            
+                _friendsRepository.DeleteFriendAsync(command.UserId, command.FriendId, cancellationToken);            
         }
     }
 }
