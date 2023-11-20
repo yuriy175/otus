@@ -1,19 +1,27 @@
 ﻿using Common.API.Controllers;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Posts.API.Dtos;
+using Posts.Application.Commands.Friends;
+using Posts.Application.Commands.Posts;
+using Posts.Application.Queries.Friends;
+using Posts.Application.Queries.Posts;
 using Posts.Core.Model.Interfaces;
+using SocialNetApp.Core.Model;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Posts.API.Controllers
 {
     [ApiController]
     public class PostsController : AuthorizedControllerBase
     {
-        private readonly IPostsService _friendsService;
+        private IMediator _mediator;
 
-        public PostsController(IPostsService friendsService)
+        public PostsController(IMediator mediator)
         {
-            _friendsService = friendsService;
+            _mediator = mediator;
         }
 
         [Authorize]
@@ -25,7 +33,7 @@ namespace Posts.API.Controllers
             {
                 return BadRequest();
             }
-            return Ok(await _friendsService.CreatePostAsync(userId.Value, text, cancellationToken));
+            return Ok(await _mediator.Send(new AddPostCommand { UserId = userId.Value, Text = text }));
         }
 
         [Authorize]
@@ -37,7 +45,7 @@ namespace Posts.API.Controllers
             {
                 return BadRequest();
             }
-            return Ok(await _friendsService.UpdatePostAsync(userId.Value, post.PostId, post.Text, cancellationToken));
+            return Ok(await _mediator.Send(new UpdatePostCommand { UserId = userId.Value, Text = post.Text, PostId = post.PostId }));
         }
 
         [Authorize]
@@ -49,7 +57,7 @@ namespace Posts.API.Controllers
             {
                 return BadRequest();
             }
-            return Ok(await _friendsService.DeletePostAsync(userId.Value, postId, cancellationToken));
+            return Ok(await _mediator.Send(new DeletePostCommand { UserId = userId.Value, PostId = postId }));
         }
 
         [AllowAnonymous]
@@ -61,7 +69,7 @@ namespace Posts.API.Controllers
             {
                 return BadRequest();
             }
-            return Ok(await _friendsService.GetPostAsync(userId.Value, postId, cancellationToken));
+            return Ok(await _mediator.Send(new GetUserPostQuery { UserId = userId.Value, PostId = postId }));
         }
 
         [Authorize]
@@ -73,7 +81,7 @@ namespace Posts.API.Controllers
             {
                 return BadRequest();
             }
-            return Ok(await _friendsService.FeedPostsAsync(userId.Value, offset, limit, cancellationToken));
+            return Ok(await _mediator.Send(new FeedPostsQuery { UserId = userId.Value, Offset = offset, Limit = limit }));
         }
     }
 }

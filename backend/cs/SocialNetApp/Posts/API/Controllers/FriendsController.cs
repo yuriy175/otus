@@ -41,7 +41,7 @@ namespace Posts.API.Controllers
             {
                 return BadRequest();
             }
-            return Ok(await _friendsService.DeleteFriendAsync(userId.Value, friendId, cancellationToken));
+            return Ok(await _mediator.Send(new DeleteFriendCommand { UserId = userId.Value, FriendId = friendId }));
         }
 
         [Authorize]

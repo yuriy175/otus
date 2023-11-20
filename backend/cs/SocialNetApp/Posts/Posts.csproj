@@ -25,7 +25,6 @@
 
     <ItemGroup>
       <Folder Include="API\Mappings\" />
-      <Folder Include="Application\Commands\Posts\" />
     </ItemGroup>
 
 </Project>
