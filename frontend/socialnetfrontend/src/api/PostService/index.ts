@@ -1,0 +1,1 @@
+export {getFriends} from './FriendsService'

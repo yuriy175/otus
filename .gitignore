@@ -17,6 +17,9 @@
 /backend/cs/SocialNetApp/Dialogs/obj
 /backend/cs/SocialNetApp/WebSockets/bin
 /backend/cs/SocialNetApp/WebSockets/obj
+/backend/cs/SocialNetApp/Posts/bin
+/backend/cs/SocialNetApp/Posts/obj
+
 
 #docker
 /docker/pgslave

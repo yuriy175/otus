@@ -5,11 +5,14 @@ import axios from 'axios';
 import TextField from '@mui/material/TextField';
 import css from './LoginComponent.css';
 import Button from '@mui/material/Button';
+import { loginCurrentUser, useAppDispatch } from '../../core/store';
 
 export function LoginComponent() {
+  const dispatch = useAppDispatch();
   const [loggedIn, setLoggedIn] = useState(false);
   const onLogin = () => {
-    setLoggedIn(true);
+    //setLoggedIn(true);
+    dispatch(loginCurrentUser(1645801, 'Абрамов'));
   };
   if (loggedIn) {
     return <Navigate to="/main" />;
