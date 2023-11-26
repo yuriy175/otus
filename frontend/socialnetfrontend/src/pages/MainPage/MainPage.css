@@ -1,9 +1,10 @@
 .panel { 
     display: flex;
-    align-self: center;
     flex-grow: 1;
-    justify-content: center;
     flex-direction: column;
-    gap: 0.8rem;
+}
+
+.toolbarTitle { 
+    flex-grow: 1;
 }
 

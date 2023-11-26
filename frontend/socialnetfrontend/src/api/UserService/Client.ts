@@ -488,9 +488,9 @@ export interface NewUserDto {
 }
 
 export interface User {
-    id?: number;
-    name?: string | undefined;
-    surname?: string | undefined;
+    id: number;
+    name: string;
+    surname: string;
     age?: number;
     sex?: string | undefined;
     city?: string | undefined;

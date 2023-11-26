@@ -5,14 +5,14 @@ import { CurrentUser, User } from '../../../core/types'
 
 const initialState : CurrentUser = {}
 
-export const usersSlice = createSlice({
-    name: 'users',
+export const friendsSlice = createSlice({
+    name: 'friends',
     initialState,
     reducers:{
-        setCurrentUser(state, {payload}: PayloadAction<User>){
+        setFriends(state, {payload}: PayloadAction<User>){
           state.user =  payload
         },
     }
 })
 
-export default usersSlice.reducer
+export default friendsSlice.reducer

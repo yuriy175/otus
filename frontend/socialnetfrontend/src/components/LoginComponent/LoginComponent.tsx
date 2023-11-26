@@ -5,16 +5,22 @@ import axios from 'axios';
 import TextField from '@mui/material/TextField';
 import css from './LoginComponent.css';
 import Button from '@mui/material/Button';
-import { loginCurrentUser, useAppDispatch } from '../../core/store';
+import {
+  loginCurrentUser,
+  selectCurrentUser,
+  useAppDispatch,
+  useRootSelector,
+} from '../../core/store';
 
 export function LoginComponent() {
   const dispatch = useAppDispatch();
-  const [loggedIn, setLoggedIn] = useState(false);
+  const user = useRootSelector(selectCurrentUser);
+  const [userId, setUserId] = useState(1645801);
+  const [password, setPassword] = useState('Абрамов');
   const onLogin = () => {
-    //setLoggedIn(true);
-    dispatch(loginCurrentUser(1645801, 'Абрамов'));
+    dispatch(loginCurrentUser(userId, password));
   };
-  if (loggedIn) {
+  if (user) {
     return <Navigate to="/main" />;
   }
 
@@ -24,12 +30,14 @@ export function LoginComponent() {
         required
         id="outlined-required"
         label="Id пользователя"
+        value={userId}
       />
       <TextField
         required
         id="outlined-required"
         label="Пароль"
         type="password"
+        value={password}
       />
       <Button variant="contained" onClick={onLogin}>
         Логин
