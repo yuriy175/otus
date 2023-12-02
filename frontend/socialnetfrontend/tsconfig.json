@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./build/",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "target": "es2017",
+    "module": "ESNext",
+    "jsx": "react",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": false,
+    "allowJs": true,
+    "pretty": true,
+    "noUncheckedIndexedAccess": false,
+    "lib": ["es2017", "dom"],
+    "types": ["react/next", "react-dom/next"],
+    "paths": {
+      "nir/Nir": ["./src/remoteType.d.ts"]
+    },
+    "plugins": [
+      {
+        "transform": "typescript-loadable-components-plugin"
+      }
+    ]
+  }
+}

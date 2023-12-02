@@ -1,0 +1,1 @@
+export {DialogsComponent} from './DialogsComponent'

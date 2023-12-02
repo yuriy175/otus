@@ -46,7 +46,7 @@ namespace Posts.API.Controllers
 
         [Authorize]
         [HttpGet("/friends")]
-        public async Task<ActionResult> GetFriends(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<int>?>> GetFriends(CancellationToken cancellationToken)
         {
             var userId = GetUserId();
             if (userId is null)
