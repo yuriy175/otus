@@ -64,8 +64,11 @@ services:
       - SECURITY_KEY=$SECURITY_KEY
       - REDIS_HOST=$REDIS_HOST
       - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
+      - GRPC_PORT=$GRPC_DIALOGS_PORT
+      - REST_PORT=$REST_DIALOGS_PORT
     ports:
-      - "8004:80"
+      - "8004:8004"
+      - "8104:8104"
     depends_on:
       - manager
       - master

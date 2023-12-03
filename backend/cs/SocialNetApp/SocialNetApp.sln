@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSockets", "WebSockets\We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.MQ", "Common.MQ\Common.MQ.csproj", "{647AFD2C-2AB5-447C-9CE5-BB4D6145C828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posts", "Posts\Posts.csproj", "{B011FD1A-A8E6-4F1F-B9CF-C48A9D7FE163}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posts", "Posts\Posts.csproj", "{B011FD1A-A8E6-4F1F-B9CF-C48A9D7FE163}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bff", "Bff\Bff.csproj", "{5765C17F-A33C-490F-A773-E9FAE21FE60A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{B011FD1A-A8E6-4F1F-B9CF-C48A9D7FE163}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B011FD1A-A8E6-4F1F-B9CF-C48A9D7FE163}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B011FD1A-A8E6-4F1F-B9CF-C48A9D7FE163}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5765C17F-A33C-490F-A773-E9FAE21FE60A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5765C17F-A33C-490F-A773-E9FAE21FE60A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5765C17F-A33C-490F-A773-E9FAE21FE60A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5765C17F-A33C-490F-A773-E9FAE21FE60A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

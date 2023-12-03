@@ -4,6 +4,7 @@ using Profile.Core.Model.Interfaces;
 using Profile.Core.Services;
 using Common.MQ.Core.Services;
 using Common.MQ.Core.Model.Interfaces;
+using grpc = Profile.Infrastructure.gRpc.Services;
 
 namespace SocialNetApp
 {
@@ -21,6 +22,7 @@ namespace SocialNetApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddGrpc();
             services.AddControllers();
             services.AddCors(options =>
             {
@@ -63,8 +65,10 @@ namespace SocialNetApp
             app.UseWebSockets();
 
             app.UseEndpoints(endpoints =>
-            {
+            {                
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<grpc.UserService>();
+                endpoints.MapGrpcService<grpc.AuthService>();
             });
         }
         public static IApplicationBuilder UseSwaggerDocumentation(IApplicationBuilder app, string url, string name)

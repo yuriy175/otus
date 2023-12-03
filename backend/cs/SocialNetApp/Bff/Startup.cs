@@ -1,14 +1,8 @@
-﻿using Common.MQ.Core.Model.Interfaces;
-using Common.MQ.Core.Services;
-using Posts.Core.Model.Interfaces;
-using Posts.Core.Services;
-using Posts.Infrastructure.Caches;
-using Posts.Infrastructure.Repositories;
-using Posts.Infrastructure.Repositories.Interfaces;
-using Profile.Core.Services;
+﻿using Bff.Infrastructure.gRpc.Services.Interfaces;
+using Profile.Infrastructure.gRpc.Services;
 using System.Reflection;
 
-namespace Posts
+namespace Bff
 {
     public class Startup
     {
@@ -34,23 +28,14 @@ namespace Posts
                         .AllowAnyOrigin()
                 );
             });
-            _ = services.AddSingleton<DataContext>(p => new DataContext(
-                Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
-                Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
-            services.AddSingleton<ICacheService, RedisService>();
-            services.AddScoped<IFriendsRepository, FriendsRepository>();
-            services.AddScoped<IPostsRepository, PostsRepository>();
-
-            services.AddScoped<IFriendsService, FriendsService>();
-            services.AddScoped<IPostsService, PostsService>();
-            services.AddScoped<IMQSender, MQSender>();            
 
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            services.AddScoped<IUserService, UserService>();
+
             services.AddAuthorization();
             services.ConfigureAuthentication();
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,8 +53,6 @@ namespace Posts
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGrpcService<grpc.UserService>();
-                endpoints.MapGrpcService<grpc.AuthService>();
             });
         }
         public static IApplicationBuilder UseSwaggerDocumentation(IApplicationBuilder app, string url, string name)

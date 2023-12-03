@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -25,6 +25,15 @@
 
     <ItemGroup>
       <Folder Include="API\Mappings\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Protobuf Include="Infrastructure\gRpc\Protos\friend.proto" GrpcServices="Server" />
+        <Protobuf Include="Infrastructure\gRpc\Protos\post.proto" GrpcServices="Server" />
     </ItemGroup>
 
 </Project>

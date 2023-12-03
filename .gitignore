@@ -19,6 +19,8 @@
 /backend/cs/SocialNetApp/WebSockets/obj
 /backend/cs/SocialNetApp/Posts/bin
 /backend/cs/SocialNetApp/Posts/obj
+/backend/cs/SocialNetApp/Bff/bin
+/backend/cs/SocialNetApp/Bff/obj
 
 
 #docker

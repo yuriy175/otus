@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using SocialNetApp;
+using System.Net;
 
 public static class Program
 {
@@ -21,7 +23,24 @@ public static class Program
                     Environment.NewLine +
                     "REDIS_HOST: " +Environment.GetEnvironmentVariable("REDIS_HOST")+
                     Environment.NewLine +
-                    "RABBITMQ_CONNECTION: " + Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION"));
+                    "RABBITMQ_CONNECTION: " + Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION") + 
+                    Environment.NewLine +
+                    "REST_PORT: " + Environment.GetEnvironmentVariable("REST_PORT") +
+                    Environment.NewLine +
+                    "GRPC_PORT: " + Environment.GetEnvironmentVariable("GRPC_PORT")); 
+                webBuilder.ConfigureKestrel(options =>
+                {
+                    options.Listen(IPAddress.Any, Convert.ToInt32(Environment.GetEnvironmentVariable("REST_PORT")), listenOptions =>
+                    {
+                        listenOptions.Protocols = HttpProtocols.Http1; //.Http1AndHttp2;
+                    });
+                    options.Listen(IPAddress.Any, Convert.ToInt32(Environment.GetEnvironmentVariable("GRPC_PORT")), listenOptions =>
+                    {
+                        listenOptions.Protocols = HttpProtocols.Http2;
+                        //listenOptions.UseHttps("<path to .pfx file>",
+                        //    "<certificate password>");
+                    });
+                });
                 webBuilder.UseStartup<Startup>();
             });
     }

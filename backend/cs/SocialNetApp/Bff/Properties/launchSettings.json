@@ -1,0 +1,33 @@
+{
+  "profiles": {
+    "Bff": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "SECURITY_KEY": "mysupersecret_secretkey!123",
+            "GRPC_PROFILE": "http://localhost:5267"
+        },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5297"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:65214",
+      "sslPort": 0
+    }
+  }
+}
