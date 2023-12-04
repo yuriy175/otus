@@ -1,11 +1,11 @@
 import {combineReducers} from '@reduxjs/toolkit'
 
 import {usersReducer} from '../users'
-//import {friendsReducer} from '../friends'
+import {friendsReducer} from '../friends'
 
 const rootReducer = combineReducers({
     users: usersReducer,
-    //friends: friendsReducer,
+    friends: friendsReducer,
 })
 
 export default rootReducer

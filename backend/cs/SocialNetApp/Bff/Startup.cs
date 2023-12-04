@@ -33,6 +33,7 @@ namespace Bff
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFriendService, FriendService>();
 
             services.AddAuthorization();
             services.ConfigureAuthentication();

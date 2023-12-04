@@ -11,7 +11,7 @@ namespace Posts.API.Controllers
     [ApiController]
     public class FriendsController : AuthorizedControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
         private readonly IFriendsService _friendsService;
 
         public FriendsController(IMediator mediator, IFriendsService friendsService)

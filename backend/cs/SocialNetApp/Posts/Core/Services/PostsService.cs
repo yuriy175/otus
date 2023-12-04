@@ -1,8 +1,8 @@
 ﻿using Common.MQ.Core.Model.Interfaces;
+using Posts.Core.Model;
 using Posts.Core.Model.Interfaces;
 using Posts.Infrastructure.Caches;
 using Posts.Infrastructure.Repositories.Interfaces;
-using SocialNetApp.Core.Model;
 
 namespace Profile.Core.Services
 {

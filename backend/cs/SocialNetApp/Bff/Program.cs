@@ -10,14 +10,18 @@ public static class Program
 
     private static IHostBuilder CreateHostBuilder(string[] args)
     {
-        AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-        AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
+        //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+        //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
         return Host
             .CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 Console.WriteLine(
                     "GRPC_PROFILE: " + Environment.GetEnvironmentVariable("GRPC_PROFILE") +
+                    Environment.NewLine +
+                    "GRPC_POSTS: " + Environment.GetEnvironmentVariable("GRPC_POSTS") +
+                    Environment.NewLine+
+                    "GRPC_DIALOGS: " + Environment.GetEnvironmentVariable("GRPC_DIALOGS") +
                     Environment.NewLine);
                 webBuilder.UseStartup<Startup>();
             });

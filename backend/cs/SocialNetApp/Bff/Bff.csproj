@@ -32,6 +32,12 @@
     </ItemGroup>
     
     <ItemGroup>
+      <Protobuf Include="..\Posts\Infrastructure\gRpc\Protos\friend.proto">
+        <Link>Infrastructure\gRpc\Protos\friend.proto</Link>
+      </Protobuf>
+      <Protobuf Include="..\Posts\Infrastructure\gRpc\Protos\post.proto">
+        <Link>Infrastructure\gRpc\Protos\post.proto</Link>
+      </Protobuf>
       <Protobuf Include="..\Profile\Infrastructure\gRpc\Protos\user.proto" GrpcServices="Client">
         <Link>Infrastructure\gRpc\Protos\user.proto</Link>
       </Protobuf>

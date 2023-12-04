@@ -31,22 +31,16 @@ module.exports = merge(common, {
     hot: true,
     proxy: [
       {
-        path: '/api/auth',
+        path: '/cs/users',
         changeOrigin: true,
-        target: 'http://localhost:5266',
-        pathRewrite: { '/api/auth': '' },
+        target: 'http://localhost:5297',
+        pathRewrite: { '/cs/users': '' },
       },
       {
-        path: '/api/user',
+        path: '/cs/friends',
         changeOrigin: true,
-        target: 'http://localhost:5266',
-        pathRewrite: { '/api/user': '' },
-      },
-      {
-        path: '/api/friends',
-        changeOrigin: true,
-        target: 'http://localhost:5165',
-        pathRewrite: { '/api/friends': '' },
+        target: 'http://localhost:5297',
+        pathRewrite: { '/cs/friends': '' },
       },
     ],
   },

@@ -1,9 +1,34 @@
-﻿using Common.API.Controllers;
+﻿using AutoMapper;
+using Bff.API.Dtos;
+using Bff.Infrastructure.gRpc.Services.Interfaces;
+using Common.API.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bff.API.Controllers
 {
+    [ApiController]
+    public class FriendsController : AuthorizedControllerBase
+    {
+        private readonly IFriendService _friendService;
+
+        public FriendsController(IMapper mapper, IFriendService friendService)
+        {
+            _friendService = friendService;
+        }
+
+        [Authorize]
+        [HttpGet("/friends")]
+        public async Task<ActionResult<IEnumerable<int>?>> GetFriends(CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+            return Ok(await _friendService.GetFriendsAsync(userId.Value, cancellationToken));
+        }
+    }
     /*
     [ApiController]
     public class FriendsController : AuthorizedControllerBase

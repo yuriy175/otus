@@ -7,6 +7,7 @@ using Posts.Infrastructure.Repositories;
 using Posts.Infrastructure.Repositories.Interfaces;
 using Profile.Core.Services;
 using System.Reflection;
+using grpc = Posts.Infrastructure.gRpc.Services;
 
 namespace Posts
 {
@@ -24,6 +25,7 @@ namespace Posts
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddGrpc();
             services.AddControllers();
             services.AddCors(options =>
             {
@@ -68,8 +70,7 @@ namespace Posts
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGrpcService<grpc.UserService>();
-                endpoints.MapGrpcService<grpc.AuthService>();
+                endpoints.MapGrpcService<grpc.FriendService>();
             });
         }
         public static IApplicationBuilder UseSwaggerDocumentation(IApplicationBuilder app, string url, string name)

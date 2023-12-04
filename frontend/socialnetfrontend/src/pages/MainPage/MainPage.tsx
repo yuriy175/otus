@@ -54,7 +54,7 @@ export function MainPage() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', flexGrow: '1' }}>
       <ToolbarComponent user={user}></ToolbarComponent>
       <Box
         component="nav"

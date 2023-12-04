@@ -3,6 +3,6 @@ import { friendsSlice } from './friendsSlice'
 
 export const selectFriends = (state: RootState) => 
 {
-    return state.users?.user
+    return state.friends
 }
 

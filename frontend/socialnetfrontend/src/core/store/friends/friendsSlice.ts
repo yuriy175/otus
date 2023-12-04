@@ -10,7 +10,7 @@ export const friendsSlice = createSlice({
     initialState,
     reducers:{
         setFriends(state, {payload}: PayloadAction<User>){
-          state.user =  payload
+          state. =  payload
         },
     }
 })

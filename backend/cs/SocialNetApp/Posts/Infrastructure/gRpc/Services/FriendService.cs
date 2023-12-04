@@ -1,26 +1,31 @@
-﻿using Auths;
-using AutoMapper;
+﻿using AutoMapper;
+using Friend;
 using Grpc.Core;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
-using Profile.Core.Model.Interfaces;
-using System.Threading;
-using static Auths.Auth;
+using MediatR;
+using Posts.Application.Queries.Friends;
+using static Friend.Friend;
 
-namespace Profile.Infrastructure.gRpc.Services
+namespace Posts.Infrastructure.gRpc.Services
 {
-    public class AuthService : AuthBase
+    public class FriendService : FriendBase
     {
-        private readonly IAuthService _authService;
+        private readonly IMediator _mediator;
 
-        public AuthService(IMapper mapper, IAuthService authService)
+        public FriendService(IMediator mediator)
         {
-            _authService = authService;
+            _mediator = mediator;
         }
 
-        public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
+        public override async Task<GetFriendIdsReply> GetFriendIds(GetFriendIdsRequest request, ServerCallContext context)
         {
-            var token = await _authService.LoginAsync(request.Id, request.Password, context.CancellationToken);
-            return new LoginReply { Token = token };
+            var friends = await _mediator.Send(new GetUserFriendsQuery { UserId = request.Id });
+            var reply = new GetFriendIdsReply { };
+            if(friends is null)
+            {
+                return reply;
+            }
+            reply.Ids.AddRange(friends.Select(t => Convert.ToUInt32(t)));
+            return reply;
         }
     }
 }

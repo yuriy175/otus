@@ -1,9 +1,7 @@
-﻿using Common.MQ.Core.Model.Interfaces;
-using MediatR;
+﻿using MediatR;
+using Posts.Core.Model;
 using Posts.Infrastructure.Caches;
 using Posts.Infrastructure.Repositories.Interfaces;
-using SocialNetApp.Core.Model;
-using System.Collections.Generic;
 
 namespace Posts.Application.Queries.Posts
 {

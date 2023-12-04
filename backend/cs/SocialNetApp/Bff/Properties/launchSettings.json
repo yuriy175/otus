@@ -7,7 +7,9 @@
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development",
             "SECURITY_KEY": "mysupersecret_secretkey!123",
-            "GRPC_PROFILE": "http://localhost:5267"
+            "GRPC_PROFILE": "http://localhost:5267",
+            "GRPC_DIALOGS": "http://localhost:8106",
+            "GRPC_POSTS": "http://localhost:5166"
         },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5297"

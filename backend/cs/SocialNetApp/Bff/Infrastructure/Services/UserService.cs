@@ -22,8 +22,7 @@ namespace Profile.Infrastructure.gRpc.Services
 
             var token = await auth.LoginAsync(new LoginRequest { Id = dto.Id, Password = dto.Password });
             var user = await client.GetUserByIdAsync(new GetUserByIdRequest { Id = dto.Id });
-
-            return new LoggedinUserDto
+            var userDto = new UserDto
             {
                 City = user.City,
                 Id = user.Id,
@@ -32,6 +31,9 @@ namespace Profile.Infrastructure.gRpc.Services
                 Sex = user.Sex,
                 Surname = user.Surname,
                 Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+            };
+
+            return new LoggedinUserDto { User = userDto,
                 Token = token.Token,
             };
         }

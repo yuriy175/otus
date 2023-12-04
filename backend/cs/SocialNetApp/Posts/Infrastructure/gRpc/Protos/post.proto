@@ -1,11 +1,11 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
-option csharp_namespace = "Profile";
+option csharp_namespace = "Post2";
  
-package profile;
+package post;
  
-service Users {
+service Posts {
   rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdReply);
 }
  
