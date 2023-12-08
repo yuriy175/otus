@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Friend;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using Posts.Application.Commands.Friends;
 using Posts.Application.Queries.Friends;
 using static Friend.Friend;
 
@@ -26,6 +28,18 @@ namespace Posts.Infrastructure.gRpc.Services
             }
             reply.Ids.AddRange(friends.Select(t => Convert.ToUInt32(t)));
             return reply;
+        }
+
+        public override async Task<Empty> AddFriend(AddFriendRequest request, ServerCallContext context)
+        {
+            await _mediator.Send(new AddFriendCommand { UserId = request.UserId, FriendId = request.FriendId });
+            return new Empty();
+        }
+
+        public override async Task<Empty> DeleteFriend(DeleteFriendRequest request, ServerCallContext context)
+        {
+            await _mediator.Send(new DeleteFriendCommand { UserId = request.UserId, FriendId = request.FriendId });
+            return new Empty();
         }
     }
 }

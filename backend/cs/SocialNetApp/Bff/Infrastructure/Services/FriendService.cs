@@ -1,7 +1,9 @@
 ﻿using Auths;
+using AutoMapper;
 using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
 using Grpc.Net.Client;
+using System.Diagnostics;
 using static Friend.Friend;
 
 namespace Profile.Infrastructure.gRpc.Services
@@ -11,23 +13,76 @@ namespace Profile.Infrastructure.gRpc.Services
         private readonly static string _grpcPostsUrl = Environment.GetEnvironmentVariable("GRPC_POSTS");
         private readonly static string _grpcUsersUrl = Environment.GetEnvironmentVariable("GRPC_PROFILE");
 
-        public FriendService()
+        private readonly IMapper _mapper;
+
+        private static readonly GrpcChannel _usersChannel = null;
+        private static readonly GrpcChannel _postsChannel = null;
+
+        static FriendService()
         {
+            var options = new GrpcChannelOptions()
+            {
+                HttpHandler = new SocketsHttpHandler
+                {
+                    EnableMultipleHttp2Connections = true,
+                }
+            };
+            _postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
+            _usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
+        }
+
+        public FriendService(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
+        public async Task<UserDto> AddFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
+        {
+            var options = new GrpcChannelOptions();
+            //using var postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
+            //using var usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
+            var userClient = new Users.UsersClient(_usersChannel);
+            var friendClient = new FriendClient(_postsChannel);
+
+            await friendClient.AddFriendAsync(new Friend.AddFriendRequest { UserId = userId, FriendId = friendId });
+
+            var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
+            return new UserDto
+            {
+                City = user.City,
+                Id = user.Id,
+                Info = user.Info,
+                Name = user.Name,
+                Sex = user.Sex,
+                Surname = user.Surname,
+                Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+            };
+        }
+
+        public async Task DeleteFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
+        {
+            //var options = new GrpcChannelOptions();
+            //using var postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
+            var friendClient = new FriendClient(_postsChannel);
+
+            await friendClient.DeleteFriendAsync(new Friend.DeleteFriendRequest { UserId = userId, FriendId = friendId });
         }
 
         public async Task<IEnumerable<UserDto>> GetFriendsAsync(uint userId, CancellationToken cancellationToken)
         {
-            var options = new GrpcChannelOptions();
-            using var postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
-            using var usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-            var userClient = new Users.UsersClient(usersChannel);
-            var friendClient = new FriendClient(postsChannel);
+            var st = Stopwatch.StartNew();            
+            var userClient = new Users.UsersClient(_usersChannel);
+            var friendClient = new FriendClient(_postsChannel);
 
+            var list = new List<long> { };
+            list.Add(st.ElapsedMilliseconds);
             var friendIds = await friendClient.GetFriendIdsAsync(new Friend.GetFriendIdsRequest { Id = userId});
+            list.Add(st.ElapsedMilliseconds);
             var friends = new List<UserDto>();
             foreach (var friendId in friendIds.Ids)
             {
                 var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
+                list.Add(st.ElapsedMilliseconds);
                 friends.Add(new UserDto
                 {
                     City = user.City,
@@ -39,7 +94,7 @@ namespace Profile.Infrastructure.gRpc.Services
                     Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
                 });
             }
-
+            list.Add(st.ElapsedMilliseconds);
             return friends;
         }
     }

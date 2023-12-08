@@ -1,1 +1,1 @@
-export {getFriends} from './FriendsService'
+export {getFriends, addFriends, deleteFriends} from './FriendsService'

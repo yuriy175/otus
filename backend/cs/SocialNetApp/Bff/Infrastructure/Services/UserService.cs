@@ -17,8 +17,9 @@ namespace Profile.Infrastructure.gRpc.Services
         {
             var options = new GrpcChannelOptions();
             using var channel = GrpcChannel.ForAddress(_grpcUrl, options);
+            using var authChannel = GrpcChannel.ForAddress(_grpcUrl, options);
             var client = new Users.UsersClient(channel);
-            var auth = new Auth.AuthClient(channel);
+            var auth = new Auth.AuthClient(authChannel);
 
             var token = await auth.LoginAsync(new LoginRequest { Id = dto.Id, Password = dto.Password });
             var user = await client.GetUserByIdAsync(new GetUserByIdRequest { Id = dto.Id });

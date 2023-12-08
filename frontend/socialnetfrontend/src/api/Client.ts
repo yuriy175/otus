@@ -26,7 +26,7 @@ export class FriendsClient {
     /**
      * @return Success
      */
-    friends( cancelToken?: CancelToken | undefined): Promise<number[]> {
+    friends( cancelToken?: CancelToken | undefined): Promise<UserDto[]> {
         let url_ = this.baseUrl + "/friends";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -50,7 +50,7 @@ export class FriendsClient {
         });
     }
 
-    protected processFriends(response: AxiosResponse): Promise<number[]> {
+    protected processFriends(response: AxiosResponse): Promise<UserDto[]> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -65,13 +65,117 @@ export class FriendsClient {
             let result200: any = null;
             let resultData200  = _responseText;
             result200 = JSON.parse(resultData200);
-            return Promise.resolve<number[]>(result200);
+            return Promise.resolve<UserDto[]>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<number[]>(null as any);
+        return Promise.resolve<UserDto[]>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    set(user_id: number, cancelToken?: CancelToken | undefined): Promise<UserDto> {
+        let url_ = this.baseUrl + "/friend/set/{user_id}";
+        if (user_id === undefined || user_id === null)
+            throw new Error("The parameter 'user_id' must be defined.");
+        url_ = url_.replace("{user_id}", encodeURIComponent("" + user_id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSet(_response);
+        });
+    }
+
+    protected processSet(response: AxiosResponse): Promise<UserDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<UserDto>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<UserDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    delete(user_id: number, cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/friend/delete/{user_id}";
+        if (user_id === undefined || user_id === null)
+            throw new Error("The parameter 'user_id' must be defined.");
+        url_ = url_.replace("{user_id}", encodeURIComponent("" + user_id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
     }
 }
 

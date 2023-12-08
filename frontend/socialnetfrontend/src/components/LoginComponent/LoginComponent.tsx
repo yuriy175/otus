@@ -26,11 +26,6 @@ export function LoginComponent() {
     dispatch(loginCurrentUser(userId, password));
   };
 
-  useEffect(() => {
-    if (user) {
-      //dispatch(getUserFriends());
-    }
-  }, [user]);
   if (user) {
     return <Navigate to="/main" />;
   }

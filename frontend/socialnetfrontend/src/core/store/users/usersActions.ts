@@ -7,7 +7,7 @@ export const loginCurrentUser = (id: number, password: string):AppThunk =>
 async(dispatch, getState) => {
     const user = await loginUser(id, password)
     //const friendIds = await getFriends()
-    dispatch(setCurrentUser(user))
+    dispatch(setCurrentUser(user.user))
 }
 
 export const logoffCurrentUser = ():AppThunk => 

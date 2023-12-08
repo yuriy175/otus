@@ -1,2 +1,2 @@
 export {loginUser} from './UserService'
-export {getFriends} from './PostService'
+export {getFriends, addFriends, deleteFriends} from './PostService'

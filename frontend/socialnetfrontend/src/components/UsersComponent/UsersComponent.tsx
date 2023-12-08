@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 export function UsersComponent() {
   const dispatch = useAppDispatch();
   const user = useRootSelector(selectCurrentUser);
+  console.log('user', user);
   return (
     <div className={css.panel}>
       <TextField
@@ -43,7 +44,7 @@ export function UsersComponent() {
         variant="standard"
         multiline
         rows={4}
-        value={user?.info}
+        value={user?.info ?? ''}
       />
     </div>
   );
