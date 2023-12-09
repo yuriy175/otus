@@ -2,6 +2,7 @@ import type {AxiosRequestConfig} from 'axios'
 import axios from 'axios'
 
 const baseCsURL = '/cs'
+const baseGoURL = '/go'
 
 export const axiosCsInstance = axios.create({
     baseURL:baseCsURL,
@@ -10,7 +11,7 @@ export const axiosCsInstance = axios.create({
 })
 
 export const axiosGoInstance = axios.create({
-    baseURL:baseCsURL,
+    baseURL:baseGoURL,
     responseType: 'json',
     transformResponse: r => r
 })

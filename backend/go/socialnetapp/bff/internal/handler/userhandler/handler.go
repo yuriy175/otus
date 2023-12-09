@@ -1,33 +1,33 @@
-package authhandler
+package userhandler
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"socialnerworkapp.com/bff/internal/handler"
+	"socialnerworkapp.com/bff/internal/service"
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
-	"socialnerworkapp.com/profile/internal/handler"
-	"socialnerworkapp.com/profile/internal/service"
 )
 
-type authHandlerImp struct {
-	service service.AuthService
+type userHandlerImp struct {
+	service service.UserService
 }
 
-func NewAuthHandler(service service.AuthService) handler.AuthHandler {
-	return &authHandlerImp{service: service}
+func NewUserHandler(service service.UserService) handler.UserHandler {
+	return &userHandlerImp{service: service}
 }
 
 // Login godoc
 // @Summary Login user
-// @Tags         auth
+// @Tags         users
 // @Accept  json
-// @Param properties body dto.LoginDto true "Login properties"
-// @Success 200 {object} string
+// @Param properties body dto.LoginUserDto true "Login properties"
+// @Success 200 {object} dto.LoggedinUserDto
 // @Failure      400
 // @Failure      500
-// // @Router /login [post]
-func (h *authHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
+// @Router /login [post]
+func (h *userHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
 	payload := make(map[string]interface{})
 	err := json.NewDecoder(req.Body).Decode(&payload)
 	if err != nil {
@@ -46,17 +46,13 @@ func (h *authHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	password := p.(string)
-
-	token, err := h.service.Login(ctx, id, password)
+	userDto, err := h.service.Login(ctx, id, password)
 	if err != nil {
 		log.Printf("Auth service error: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	u := struct {
-		Token string `json:"token"`
-	}{Token: token}
-	if err := json.NewEncoder(w).Encode(u); err != nil {
+	if err := json.NewEncoder(w).Encode(userDto); err != nil {
 		log.Printf("Auth service error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}

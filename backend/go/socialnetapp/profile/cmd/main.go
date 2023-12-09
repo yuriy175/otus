@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 
+	"google.golang.org/grpc"
 	"socialnerworkapp.com/profile/internal/handler/authhandler"
 	"socialnerworkapp.com/profile/internal/handler/userhandler"
 	"socialnerworkapp.com/profile/internal/repository/userrepository"
@@ -16,6 +19,8 @@ import (
 
 	httpSwagger "github.com/swaggo/http-swagger"
 	_ "socialnerworkapp.com/docs"
+	gen "socialnerworkapp.com/pkg/proto/gen"
+	profilegrpc "socialnerworkapp.com/profile/internal/grpc"
 
 	"github.com/rs/cors"
 )
@@ -38,6 +43,9 @@ func main() {
 	log.Println("Started Go!")
 	log.Println(os.LookupEnv("POSTGRESQL_CONNECTION"))
 	log.Println(os.LookupEnv("REDIS_HOST"))
+	log.Println(os.LookupEnv("GRPC_PORT"))
+	restPort, _ := os.LookupEnv("REST_PORT")
+	log.Println(restPort)
 
 	// TODO: use fasthttp
 	repo := userrepository.NewUserRepository()
@@ -45,6 +53,20 @@ func main() {
 	userHandler := userhandler.NewUserHandler(userSrv)
 	authSrv := authservice.NewAuthService(repo)
 	authHandler := authhandler.NewAuthHandler(authSrv)
+
+	go func() {
+		lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 55267))
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		var opts []grpc.ServerOption
+		grpcServer := grpc.NewServer(opts...)
+		gen.RegisterAuthServer(grpcServer, profilegrpc.NewGrpcAuthtHandler(authSrv))
+		gen.RegisterUsersServer(grpcServer, profilegrpc.NewGrpcUserHandler(userSrv))
+		if err = grpcServer.Serve(lis); err != nil {
+			panic(err)
+		}
+	}()
 
 	router := mux.NewRouter()
 	router.HandleFunc("/users", userHandler.GetUsers)
@@ -57,7 +79,7 @@ func main() {
 	http.Handle("/", router)
 
 	handler := cors.Default().Handler(router)
-	if err := http.ListenAndServe(":80", handler); err != nil {
+	if err := http.ListenAndServe(":"+restPort, handler); err != nil {
 		panic(err)
 	}
 }

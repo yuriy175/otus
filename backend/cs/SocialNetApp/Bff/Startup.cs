@@ -51,6 +51,8 @@ namespace Bff
             app.UseAuthorization();
             app.UseWebSockets();
 
+            FriendService.WarmupChannels();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

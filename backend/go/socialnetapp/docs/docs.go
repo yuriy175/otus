@@ -198,7 +198,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "users"
                 ],
                 "summary": "Login user",
                 "parameters": [
@@ -208,7 +208,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginDto"
+                            "$ref": "#/definitions/dto.LoginUserDto"
                         }
                     }
                 ],
@@ -216,7 +216,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/dto.LoggedinUserDto"
                         }
                     },
                     "400": {
@@ -606,7 +606,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.LoggedinUserDto": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserDto"
+                }
+            }
+        },
         "dto.LoginDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginUserDto": {
             "type": "object",
             "properties": {
                 "id": {
@@ -654,6 +676,35 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UserDto": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "info": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Message": {
             "type": "object",
             "properties": {
@@ -666,10 +717,7 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
-                "userId1": {
-                    "type": "integer"
-                },
-                "userId2": {
+                "userId": {
                     "type": "integer"
                 }
             }

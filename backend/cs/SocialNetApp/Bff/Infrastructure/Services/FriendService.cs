@@ -3,6 +3,7 @@ using AutoMapper;
 using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
 using Grpc.Net.Client;
+using RabbitMQ.Client;
 using System.Diagnostics;
 using static Friend.Friend;
 
@@ -29,7 +30,12 @@ namespace Profile.Infrastructure.gRpc.Services
             };
             _postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
             _usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
+
+            _postsChannel.ConnectAsync().Wait();
+            _usersChannel.ConnectAsync().Wait();
         }
+
+        public static Task WarmupChannels(){ return Task.CompletedTask; }
 
         public FriendService(IMapper mapper)
         {
@@ -43,7 +49,6 @@ namespace Profile.Infrastructure.gRpc.Services
             //using var usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
             var userClient = new Users.UsersClient(_usersChannel);
             var friendClient = new FriendClient(_postsChannel);
-
             await friendClient.AddFriendAsync(new Friend.AddFriendRequest { UserId = userId, FriendId = friendId });
 
             var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });

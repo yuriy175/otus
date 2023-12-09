@@ -37,10 +37,22 @@ module.exports = merge(common, {
         pathRewrite: { '/cs/users': '' },
       },
       {
+        path: '/go/users',
+        changeOrigin: true,
+        target: 'http://localhost:55297',
+        pathRewrite: { '/go/users': '' },
+      },
+      {
         path: '/cs/friends',
         changeOrigin: true,
         target: 'http://localhost:5297',
         pathRewrite: { '/cs/friends': '' },
+      },
+      {
+        path: '/go/friends',
+        changeOrigin: true,
+        target: 'http://localhost:55297',
+        pathRewrite: { '/go/friends': '' },
       },
     ],
   },

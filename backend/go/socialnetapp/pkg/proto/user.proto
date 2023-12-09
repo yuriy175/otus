@@ -1,0 +1,22 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "/gen";
+ 
+service Users {
+  rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdReply);
+}
+ 
+message GetUserByIdRequest {
+  uint32 id = 1;
+}
+ 
+message GetUserByIdReply {
+  uint32 id = 1;
+  string name = 2;
+  string surname = 3;   
+  google.protobuf.Int32Value Age = 4;
+  google.protobuf.StringValue Sex = 5;
+  google.protobuf.StringValue City = 6; 
+  google.protobuf.StringValue Info = 7;
+}
