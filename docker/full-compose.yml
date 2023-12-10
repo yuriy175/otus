@@ -60,6 +60,27 @@ services:
       - postgres
       - redis-server
 
+  bff_go:
+    container_name: bff_go
+    image: bff_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/bff.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - GRPC_PROFILE=$GRPC_PROFILE
+      - GRPC_POSTS=$GRPC_POSTS
+      - GRPC_DIALOGS=$GRPC_DIALOGS
+      - SECURITY_KEY=$SECURITY_KEY
+    ports:
+      - "8009:80"
+    depends_on:
+      - postgres
+      - redis-server
+
   bff_cs:
     container_name: bff_cs
     image: bff_cs:$APP_VERSION

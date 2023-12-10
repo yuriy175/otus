@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -43,7 +42,8 @@ func main() {
 	log.Println("Started Go!")
 	log.Println(os.LookupEnv("POSTGRESQL_CONNECTION"))
 	log.Println(os.LookupEnv("REDIS_HOST"))
-	log.Println(os.LookupEnv("GRPC_PORT"))
+	grpcPort, _ := os.LookupEnv("GRPC_PORT")
+	log.Println(grpcPort)
 	restPort, _ := os.LookupEnv("REST_PORT")
 	log.Println(restPort)
 
@@ -55,7 +55,8 @@ func main() {
 	authHandler := authhandler.NewAuthHandler(authSrv)
 
 	go func() {
-		lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 55267))
+		//lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 55267))
+		lis, err := net.Listen("tcp", "localhost:"+grpcPort)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}

@@ -5,7 +5,11 @@ import (
 	"net/http"
 	"os"
 
+	"socialnerworkapp.com/bff/internal/handler/friendhandler"
+	"socialnerworkapp.com/bff/internal/handler/posthandler"
 	"socialnerworkapp.com/bff/internal/handler/userhandler"
+	"socialnerworkapp.com/bff/internal/service/friendservice"
+	"socialnerworkapp.com/bff/internal/service/postservice"
 	"socialnerworkapp.com/bff/internal/service/userservice"
 
 	"github.com/gorilla/mux"
@@ -61,8 +65,19 @@ func main() {
 	userSrv := userservice.NewUserService()
 	userHandler := userhandler.NewUserHandler(userSrv)
 
+	friendSrv := friendservice.NewFriendService()
+	friendHandler := friendhandler.NewFriendHandler(friendSrv)
+
+	postSrv := postservice.NewPostService()
+	postHandler := posthandler.NewPostHandler(postSrv)
+
 	router := mux.NewRouter()
 	router.HandleFunc("/login", userHandler.Login)
+	router.HandleFunc("/friend/set/{user_id}", friendHandler.AddFriend)
+	router.HandleFunc("/friend/delete/{user_id}", friendHandler.DeleteFriend)
+	router.HandleFunc("/friends", friendHandler.DeleteFriend)
+	router.HandleFunc("/post/create", postHandler.CreatePost)
+	router.HandleFunc("/post/feed", postHandler.FeedPosts)
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.Handle("/", router)

@@ -2,10 +2,13 @@ package main
 
 import (
 	"log"
+	"net"
 	"net/http"
 	"os"
 
+	"google.golang.org/grpc"
 	"socialnerworkapp.com/pkg/mq"
+	"socialnerworkapp.com/pkg/proto/gen"
 	"socialnerworkapp.com/posts/internal/cache/redis"
 	"socialnerworkapp.com/posts/internal/handler/friendhandler"
 	"socialnerworkapp.com/posts/internal/handler/posthandler"
@@ -21,6 +24,7 @@ import (
 	_ "socialnerworkapp.com/docs"
 
 	"github.com/rs/cors"
+	postsgrpc "socialnerworkapp.com/posts/internal/grpc"
 )
 
 func init() {
@@ -41,6 +45,10 @@ func main() {
 	log.Println("Started Go!")
 	log.Println(os.LookupEnv("POSTGRESQL_CONNECTION"))
 	log.Println(os.LookupEnv("REDIS_HOST"))
+	grpcPort, _ := os.LookupEnv("GRPC_PORT")
+	log.Println(grpcPort)
+	restPort, _ := os.LookupEnv("REST_PORT")
+	log.Println(restPort)
 
 	// TODO: use fasthttp
 	friendRepo := friendrepository.NewFriendRepository()
@@ -53,6 +61,20 @@ func main() {
 	postRepo := postrepository.NewPostRepository()
 	postSrv := postservice.NewPostService(postRepo, friendRepo, cacheSrv, mqSender)
 	postHandler := posthandler.NewPostHandler(postSrv)
+
+	go func() {
+		lis, err := net.Listen("tcp", "localhost:"+grpcPort)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		var opts []grpc.ServerOption
+		grpcServer := grpc.NewServer(opts...)
+		gen.RegisterFriendServer(grpcServer, postsgrpc.NewGrpcFriendsHandler(friendSrv))
+		gen.RegisterPostServer(grpcServer, postsgrpc.NewGrpcPostsHandler(postSrv))
+		if err = grpcServer.Serve(lis); err != nil {
+			panic(err)
+		}
+	}()
 
 	router := mux.NewRouter()
 	router.HandleFunc("/friend/set/{user_id}", friendHandler.AddFriend)

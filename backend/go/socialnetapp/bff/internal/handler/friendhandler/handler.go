@@ -1,14 +1,15 @@
 package friendhandler
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"socialnerworkapp.com/bff/internal/handler"
+	"socialnerworkapp.com/bff/internal/service"
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
-	"socialnerworkapp.com/posts/internal/handler"
-	"socialnerworkapp.com/posts/internal/service"
 )
 
 type friendHandlerImp struct {
@@ -16,13 +17,12 @@ type friendHandlerImp struct {
 }
 
 func NewFriendHandler(service service.FriendService) handler.FriendHandler {
-	return &friendHandlerImp{
-		service: service}
+	return &friendHandlerImp{service: service}
 }
 
 // AddFriend godoc
 // @Summary Add user's friend
-// @Tags        obsolete friends
+// @Tags        friends
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -31,7 +31,7 @@ func NewFriendHandler(service service.FriendService) handler.FriendHandler {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// // @Router /friend/set/{user_id} [put]
+// @Router /friend/set/{user_id} [put]
 func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	vars := mux.Vars(req)
@@ -40,26 +40,26 @@ func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 		log.Printf("Friend handler error: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 	}
-	token, err := commonhandler.GetAuthorizationToken(w, req)
-	if err != nil {
-		return
-	}
-	userId, err := commonhandler.GetAuthorizedUserId(w, req, token)
+	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}
 
-	err = h.service.UpsertFriend(ctx, userId, uint(friendId))
+	userDto, err := h.service.AddFriend(ctx, userId, uint(friendId))
 
 	if err != nil {
 		log.Printf("Friend handler error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	if err := json.NewEncoder(w).Encode(userDto); err != nil {
+		log.Printf("Friend service error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
 // DeleteFriend godoc
 // @Summary Delete user's friend
-// @Tags        obsolete friends
+// @Tags        friends
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -68,14 +68,10 @@ func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// // @Router /friend/delete/{user_id} [delete]
+// @Router /friend/delete/{user_id} [delete]
 func (h *friendHandlerImp) DeleteFriend(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	token, err := commonhandler.GetAuthorizationToken(w, req)
-	if err != nil {
-		return
-	}
-	userId, err := commonhandler.GetAuthorizedUserId(w, req, token)
+	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}
@@ -90,6 +86,37 @@ func (h *friendHandlerImp) DeleteFriend(w http.ResponseWriter, req *http.Request
 	err = h.service.DeleteFriend(ctx, userId, uint(friendId))
 
 	if err != nil {
+		log.Printf("Friend handler error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+// GetFriends godoc
+// @Summary Get friends post
+// @Tags         posts
+// @Security BearerAuth
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} dto.UserDto
+// @Failure      400
+// @Failure      404
+// @Failure      500
+// @Router /friends [get]
+func (h *friendHandlerImp) GetFriends(w http.ResponseWriter, req *http.Request) {
+	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
+	if err != nil {
+		return
+	}
+
+	ctx := req.Context()
+	friends, err := h.service.GetFriends(ctx, userId)
+
+	if err != nil {
+		log.Printf("Friend handler error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(friends); err != nil {
 		log.Printf("Friend handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}

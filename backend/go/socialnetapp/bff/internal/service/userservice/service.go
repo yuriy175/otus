@@ -30,7 +30,7 @@ func (s *userServiceImp) Login(ctx context.Context, userId uint, password string
 	defer conn.Close()
 	id := uint32(userId)
 	authClient := gen.NewAuthClient(conn)
-	loginRequest := &gen.LoginRequest{Id: id, Password: "Абрамов"}
+	loginRequest := &gen.LoginRequest{Id: id, Password: password}
 	token, err := authClient.Login(ctx, loginRequest)
 	if err != nil {
 		return nil, err

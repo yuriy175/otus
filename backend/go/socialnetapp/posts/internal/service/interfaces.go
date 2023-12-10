@@ -9,6 +9,7 @@ import (
 type FriendService interface {
 	UpsertFriend(_ context.Context, userId uint, friendId uint) error
 	DeleteFriend(_ context.Context, userId uint, friendId uint) error
+	GetFriendIds(_ context.Context, userId uint) ([]uint, error)
 }
 
 type PostService interface {

@@ -49,7 +49,7 @@ func (h *userHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
 	userDto, err := h.service.Login(ctx, id, password)
 	if err != nil {
 		log.Printf("Auth service error: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if err := json.NewEncoder(w).Encode(userDto); err != nil {

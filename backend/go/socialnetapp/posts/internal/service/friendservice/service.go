@@ -15,6 +15,10 @@ func NewFriendService(repository repository.FriendRepository) service.FriendServ
 	return &friendServiceImp{repository: repository}
 }
 
+func (s *friendServiceImp) GetFriendIds(ctx context.Context, userId uint) ([]uint, error) {
+	return s.repository.GetFriendIds(ctx, userId)
+}
+
 func (s *friendServiceImp) UpsertFriend(ctx context.Context, userId uint, friendId uint) error {
 	return s.repository.UpsertFriend(ctx, userId, friendId)
 }

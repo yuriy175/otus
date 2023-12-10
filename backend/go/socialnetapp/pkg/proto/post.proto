@@ -1,0 +1,27 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "/gen";
+ 
+service Post {
+  rpc CreatePost (CreatePostRequest) returns (google.protobuf.Empty) {};
+  rpc FeedPosts (FeedPostsRequest) returns (stream PostReply);
+}
+ 
+message CreatePostRequest {
+  uint32 user_id = 1;
+  string text = 2;
+}
+
+message FeedPostsRequest {
+  uint32 user_id = 1;
+  uint32 offset = 2;
+  uint32 limit = 3;
+}
+
+message PostReply {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+  string message = 3;
+}
