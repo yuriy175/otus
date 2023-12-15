@@ -1,4 +1,5 @@
 ﻿using Bff.API.Dtos;
+using ProfileGrpc;
 
 namespace Bff.API.Mappings
 {
@@ -6,8 +7,19 @@ namespace Bff.API.Mappings
     {
         public UserMappings()
         {
-            // UserDto -> User
-            // CreateMap<UserDto, User>();
+            // UserReply -> UserDto
+            CreateMap<UserReply, UserDto>();
         }
     }
 }
+
+// ToUserDto(UserReply user) => new UserDto
+//{
+//    City = user.City,
+//    Id = user.Id,
+//    Info = user.Info,
+//    Name = user.Name,
+//    Sex = user.Sex,
+//    Surname = user.Surname,
+//    Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+//};

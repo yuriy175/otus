@@ -29,5 +29,17 @@ namespace Bff.API.Controllers
         {
             return Ok(await _userService.LoginAsync(dto, cancellationToken));
         }
+
+        [HttpPost("/user/register")]
+        public async Task<ActionResult<UserDto>> RegisterUser([FromBody] NewUserDto dto, CancellationToken cancellationToken)
+        {
+            return Ok(new { id = await _userService.PutUserAsync(dto, dto.Password) });
+        }
+
+        [HttpGet("/user/search")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> FindUsers([FromQuery] SearchUserDto dto, CancellationToken cancellationToken)
+        {
+            return Ok(await _userService.GetUsersByNameAsync(dto.Name, dto.Surname));
+        }
     }
 }

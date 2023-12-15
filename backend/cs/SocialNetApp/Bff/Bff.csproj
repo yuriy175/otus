@@ -32,6 +32,9 @@
     </ItemGroup>
     
     <ItemGroup>
+      <Protobuf Include="..\Dialogs\Infrastructure\gRpc\Protos\dialog.proto">
+        <Link>Infrastructure\gRpc\Protos\dialog.proto</Link>
+      </Protobuf>
       <Protobuf Include="..\Posts\Infrastructure\gRpc\Protos\friend.proto">
         <Link>Infrastructure\gRpc\Protos\friend.proto</Link>
       </Protobuf>

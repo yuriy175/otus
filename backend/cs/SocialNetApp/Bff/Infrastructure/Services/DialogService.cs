@@ -4,25 +4,23 @@ using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
 using FriendGrpc;
 using Grpc.Net.Client;
-using ProfileGrpc;
 using RabbitMQ.Client;
 using System.Diagnostics;
 using static FriendGrpc.Friend;
-using static ProfileGrpc.Users;
 
 namespace Profile.Infrastructure.gRpc.Services
 {
-    public class FriendService : IFriendService
+    public class DialogService : IDialogService
     {
-        private readonly static string _grpcPostsUrl = Environment.GetEnvironmentVariable("GRPC_POSTS");
+        private readonly static string _grpcDialogsUrl = Environment.GetEnvironmentVariable("GRPC_DIALOGS");
         private readonly static string _grpcUsersUrl = Environment.GetEnvironmentVariable("GRPC_PROFILE");
 
         private readonly IMapper _mapper;
 
         private static readonly GrpcChannel _usersChannel = null;
-        private static readonly GrpcChannel _postsChannel = null;
+        private static readonly GrpcChannel _dialogsChannel = null;
 
-        static FriendService()
+        static DialogService()
         {
             var options = new GrpcChannelOptions()
             {
@@ -31,10 +29,10 @@ namespace Profile.Infrastructure.gRpc.Services
                     EnableMultipleHttp2Connections = true,
                 }
             };
-            _postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
+            _dialogsChannel = GrpcChannel.ForAddress(_grpcDialogsUrl, options);
             _usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
 
-            _postsChannel.ConnectAsync().Wait();
+            _dialogsChannel.ConnectAsync().Wait();
             _usersChannel.ConnectAsync().Wait();
         }
 
@@ -50,12 +48,21 @@ namespace Profile.Infrastructure.gRpc.Services
             var options = new GrpcChannelOptions();
             //using var postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
             //using var usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-            var userClient = new UsersClient(_usersChannel);
+            var userClient = new Users.UsersClient(_usersChannel);
             var friendClient = new FriendClient(_postsChannel);
             await friendClient.AddFriendAsync(new AddFriendRequest { UserId = userId, FriendId = friendId });
 
             var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
-            return _mapper.Map<UserDto>(user);
+            return new UserDto
+            {
+                City = user.City,
+                Id = user.Id,
+                Info = user.Info,
+                Name = user.Name,
+                Sex = user.Sex,
+                Surname = user.Surname,
+                Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+            };
         }
 
         public async Task DeleteFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
@@ -80,21 +87,19 @@ namespace Profile.Infrastructure.gRpc.Services
             {
                 var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
                 list.Add(st.ElapsedMilliseconds);
-                friends.Add(_mapper.Map<UserDto>(user));
+                friends.Add(new UserDto
+                {
+                    City = user.City,
+                    Id = user.Id,
+                    Info = user.Info,
+                    Name = user.Name,
+                    Sex = user.Sex,
+                    Surname = user.Surname,
+                    Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+                });
             }
             list.Add(st.ElapsedMilliseconds);
             return friends;
         }
-
-        //private UserDto ToUserDto(UserReply user) => new UserDto
-        //{
-        //    City = user.City,
-        //    Id = user.Id,
-        //    Info = user.Info,
-        //    Name = user.Name,
-        //    Sex = user.Sex,
-        //    Surname = user.Surname,
-        //    Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
-        //};
     }
 }

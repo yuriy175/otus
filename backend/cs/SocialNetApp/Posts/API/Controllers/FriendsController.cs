@@ -12,12 +12,10 @@ namespace Posts.API.Controllers
     public class FriendsController : AuthorizedControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IFriendsService _friendsService;
 
-        public FriendsController(IMediator mediator, IFriendsService friendsService)
+        public FriendsController(IMediator mediator)
         {
             _mediator = mediator;
-            _friendsService = friendsService;
         }
 
         [Authorize]

@@ -2,6 +2,7 @@
 using Dialogs.Core.Services;
 using Dialogs.Infrastructure.Repositories;
 using Dialogs.Infrastructure.Repositories.Interfaces;
+using grpc = Dialogs.Infrastructure.gRpc.Services;
 
 namespace Dialogs
 {
@@ -19,6 +20,7 @@ namespace Dialogs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddGrpc();
             services.AddControllers();
             services.AddCors(options =>
             {
@@ -56,6 +58,7 @@ namespace Dialogs
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<grpc.DialogService>();
             });
         }
         public static IApplicationBuilder UseSwaggerDocumentation(IApplicationBuilder app, string url, string name)

@@ -71,6 +71,7 @@ namespace Posts
             {
                 endpoints.MapControllers();
                 endpoints.MapGrpcService<grpc.FriendService>();
+                endpoints.MapGrpcService<grpc.PostService>();
             });
         }
         public static IApplicationBuilder UseSwaggerDocumentation(IApplicationBuilder app, string url, string name)

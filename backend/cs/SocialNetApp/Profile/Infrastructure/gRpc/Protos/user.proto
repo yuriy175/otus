@@ -1,19 +1,20 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
-option csharp_namespace = "Profile";
+option csharp_namespace = "ProfileGrpc";
  
 package profile;
  
 service Users {
-  rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdReply);
+  rpc GetUserById (GetUserByIdRequest) returns (UserReply);
+  rpc AddUser (AddUserRequest) returns (AddUserReply);
+  rpc GetUsersByName (GetUsersByNameRequest) returns (stream UserReply);
 }
  
 message GetUserByIdRequest {
   uint32 id = 1;
 }
- 
-message GetUserByIdReply {
+message UserReply {
   uint32 id = 1;
   string name = 2;
   string surname = 3;   
@@ -21,4 +22,18 @@ message GetUserByIdReply {
   google.protobuf.StringValue Sex = 5;
   google.protobuf.StringValue City = 6; 
   google.protobuf.StringValue Info = 7;
+}
+
+message AddUserRequest {
+  UserReply user = 1;
+  string password = 2;
+}
+
+message AddUserReply {
+  uint32 id = 1;
+}
+
+message GetUsersByNameRequest {
+  string name = 1;
+  string surname = 2;
 }

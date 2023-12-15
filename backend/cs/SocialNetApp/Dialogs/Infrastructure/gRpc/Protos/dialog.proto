@@ -1,0 +1,33 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "DialogGrpc";
+ 
+package dialog;
+ 
+service Dialog {
+  rpc GetMessages (GetMessagesRequest) returns (GetMessagesReply);
+  rpc CreateMessage (CreateMessageRequest) returns (MessageReply);
+}
+ 
+message MessageReply {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+  string text = 3;
+}
+
+message GetMessagesReply {
+  repeated MessageReply messages = 1;
+}
+
+message CreateMessageRequest {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+  string text = 3;
+}
+
+message GetMessagesRequest {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+}

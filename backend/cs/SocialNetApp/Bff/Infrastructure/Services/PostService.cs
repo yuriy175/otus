@@ -12,7 +12,7 @@ using static ProfileGrpc.Users;
 
 namespace Profile.Infrastructure.gRpc.Services
 {
-    public class FriendService : IFriendService
+    public class PostService : IPostService
     {
         private readonly static string _grpcPostsUrl = Environment.GetEnvironmentVariable("GRPC_POSTS");
         private readonly static string _grpcUsersUrl = Environment.GetEnvironmentVariable("GRPC_PROFILE");
@@ -22,7 +22,7 @@ namespace Profile.Infrastructure.gRpc.Services
         private static readonly GrpcChannel _usersChannel = null;
         private static readonly GrpcChannel _postsChannel = null;
 
-        static FriendService()
+        static PostService()
         {
             var options = new GrpcChannelOptions()
             {
@@ -50,12 +50,21 @@ namespace Profile.Infrastructure.gRpc.Services
             var options = new GrpcChannelOptions();
             //using var postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
             //using var usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-            var userClient = new UsersClient(_usersChannel);
+            var userClient = new Users.UsersClient(_usersChannel);
             var friendClient = new FriendClient(_postsChannel);
             await friendClient.AddFriendAsync(new AddFriendRequest { UserId = userId, FriendId = friendId });
 
             var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
-            return _mapper.Map<UserDto>(user);
+            return new UserDto
+            {
+                City = user.City,
+                Id = user.Id,
+                Info = user.Info,
+                Name = user.Name,
+                Sex = user.Sex,
+                Surname = user.Surname,
+                Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+            };
         }
 
         public async Task DeleteFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
@@ -68,7 +77,7 @@ namespace Profile.Infrastructure.gRpc.Services
         public async Task<IEnumerable<UserDto>> GetFriendsAsync(uint userId, CancellationToken cancellationToken)
         {
             var st = Stopwatch.StartNew();            
-            var userClient = new Users.UsersClient(_usersChannel);
+            var userClient = new UsersClient(_usersChannel);
             var friendClient = new FriendClient(_postsChannel);
 
             var list = new List<long> { };
@@ -80,21 +89,19 @@ namespace Profile.Infrastructure.gRpc.Services
             {
                 var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
                 list.Add(st.ElapsedMilliseconds);
-                friends.Add(_mapper.Map<UserDto>(user));
+                friends.Add(new UserDto
+                {
+                    City = user.City,
+                    Id = user.Id,
+                    Info = user.Info,
+                    Name = user.Name,
+                    Sex = user.Sex,
+                    Surname = user.Surname,
+                    Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+                });
             }
             list.Add(st.ElapsedMilliseconds);
             return friends;
         }
-
-        //private UserDto ToUserDto(UserReply user) => new UserDto
-        //{
-        //    City = user.City,
-        //    Id = user.Id,
-        //    Info = user.Info,
-        //    Name = user.Name,
-        //    Sex = user.Sex,
-        //    Surname = user.Surname,
-        //    Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
-        //};
     }
 }

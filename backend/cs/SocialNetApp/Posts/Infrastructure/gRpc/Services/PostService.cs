@@ -1,28 +1,39 @@
-﻿namespace Profile.Infrastructure.gRpc.Services
+﻿using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
+using MediatR;
+using PostGrpc;
+using Posts;
+using Posts.Application.Commands.Posts;
+using Posts.Application.Queries.Posts;
+using System.Collections.Generic;
+using static PostGrpc.Post;
+using static System.Net.Mime.MediaTypeNames;
+
+namespace Posts.Infrastructure.gRpc.Services
 {
-    //public class UserService : Users.UsersBase
-    //{
-    //    private readonly IMapper _mapper;
-    //    private readonly IUserService _userService;
+    public class PostService : PostBase
+    {
+        private readonly IMediator _mediator;
 
-    //    public UserService(IMapper mapper, IUserService userService)
-    //    {
-    //        _mapper = mapper;
-    //        _userService = userService;
-    //    }
+        public PostService(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
-    //    public override async Task<GetUserByIdReply> GetUserById(GetUserByIdRequest request, ServerCallContext context)
-    //    {
-    //        var user = await _userService.GetUserByIdAsync(request.Id);
-    //        return new GetUserByIdReply { 
-    //            City = user.City,
-    //            Id = user.Id,
-    //            Info = user.Info,
-    //            Name = user.Name,
-    //            Sex = user.Sex,
-    //            Surname = user.Surname,
-    //            Age = user.Age
-    //        };
-    //    }
-    //}
+        public override async Task<Empty> CreatePost(CreatePostRequest request, ServerCallContext context)
+        {
+            await _mediator.Send(new AddPostCommand { UserId = request.UserId, Text = request.Text });
+            return new Empty();
+        }
+
+        public override async Task FeedPosts(FeedPostsRequest request, IServerStreamWriter<PostReply> responseStream, ServerCallContext context)
+        {
+            var posts = await _mediator.Send(new FeedPostsQuery { UserId = request.UserId, Offset = request.Offset, Limit = request.Limit });
+            foreach (var post in posts)
+            {
+                await responseStream.WriteAsync(new PostReply { UserId = post.Id, AuthorId = post.AuthorId, Message = post.Message });
+            }
+        }
+    }
 }

@@ -34,6 +34,8 @@ namespace Bff
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFriendService, FriendService>();
+            services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IDialogService, DialogService>();            
 
             services.AddAuthorization();
             services.ConfigureAuthentication();

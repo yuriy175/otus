@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Friend;
+using FriendGrpc;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 using Posts.Application.Commands.Friends;
 using Posts.Application.Queries.Friends;
-using static Friend.Friend;
+using static FriendGrpc.Friend;
 
 namespace Posts.Infrastructure.gRpc.Services
 {
