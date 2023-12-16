@@ -33,7 +33,7 @@ namespace Bff.API.Controllers
 
         [Authorize]
         [HttpGet("/post/feed")]
-        public async Task<ActionResult<IEnumerable<PostDto>?>> FeedPosts([FromQuery] uint offset, [FromQuery] uint limit, CancellationToken cancellationToken)
+        public async Task<ActionResult<UserPostsDto>> FeedPosts([FromQuery] uint offset, [FromQuery] uint limit, CancellationToken cancellationToken)
         {
             var userId = GetUserId();
             if (userId is null)

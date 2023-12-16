@@ -18,7 +18,7 @@ namespace Bff.API.Controllers
         }
 
         [HttpGet("/dialog/{user_id}/list")]
-        public async Task<ActionResult<IEnumerable<MessageDto>>> GetDialogByUserId([FromRoute(Name = "user_id")] uint userId, CancellationToken cancellationToken)
+        public async Task<ActionResult<UserMessagesDto>> GetDialogByUserId([FromRoute(Name = "user_id")] uint userId, CancellationToken cancellationToken)
         {
             var authorId = GetUserId();
             if (authorId is null)

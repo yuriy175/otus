@@ -34,6 +34,8 @@ namespace Profile.Infrastructure.gRpc.Services
             _authChannel.ConnectAsync().Wait();
         }
 
+        public static Task WarmupChannels() { return Task.CompletedTask; }
+
         public UserService(IMapper mapper)
         {
             _mapper = mapper;

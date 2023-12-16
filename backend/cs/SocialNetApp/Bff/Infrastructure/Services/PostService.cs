@@ -3,12 +3,17 @@ using AutoMapper;
 using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
 using FriendGrpc;
+using Grpc.Core;
 using Grpc.Net.Client;
+using PostGrpc;
 using ProfileGrpc;
 using RabbitMQ.Client;
+using System.Collections.Generic;
 using System.Diagnostics;
 using static FriendGrpc.Friend;
+using static PostGrpc.Post;
 using static ProfileGrpc.Users;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Profile.Infrastructure.gRpc.Services
 {
@@ -40,68 +45,37 @@ namespace Profile.Infrastructure.gRpc.Services
 
         public static Task WarmupChannels(){ return Task.CompletedTask; }
 
-        public FriendService(IMapper mapper)
+        public PostService(IMapper mapper)
         {
             _mapper = mapper;
         }
 
-        public async Task<UserDto> AddFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
+        public async Task CreatePostAsync(uint userId, string text, CancellationToken cancellationToken)
         {
-            var options = new GrpcChannelOptions();
-            //using var postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
-            //using var usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-            var userClient = new Users.UsersClient(_usersChannel);
-            var friendClient = new FriendClient(_postsChannel);
-            await friendClient.AddFriendAsync(new AddFriendRequest { UserId = userId, FriendId = friendId });
-
-            var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
-            return new UserDto
-            {
-                City = user.City,
-                Id = user.Id,
-                Info = user.Info,
-                Name = user.Name,
-                Sex = user.Sex,
-                Surname = user.Surname,
-                Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
-            };
+            var postClient = new PostClient(_postsChannel);
+            await postClient.CreatePostAsync(new CreatePostRequest { UserId = userId, Text = text});
         }
 
-        public async Task DeleteFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
+        public async Task<UserPostsDto> FeedPostsAsync(uint userId, uint offset, uint limit, CancellationToken cancellationToken)
         {
-            var friendClient = new FriendClient(_postsChannel);
-
-            await friendClient.DeleteFriendAsync(new DeleteFriendRequest { UserId = userId, FriendId = friendId });
-        }
-
-        public async Task<IEnumerable<UserDto>> GetFriendsAsync(uint userId, CancellationToken cancellationToken)
-        {
-            var st = Stopwatch.StartNew();            
             var userClient = new UsersClient(_usersChannel);
-            var friendClient = new FriendClient(_postsChannel);
-
-            var list = new List<long> { };
-            list.Add(st.ElapsedMilliseconds);
-            var friendIds = await friendClient.GetFriendIdsAsync(new GetFriendIdsRequest { Id = userId});
-            list.Add(st.ElapsedMilliseconds);
-            var friends = new List<UserDto>();
-            foreach (var friendId in friendIds.Ids)
+            var postClient = new PostClient(_postsChannel);
+            var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = userId });
+            
+            using var call = postClient.FeedPosts(new FeedPostsRequest { UserId = userId, Offset = offset, Limit = limit}, cancellationToken: cancellationToken);
+            var posts = new List<PostDto>();
+            while (await call.ResponseStream.MoveNext())
             {
-                var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
-                list.Add(st.ElapsedMilliseconds);
-                friends.Add(new UserDto
+                var post = call.ResponseStream.Current;
+                posts.Add(new PostDto
                 {
-                    City = user.City,
-                    Id = user.Id,
-                    Info = user.Info,
-                    Name = user.Name,
-                    Sex = user.Sex,
-                    Surname = user.Surname,
-                    Age = user.Age.HasValue ? (byte)user.Age.Value : null as byte?,
+                    AuthorId = post.AuthorId,
+                    Id = post.UserId,
+                    Message = post.Message,
                 });
             }
-            list.Add(st.ElapsedMilliseconds);
-            return friends;
+
+            return new UserPostsDto { User = _mapper.Map<UserDto>(user), Posts = posts};
         }
     }
 }

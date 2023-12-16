@@ -47,9 +47,6 @@ namespace Profile.Infrastructure.gRpc.Services
 
         public async Task<UserDto> AddFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
         {
-            var options = new GrpcChannelOptions();
-            //using var postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
-            //using var usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
             var userClient = new UsersClient(_usersChannel);
             var friendClient = new FriendClient(_postsChannel);
             await friendClient.AddFriendAsync(new AddFriendRequest { UserId = userId, FriendId = friendId });
