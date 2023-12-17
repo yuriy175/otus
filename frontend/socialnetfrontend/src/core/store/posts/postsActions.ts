@@ -1,22 +1,22 @@
-import { getFriends, loginUser, addFriends as apiAddFriends, deleteFriends  as apiDeleteFriends} from "../../../api";
+import { Post } from "../../../core/types";
+import { createPost, feedPosts} from "../../../api";
 import { AppThunk } from "../store";
-import {friendsSlice} from "./friendsSlice";
+import {postsSlice} from "./postsSlice";
 
-const {setFriends, addFriends, deleteFriends} = friendsSlice.actions
-export const getUserFriends = ():AppThunk => 
+const {setPosts} = postsSlice.actions
+export const feedFriendPosts = ():AppThunk => 
 async(dispatch, getState) => {
-    const friends = await getFriends()
-    dispatch(setFriends(friends))
+    const apiPosts = await feedPosts(0, 100)
+    const posts: Post[] = apiPosts.posts?.map(p => ({
+        id:  p.id,
+        author:  apiPosts.authors?.find(a => a.id === p.authorId),
+        message:  p.message,
+        //time:  p.created,       
+    }))
+    dispatch(setPosts(posts))
 }
 
-export const addUserFriends = (friendId: number):AppThunk => 
+export const addUserPost = (text: string):AppThunk => 
 async(dispatch, getState) => {
-    const friend = await apiAddFriends(friendId)
-    dispatch(addFriends(friend))
-}
-
-export const deleteUserFriends = (friendId: number):AppThunk => 
-async(dispatch, getState) => {
-    await apiDeleteFriends(friendId)
-    dispatch(deleteFriends(friendId))
+    await createPost(text)
 }

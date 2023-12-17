@@ -2,6 +2,7 @@
 using AutoMapper;
 using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
+using Bff.Infrastructure.Services.Interfaces;
 using FriendGrpc;
 using Grpc.Net.Client;
 using ProfileGrpc;
@@ -10,45 +11,23 @@ using System.Diagnostics;
 using static FriendGrpc.Friend;
 using static ProfileGrpc.Users;
 
-namespace Profile.Infrastructure.gRpc.Services
+namespace Bff.Infrastructure.gRpc.Services
 {
     public class FriendService : IFriendService
     {
-        private readonly static string _grpcPostsUrl = Environment.GetEnvironmentVariable("GRPC_POSTS");
-        private readonly static string _grpcUsersUrl = Environment.GetEnvironmentVariable("GRPC_PROFILE");
-
         private readonly IMapper _mapper;
+        private readonly IGrpcChannelsProvider _channelsProvider;
 
-        private static readonly GrpcChannel _usersChannel = null;
-        private static readonly GrpcChannel _postsChannel = null;
-
-        static FriendService()
-        {
-            var options = new GrpcChannelOptions()
-            {
-                HttpHandler = new SocketsHttpHandler
-                {
-                    EnableMultipleHttp2Connections = true,
-                }
-            };
-            _postsChannel = GrpcChannel.ForAddress(_grpcPostsUrl, options);
-            _usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-
-            _postsChannel.ConnectAsync().Wait();
-            _usersChannel.ConnectAsync().Wait();
-        }
-
-        public static Task WarmupChannels(){ return Task.CompletedTask; }
-
-        public FriendService(IMapper mapper)
+        public FriendService(IMapper mapper, IGrpcChannelsProvider channelsProvider)
         {
             _mapper = mapper;
+            _channelsProvider = channelsProvider;
         }
 
         public async Task<UserDto> AddFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
         {
-            var userClient = new UsersClient(_usersChannel);
-            var friendClient = new FriendClient(_postsChannel);
+            var userClient = new UsersClient(_channelsProvider.GetUsersChannel());
+            var friendClient = new FriendClient(_channelsProvider.GetPostsChannel());
             await friendClient.AddFriendAsync(new AddFriendRequest { UserId = userId, FriendId = friendId });
 
             var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = friendId });
@@ -57,7 +36,7 @@ namespace Profile.Infrastructure.gRpc.Services
 
         public async Task DeleteFriendAsync(uint userId, uint friendId, CancellationToken cancellationToken)
         {
-            var friendClient = new FriendClient(_postsChannel);
+            var friendClient = new FriendClient(_channelsProvider.GetPostsChannel());
 
             await friendClient.DeleteFriendAsync(new DeleteFriendRequest { UserId = userId, FriendId = friendId });
         }
@@ -65,8 +44,8 @@ namespace Profile.Infrastructure.gRpc.Services
         public async Task<IEnumerable<UserDto>> GetFriendsAsync(uint userId, CancellationToken cancellationToken)
         {
             var st = Stopwatch.StartNew();            
-            var userClient = new Users.UsersClient(_usersChannel);
-            var friendClient = new FriendClient(_postsChannel);
+            var userClient = new Users.UsersClient(_channelsProvider.GetUsersChannel());
+            var friendClient = new FriendClient(_channelsProvider.GetPostsChannel());
 
             var list = new List<long> { };
             list.Add(st.ElapsedMilliseconds);

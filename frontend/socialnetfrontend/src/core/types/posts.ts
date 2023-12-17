@@ -1,7 +1,9 @@
+import { User } from "."
+
 export type Post = 
 {
     id: number
-    authorId: number
+    author: User
     message: string
     time?: string
 }

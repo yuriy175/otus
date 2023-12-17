@@ -22,6 +22,7 @@ import {
   logoffCurrentUser,
   useAppDispatch,
   getUserFriends,
+  feedFriendPosts,
 } from '../../core/store';
 import Switch from '@mui/material/Switch';
 import { Navigate } from 'react-router-dom';
@@ -29,7 +30,11 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { DrawerComponent } from './DrawerComponent';
 import { ToolbarComponent } from './ToolbarComponent';
 import { PageType, drawerWidth } from './types';
-import { FriendsComponent, UsersComponent } from '../../components';
+import {
+  FriendsComponent,
+  PostsComponent,
+  UsersComponent,
+} from '../../components';
 
 export function MainPage() {
   const user = useRootSelector(selectCurrentUser);
@@ -47,6 +52,10 @@ export function MainPage() {
         dispatch(getUserFriends());
         break;
       }
+      case 'Feed': {
+        dispatch(feedFriendPosts());
+        break;
+      }
     }
     setPageType(type);
   };
@@ -55,6 +64,8 @@ export function MainPage() {
     switch (param) {
       case 'Friends':
         return <FriendsComponent />;
+      case 'Feed':
+        return <PostsComponent />;
       default:
         return <UsersComponent />;
     }

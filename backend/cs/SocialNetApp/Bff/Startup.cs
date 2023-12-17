@@ -1,8 +1,7 @@
 ﻿using Bff.API.Middlewares;
+using Bff.Infrastructure.gRpc.Services;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
-using Microsoft.AspNetCore.Builder;
-using Profile.Infrastructure.gRpc.Services;
-using System.Reflection;
+using Bff.Infrastructure.Services.Interfaces;
 
 namespace Bff
 {
@@ -37,7 +36,8 @@ namespace Bff
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFriendService, FriendService>();
             services.AddScoped<IPostService, PostService>();
-            services.AddScoped<IDialogService, DialogService>();            
+            services.AddScoped<IDialogService, DialogService>();
+            services.AddSingleton<IGrpcChannelsProvider, GrpcChannelsProvider>();
 
             services.AddAuthorization();
             services.ConfigureAuthentication();
@@ -54,12 +54,6 @@ namespace Bff
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseWebSockets();
-            Parallel.Invoke(
-                () => FriendService.WarmupChannels(), 
-                () => UserService.WarmupChannels(),
-                () => PostService.WarmupChannels(),
-                () => DialogService.WarmupChannels()
-                );
 
             app.UseHeadersMiddleware();
 

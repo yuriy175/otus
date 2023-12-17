@@ -11,8 +11,11 @@
 
         public async Task Invoke(HttpContext context)
         {
-            IHeaderDictionary headers = context.Response.Headers;
-            headers.Add("ClientLanguage", "CSharp");
+            context.Response.OnStarting(() =>
+            {
+                context.Response.Headers["Server-Language"] = "CSharp";
+                return Task.CompletedTask;
+            });
 
             await _next(context);
         }

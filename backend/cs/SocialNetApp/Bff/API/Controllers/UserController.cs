@@ -1,12 +1,8 @@
-﻿using Auths;
-using AutoMapper;
+﻿using AutoMapper;
 using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
-using Grpc.Core;
-using Grpc.Net.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Profile;
 
 namespace Bff.API.Controllers
 {

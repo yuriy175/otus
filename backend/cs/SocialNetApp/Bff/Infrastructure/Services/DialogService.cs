@@ -2,6 +2,7 @@
 using AutoMapper;
 using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
+using Bff.Infrastructure.Services.Interfaces;
 using DialogGrpc;
 using FriendGrpc;
 using Grpc.Net.Client;
@@ -14,45 +15,22 @@ using static FriendGrpc.Friend;
 using static PostGrpc.Post;
 using static ProfileGrpc.Users;
 
-namespace Profile.Infrastructure.gRpc.Services
+namespace Bff.Infrastructure.gRpc.Services
 {
     public class DialogService : IDialogService
     {
-        private readonly static string _grpcDialogsUrl = Environment.GetEnvironmentVariable("GRPC_DIALOGS");
-        private readonly static string _grpcUsersUrl = Environment.GetEnvironmentVariable("GRPC_PROFILE");
-
         private readonly IMapper _mapper;
+        private readonly IGrpcChannelsProvider _channelsProvider;
 
-        private static readonly GrpcChannel _usersChannel = null;
-        private static readonly GrpcChannel _dialogsChannel = null;
-
-        static DialogService()
-        {
-            var options = new GrpcChannelOptions()
-            {
-                HttpHandler = new SocketsHttpHandler
-                {
-                    EnableMultipleHttp2Connections = true,
-                }
-            };
-            _dialogsChannel = GrpcChannel.ForAddress(_grpcDialogsUrl, options);
-            _usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-
-            _dialogsChannel.ConnectAsync().Wait();
-            _usersChannel.ConnectAsync().Wait();
-        }
-
-        public static Task WarmupChannels(){ return Task.CompletedTask; }
-
-
-        public DialogService(IMapper mapper)
+        public DialogService(IMapper mapper, IGrpcChannelsProvider channelsProvider)
         {
             _mapper = mapper;
+            _channelsProvider = channelsProvider;
         }
 
         public async Task<MessageDto> CreateMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken)
         {
-            var dialogClient = new DialogClient(_dialogsChannel);
+            var dialogClient = new DialogClient(_channelsProvider.GetDialogsChannel());
             var reply = await dialogClient.CreateMessageAsync(new CreateMessageRequest { AuthorId = authorId, UserId = userId, Text = text});
 
             return new MessageDto
@@ -65,8 +43,8 @@ namespace Profile.Infrastructure.gRpc.Services
 
         public async Task<UserMessagesDto> GetMessagesAsync(uint authorId, uint userId, CancellationToken cancellationToken)
         {
-            var userClient = new UsersClient(_usersChannel);
-            var dialogClient = new DialogClient(_dialogsChannel);
+            var userClient = new UsersClient(_channelsProvider.GetUsersChannel());
+            var dialogClient = new DialogClient(_channelsProvider.GetDialogsChannel());
             var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = userId });
 
             var reply = dialogClient.GetMessages(new GetMessagesRequest { AuthorId = authorId, UserId = userId }, cancellationToken: cancellationToken);

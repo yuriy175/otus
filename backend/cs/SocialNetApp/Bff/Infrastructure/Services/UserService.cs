@@ -2,48 +2,28 @@
 using AutoMapper;
 using Bff.API.Dtos;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
+using Bff.Infrastructure.Services.Interfaces;
 using Grpc.Core;
 using Grpc.Net.Client;
 using ProfileGrpc;
 using static ProfileGrpc.Users;
 
-namespace Profile.Infrastructure.gRpc.Services
+namespace Bff.Infrastructure.gRpc.Services
 {
     public class UserService : IUserService
     {
-        private readonly static string _grpcUsersUrl = Environment.GetEnvironmentVariable("GRPC_PROFILE");
-
         private readonly IMapper _mapper;
+        private readonly IGrpcChannelsProvider _channelsProvider;
 
-        private static readonly GrpcChannel _usersChannel = null;
-        private static readonly GrpcChannel _authChannel = null;
-
-        static UserService()
-        {
-            var options = new GrpcChannelOptions()
-            {
-                HttpHandler = new SocketsHttpHandler
-                {
-                    EnableMultipleHttp2Connections = true,
-                }
-            };
-            _usersChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-            _authChannel = GrpcChannel.ForAddress(_grpcUsersUrl, options);
-
-            _usersChannel.ConnectAsync().Wait();
-            _authChannel.ConnectAsync().Wait();
-        }
-
-        public static Task WarmupChannels() { return Task.CompletedTask; }
-
-        public UserService(IMapper mapper)
+        public UserService(IMapper mapper, IGrpcChannelsProvider channelsProvider)
         {
             _mapper = mapper;
+            _channelsProvider = channelsProvider;
         }
 
         public async Task<IEnumerable<UserDto>> GetUsersByNameAsync(string name, string surname)
         {
-            var client = new UsersClient(_usersChannel);
+            var client = new UsersClient(_channelsProvider.GetUsersChannel());
             using var call = client.GetUsersByName(new GetUsersByNameRequest
             {
                 Name = name,
@@ -63,8 +43,8 @@ namespace Profile.Infrastructure.gRpc.Services
             //var options = new GrpcChannelOptions();
             //using var channel = GrpcChannel.ForAddress(_grpcUrl, options);
             //using var authChannel = GrpcChannel.ForAddress(_grpcUrl, options);
-            var client = new UsersClient(_usersChannel);
-            var auth = new Auth.AuthClient(_authChannel);
+            var client = new UsersClient(_channelsProvider.GetUsersChannel());
+            var auth = new Auth.AuthClient(_channelsProvider.GetAuthChannel());
 
             var token = await auth.LoginAsync(new LoginRequest { Id = dto.Id, Password = dto.Password });
             var user = await client.GetUserByIdAsync(new GetUserByIdRequest { Id = dto.Id });
@@ -87,7 +67,7 @@ namespace Profile.Infrastructure.gRpc.Services
 
         public async Task<UserDto> PutUserAsync(NewUserDto dto, string password)
         {
-            var client = new UsersClient(_usersChannel);
+            var client = new UsersClient(_channelsProvider.GetUsersChannel());
             var reply = await client.AddUserAsync(new AddUserRequest { 
                 User = new UserReply
             {
