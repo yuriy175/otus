@@ -33,6 +33,7 @@ import { PageType, drawerWidth } from './types';
 import {
   FriendsComponent,
   PostsComponent,
+  ProfileComponent,
   UsersComponent,
 } from '../../components';
 
@@ -67,7 +68,7 @@ export function MainPage() {
       case 'Feed':
         return <PostsComponent />;
       default:
-        return <UsersComponent />;
+        return <ProfileComponent />;
     }
   };
 

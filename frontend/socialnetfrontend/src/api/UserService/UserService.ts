@@ -1,12 +1,12 @@
 import {addBearerToken, axiosCsInstance, axiosGoInstance} from '../common'
 
 import {UserClient} from '../Client'
+import { User } from '../../core/types'
 
 enum UserClients {
     AuthClient, UserClient
 }
 
-//const getAuthClient = (client: UserClients): AuthClient => new AuthClient('auth', axiosInstance)
 const getUserClient = (): UserClient => new UserClient('users', axiosCsInstance) //axiosCsInstance)
 
 export const loginUser = async (
@@ -25,4 +25,14 @@ export const loginUser = async (
     addBearerToken(token)
 
     return userDto
+}
+
+export const getUsers = async (name: string, surname: string) =>{
+    const userClient = getUserClient()
+    return userClient.search(name, surname)
+}
+
+export const registerUser = async (user: User, password: string) =>{
+    const userClient = getUserClient()
+    return userClient.register({...user, password})
 }

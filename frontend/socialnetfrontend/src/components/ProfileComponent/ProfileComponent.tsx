@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import css from './UsersComponent.css';
+import css from './ProfileComponent.css';
 
 import {
   useAppDispatch,
@@ -8,7 +8,7 @@ import {
 } from '../../core/store';
 import TextField from '@mui/material/TextField';
 
-export function UsersComponent() {
+export function ProfileComponent() {
   const dispatch = useAppDispatch();
   const user = useRootSelector(selectCurrentUser);
   console.log('user', user);

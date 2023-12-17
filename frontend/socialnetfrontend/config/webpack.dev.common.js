@@ -66,6 +66,18 @@ module.exports = merge(common, {
         target: 'http://localhost:55297',
         pathRewrite: { '/go/posts': '' },
       },
+      {
+        path: '/cs/dialogs',
+        changeOrigin: true,
+        target: 'http://localhost:5297',
+        pathRewrite: { '/cs/dialogs': '' },
+      },
+      {
+        path: '/go/dialogs',
+        changeOrigin: true,
+        target: 'http://localhost:55297',
+        pathRewrite: { '/go/dialogs': '' },
+      },
     ],
   },
   output: {

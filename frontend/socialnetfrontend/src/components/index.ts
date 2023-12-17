@@ -1,5 +1,6 @@
 export {LoginComponent} from './LoginComponent'
 export {PostsComponent} from './PostsComponent'
 export {FriendsComponent} from './FriendsComponent'
-export {UsersComponent} from './UsersComponent'
+export {SearchComponent} from './SearchComponent'
+export {ProfileComponent} from './ProfileComponent'
 export {DialogsComponent} from './DialogsComponent'

@@ -1,0 +1,1 @@
+export {createDialogMessage, getDialog} from './DialogService'
