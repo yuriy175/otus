@@ -32,7 +32,21 @@ namespace Posts.Infrastructure.gRpc.Services
             var posts = await _mediator.Send(new FeedPostsQuery { UserId = request.UserId, Offset = request.Offset, Limit = request.Limit });
             foreach (var post in posts)
             {
-                await responseStream.WriteAsync(new PostReply { UserId = post.Id, AuthorId = post.AuthorId, Message = post.Message });
+                try
+                {
+                    await responseStream.WriteAsync(new PostReply
+                    {
+                        UserId = post.Id,
+                        AuthorId = post.AuthorId,
+                        Message = post.Message,
+                        Created = post.Created.HasValue ? Timestamp.FromDateTime(
+                            DateTime.SpecifyKind(post.Created.Value, DateTimeKind.Utc)) : new Timestamp(),
+                    });
+                }
+                catch(Exception ex)
+                {
+                    var u = 0;
+                }
             }
         }
     }

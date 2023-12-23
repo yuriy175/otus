@@ -27,53 +27,61 @@ namespace WebSockets.Core.Services
 
         public async Task<Task> OnWebSocketConnectAsync(HttpContext context)
         {
-            var task = new TaskCompletionSource();
-            var token = context.Request.Query["token"];
-            var userId = AuthUtils.GetAuthorizedUserId(token);
-            if (userId == null)
+            try
             {
-                return Task.FromException(new Exception());
-            }
-            var cancellationToken = new CancellationTokenSource();
-            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-            var friends = (await _friendsRepository.GetFriendIdsAsync(userId.Value, cancellationToken.Token)).ToList();
-            foreach (var friendId in friends)
-            {
-                _websockets.AddOrUpdate(
-                    Convert.ToUInt32(friendId),
-                    id => new List<WebSocket> { webSocket },
-                    (id, list) =>
-                    {
-                        list.Add(webSocket);
-                        return list;
-                    });
-                _mqReceiver.ReceivePosts((uint)friendId, async (id, post) =>
+                var task = new TaskCompletionSource();
+                var token = context.Request.Query["token"];
+                var userId = AuthUtils.GetAuthorizedUserId(token);
+                if (userId == null)
                 {
-                    Console.WriteLine($"pre [x] WS sent '{id}':'{post}'");
-                    byte[] bytes = Encoding.UTF8.GetBytes($"{id}: {post}");
-                    if (_websockets.TryGetValue(id, out List<WebSocket>? values) && values is not null)
-                    {
-                        Console.WriteLine($"pre2 [x] WS sent '{id}':'{post}'");
-                        foreach (var ws in values.ToImmutableList())
+                    return Task.FromException(new Exception());
+                }
+                var cancellationToken = new CancellationTokenSource();
+                var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                var friends = (await _friendsRepository.GetFriendIdsAsync(userId.Value, cancellationToken.Token)).ToList();
+                foreach (var friendId in friends)
+                {
+                    _websockets.AddOrUpdate(
+                        Convert.ToUInt32(friendId),
+                        id => new List<WebSocket> { webSocket },
+                        (id, list) =>
                         {
-                            Console.WriteLine($"pre3 [x] WS sent '{id}':'{post}'");
-                            await ws.SendAsync(
-                                    bytes,
-                                    WebSocketMessageType.Text,
-                                    true,
-                                    CancellationToken.None);
-                            Console.WriteLine($" [x] WS sent '{id}':'{post}'");
+                            list.Add(webSocket);
+                            return list;
+                        });
+                    _mqReceiver.ReceivePosts((uint)friendId, async (id, post) =>
+                    {
+                        Console.WriteLine($"pre [x] WS sent '{id}':'{post}'");
+                        byte[] bytes = Encoding.UTF8.GetBytes($"{id}: {post}");
+                        if (_websockets.TryGetValue(id, out List<WebSocket>? values) && values is not null)
+                        {
+                            Console.WriteLine($"pre2 [x] WS sent '{id}':'{post}'");
+                            foreach (var ws in values.ToImmutableList())
+                            {
+                                Console.WriteLine($"pre3 [x] WS sent '{id}':'{post}'");
+                                await ws.SendAsync(
+                                        bytes,
+                                        WebSocketMessageType.Text,
+                                        true,
+                                        CancellationToken.None);
+                                Console.WriteLine($" [x] WS sent '{id}':'{post}'");
+                            }
                         }
-                    }
-                    //await webSocket.SendAsync(
-                    //    bytes,
-                    //    WebSocketMessageType.Text,
-                    //    true,
-                    //    CancellationToken.None);
-                });
-            }
+                        //await webSocket.SendAsync(
+                        //    bytes,
+                        //    WebSocketMessageType.Text,
+                        //    true,
+                        //    CancellationToken.None);
+                    });
+                }
 
-            return task.Task!;
+                return task.Task!;
+            }
+            catch  (Exception ex)
+            {
+                return Task.CompletedTask;
+                var y = 0;
+            }
         }
     }
 }

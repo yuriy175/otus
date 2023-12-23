@@ -70,7 +70,9 @@ export function PostsComponent() {
               </ListItemAvatar>
               <ListItemText
                 primary={`${p.author.surname} ${p.author.name} (${p.author.id})`}
-                secondary={p.message}
+                secondary={`${p.datetime.toLocaleString()} - ${
+                  p.message
+                }`}
               />
             </ListItem>
           ))

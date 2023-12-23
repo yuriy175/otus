@@ -12,5 +12,5 @@ export type DialogMessage =
     id: number
     authorId: number
     message: string
-    time?: string
+    datetime?: Date
 }

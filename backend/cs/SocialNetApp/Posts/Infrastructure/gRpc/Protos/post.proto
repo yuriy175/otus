@@ -1,6 +1,7 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 option csharp_namespace = "PostGrpc";
  
@@ -26,4 +27,5 @@ message PostReply {
   uint32 user_id = 1;
   uint32 author_id = 2;
   string message = 3;
+  optional google.protobuf.Timestamp created = 4;
 }

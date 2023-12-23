@@ -7,6 +7,9 @@ export const loginCurrentUser = (id: number, password: string):AppThunk =>
 async(dispatch, getState) => {
     const user = await loginUser(id, password)
     dispatch(setCurrentUser(user.user))
+    dispatch({
+        payload: {token: user.token},
+        type : "websocket/start"})
 }
 
 export const logoffCurrentUser = ():AppThunk => 

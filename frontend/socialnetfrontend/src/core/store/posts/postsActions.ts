@@ -11,7 +11,7 @@ async(dispatch, getState) => {
         id:  p.id,
         author:  apiPosts.authors?.find(a => a.id === p.authorId),
         message:  p.message,
-        //time:  p.created,       
+        datetime:  new Date(p.created),       
     }))
     dispatch(setPosts(posts))
 }

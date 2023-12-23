@@ -2,3 +2,4 @@ export {loginCurrentUser, selectCurrentUser, logoffCurrentUser, selectFoundUsers
 export {useAppDispatch, useRootSelector} from './store'
 export {getUserFriends, selectFriends, addUserFriends, deleteUserFriends} from './friends'
 export {addUserPost, feedFriendPosts, selectPosts} from './posts'
+export {delay2} from './utils'

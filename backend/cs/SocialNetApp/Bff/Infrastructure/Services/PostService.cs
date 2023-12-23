@@ -50,6 +50,7 @@ namespace Bff.Infrastructure.gRpc.Services
                     AuthorId = post.AuthorId,
                     Id = post.UserId,
                     Message = post.Message,
+                    Created = post.Created.ToDateTime(),
                 });
             }
 
