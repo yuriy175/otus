@@ -17,7 +17,7 @@
     "pretty": true,
     "noUncheckedIndexedAccess": false,
     "lib": ["es2017", "dom"],
-    "types": ["react/next", "react-dom/next"],
+    "types": ["react/next", "react-dom/next", "react-dom/experimental"],
     "paths": {
       "nir/Nir": ["./src/remoteType.d.ts"]
     },

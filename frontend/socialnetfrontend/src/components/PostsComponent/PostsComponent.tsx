@@ -69,7 +69,7 @@ export function PostsComponent() {
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
-                primary={`${p.author.surname} ${p.author.name}`}
+                primary={`${p.author.surname} ${p.author.name} (${p.author.id})`}
                 secondary={p.message}
               />
             </ListItem>

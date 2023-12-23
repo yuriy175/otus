@@ -1,1 +1,1 @@
-export {loginUser} from './UserService'
+export {loginUser, getUsers, registerUser} from './UserService'

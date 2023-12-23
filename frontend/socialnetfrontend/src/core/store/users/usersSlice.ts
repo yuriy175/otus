@@ -12,6 +12,9 @@ export const usersSlice = createSlice({
         setCurrentUser(state, {payload}: PayloadAction<User>){
           state.user =  payload
         },
+        setFoundUser(state, {payload}: PayloadAction<User[]>){
+          state.foundUsers =  payload
+        },
     }
 })
 

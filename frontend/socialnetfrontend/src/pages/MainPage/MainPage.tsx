@@ -34,6 +34,7 @@ import {
   FriendsComponent,
   PostsComponent,
   ProfileComponent,
+  SearchComponent,
   UsersComponent,
 } from '../../components';
 
@@ -67,6 +68,8 @@ export function MainPage() {
         return <FriendsComponent />;
       case 'Feed':
         return <PostsComponent />;
+      case 'Search':
+        return <SearchComponent />;
       default:
         return <ProfileComponent />;
     }
