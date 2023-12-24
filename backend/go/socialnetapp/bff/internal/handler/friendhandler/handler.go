@@ -93,7 +93,7 @@ func (h *friendHandlerImp) DeleteFriend(w http.ResponseWriter, req *http.Request
 
 // GetFriends godoc
 // @Summary Get friends post
-// @Tags         posts
+// @Tags         friends
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json

@@ -14,12 +14,14 @@ import (
 )
 
 type friendServiceImp struct {
-	grpcFriendUrl string
+	grpcFriendUrl  string
+	grpcProfileUrl string
 }
 
 func NewFriendService() service.FriendService {
 	grpcFriendUrl, _ := os.LookupEnv("GRPC_POSTS")
-	return &friendServiceImp{grpcFriendUrl: grpcFriendUrl}
+	grpcProfileUrl, _ := os.LookupEnv("GRPC_PROFILE")
+	return &friendServiceImp{grpcFriendUrl: grpcFriendUrl, grpcProfileUrl: grpcProfileUrl}
 }
 
 // AddFriend implements service.FriendService.
@@ -36,7 +38,12 @@ func (s *friendServiceImp) AddFriend(ctx context.Context, userId uint, friendId 
 		return nil, err
 	}
 
-	userClient := gen.NewUsersClient(conn)
+	userConn, err := grpc.Dial(s.grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("fail to dial: %v", err)
+	}
+	defer userConn.Close()
+	userClient := gen.NewUsersClient(userConn)
 	userRequest := &gen.GetUserByIdRequest{Id: uint32(friendId)}
 	user, err := userClient.GetUserById(ctx, userRequest)
 	if err != nil {
@@ -86,9 +93,14 @@ func (s *friendServiceImp) GetFriends(ctx context.Context, userId uint) ([]dto.U
 		return nil, err
 	}
 
-	userClient := gen.NewUsersClient(conn)
+	userConn, err := grpc.Dial(s.grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("fail to dial: %v", err)
+	}
+	defer userConn.Close()
+	userClient := gen.NewUsersClient(userConn)
 	friends := make([]dto.UserDto, len(friendsReply.Ids))
-	for _, friendId := range friendsReply.Ids {
+	for ind, friendId := range friendsReply.Ids {
 		userRequest := &gen.GetUserByIdRequest{Id: uint32(friendId)}
 		user, err := userClient.GetUserById(ctx, userRequest)
 		if err != nil {
@@ -108,7 +120,7 @@ func (s *friendServiceImp) GetFriends(ctx context.Context, userId uint) ([]dto.U
 		if user.Info != nil {
 			userDto.Info = &user.Info.Value
 		}
-		friends = append(friends, userDto)
+		friends[ind] = userDto
 	}
 
 	return friends, err

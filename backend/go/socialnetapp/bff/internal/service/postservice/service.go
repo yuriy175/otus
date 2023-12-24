@@ -62,6 +62,7 @@ func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint
 			ID:       uint(reply.UserId),
 			AuthorId: uint(reply.AuthorId),
 			Message:  reply.Message,
+			Created:  service.ConvertToTime(reply.Created),
 		}
 		posts = append(posts, post)
 	}

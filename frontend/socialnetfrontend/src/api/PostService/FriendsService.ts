@@ -2,7 +2,7 @@ import {axiosCsInstance, axiosGoInstance} from '../common'
 
 import {FriendsClient} from '../Client'
 
-const getFriendsClient = (): FriendsClient => new FriendsClient('friends', axiosCsInstance)
+const getFriendsClient = (): FriendsClient => new FriendsClient('friends', axiosGoInstance)
 
 export const getFriends = async () => {
     const client = getFriendsClient()

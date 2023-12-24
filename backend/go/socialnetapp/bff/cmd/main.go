@@ -75,10 +75,13 @@ func main() {
 	router.HandleFunc("/login", userHandler.Login)
 	router.HandleFunc("/friend/set/{user_id}", friendHandler.AddFriend)
 	router.HandleFunc("/friend/delete/{user_id}", friendHandler.DeleteFriend)
-	router.HandleFunc("/friends", friendHandler.DeleteFriend)
+	router.HandleFunc("/friends", friendHandler.GetFriends)
 	router.HandleFunc("/post/create", postHandler.CreatePost)
 	router.HandleFunc("/post/feed", postHandler.FeedPosts)
+	router.HandleFunc("/user/register", userHandler.RegisterUser)
+	router.HandleFunc("/user/search", userHandler.FindUser)
 
+	router.Use(headersMiddleware)
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.Handle("/", router)
 
@@ -86,4 +89,11 @@ func main() {
 	if err := http.ListenAndServe(":"+restPort, handler); err != nil {
 		panic(err)
 	}
+}
+
+func headersMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Server-Language", "Golang")
+		next.ServeHTTP(w, r)
+	})
 }

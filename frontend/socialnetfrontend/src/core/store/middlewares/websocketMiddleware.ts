@@ -47,7 +47,7 @@ const websocketMiddleware: Middleware = store => {
         return
     }
     const token = action.payload.token
-    reconnect(token)
+    //reconnect(token)
     // webSocket = new WebSocket(endpoint + token);
     // webSocket.onmessage = function(event) {
     //     var leng;

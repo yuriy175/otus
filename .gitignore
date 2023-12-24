@@ -2,6 +2,7 @@
 /backend/go/socialnetapp/.vscode/*.*
 /backend/go/socialnetapp/profile/cmd/*.exe
 /backend/go/socialnetapp/dialogs/cmd/*.exe
+/backend/go/socialnetapp/posts/cmd/*.exe
 /backend/go/socialnetapp/websockets/cmd/*.exe
 /backend/go/socialnetapp/bff/cmd/*.exe
 

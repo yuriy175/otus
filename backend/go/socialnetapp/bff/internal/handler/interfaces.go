@@ -6,6 +6,8 @@ import (
 
 type UserHandler interface {
 	Login(w http.ResponseWriter, req *http.Request)
+	RegisterUser(w http.ResponseWriter, req *http.Request)
+	FindUser(w http.ResponseWriter, req *http.Request)
 }
 
 type FriendHandler interface {

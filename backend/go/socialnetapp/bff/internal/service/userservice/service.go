@@ -2,6 +2,7 @@ package userservice
 
 import (
 	"context"
+	"io"
 	"log"
 	"os"
 
@@ -43,21 +44,65 @@ func (s *userServiceImp) Login(ctx context.Context, userId uint, password string
 		return nil, err
 	}
 
-	userDto := &dto.UserDto{
-		ID:      uint(user.Id),
-		Name:    user.Name,
-		Surname: user.Surname,
-		//Age:     user.Age.Value,
-		//Sex:     user.Sex,
-	}
-	if user.City != nil {
-		userDto.City = &user.City.Value
-	}
-	if user.Info != nil {
-		userDto.Info = &user.Info.Value
-	}
+	userDto := service.ConvertToUserDto(user)
 	return &dto.LoggedinUserDto{
 		User:  userDto,
 		Token: token.Token,
 	}, err
+}
+
+// GetUsersByName implements service.UserService.
+func (s *userServiceImp) GetUsersByName(ctx context.Context, name string, surname string) ([]dto.UserDto, error) {
+	conn, err := grpc.Dial(s.grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("fail to dial: %v", err)
+	}
+	defer conn.Close()
+	userClient := gen.NewUsersClient(conn)
+	getUsersRequest := &gen.GetUsersByNameRequest{
+		Name:    name,
+		Surname: surname,
+	}
+	stream, err := userClient.GetUsersByName(ctx, getUsersRequest)
+	if err != nil {
+		return nil, err
+	}
+	users := make([]dto.UserDto, 0)
+	for {
+		reply, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		user := service.ConvertToUserDto(reply)
+		users = append(users, *user)
+	}
+
+	return users, nil
+}
+
+// PutUser implements service.UserService.
+func (s *userServiceImp) PutUser(ctx context.Context, u *dto.NewUserDto, password string) (*dto.UserDto, error) {
+	conn, err := grpc.Dial(s.grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials())) // , opts...)
+	if err != nil {
+		log.Fatalf("fail to dial: %v", err)
+	}
+	defer conn.Close()
+
+	userClient := gen.NewUsersClient(conn)
+	addUserRequest := &gen.AddUserRequest{
+		Password: password,
+	}
+	reply, err := userClient.AddUser(ctx, addUserRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	userDto := &dto.UserDto{
+		ID: uint(reply.Id),
+	}
+
+	return userDto, nil
 }

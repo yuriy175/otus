@@ -29,7 +29,7 @@ func NewUserHandler(service service.UserService) handler.UserHandler {
 // @Produce  json
 // @Success 200 {array} model.User
 // @Failure      500
-// @Router /users [get]
+// // @Router /users [get]
 func (h *userHandlerImp) GetUsers(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	users, err := h.service.GetUsers(ctx)
@@ -54,7 +54,7 @@ func (h *userHandlerImp) GetUsers(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /user/get/{id} [get]
+// // @Router /user/get/{id} [get]
 func (h *userHandlerImp) GetUserById(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	vars := mux.Vars(req)
@@ -89,7 +89,7 @@ func (h *userHandlerImp) GetUserById(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /user/register [post]
+// // @Router /user/register [post]
 func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 

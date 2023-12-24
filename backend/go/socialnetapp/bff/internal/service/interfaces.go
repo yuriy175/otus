@@ -8,6 +8,8 @@ import (
 
 type UserService interface {
 	Login(_ context.Context, userId uint, password string) (*dto.LoggedinUserDto, error)
+	GetUsersByName(_ context.Context, name string, surname string) ([]dto.UserDto, error)
+	PutUser(_ context.Context, dto *dto.NewUserDto, password string) (*dto.UserDto, error)
 }
 
 type FriendService interface {

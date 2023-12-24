@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	gen "socialnerworkapp.com/pkg/proto/gen"
 	"socialnerworkapp.com/posts/internal/service"
 )
@@ -32,10 +33,16 @@ func (h *GrpcPostsHandlerImp) FeedPosts(r *gen.FeedPostsRequest, stream gen.Post
 		return err
 	}
 	for _, post := range posts {
+		created := post.Created
+		timestamp := timestamppb.Timestamp{
+			Seconds: created.Unix(),
+			Nanos:   int32(created.Nanosecond()),
+		}
 		reply := gen.PostReply{
 			UserId:   uint32(post.ID),
 			AuthorId: uint32(post.AuthorId),
-			Message:  post.Message}
+			Message:  post.Message,
+			Created:  &timestamp}
 		if err := stream.Send(&reply); err != nil {
 			return err
 		}
