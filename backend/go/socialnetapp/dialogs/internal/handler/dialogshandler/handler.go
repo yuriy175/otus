@@ -23,14 +23,14 @@ func NewDialogsHandler(service service.DialogsService) handler.DialogsHandler {
 
 // GetDialogByUserId godoc
 // @Summary Get dialog with user
-// @Tags         dialogs
+// @Tags        obsolete dialogs
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
 // @Param user_id path string true "User id"
 // @Success 200 {array} model.Message
 // @Failure      500
-// @Router /dialog/{user_id}/list [get]
+// // @Router /dialog/{user_id}/list [get]
 func (h *dialogsHandlerImp) GetDialogByUserId(w http.ResponseWriter, req *http.Request) {
 	userId1, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
@@ -60,7 +60,7 @@ func (h *dialogsHandlerImp) GetDialogByUserId(w http.ResponseWriter, req *http.R
 
 // SendMessageToUser godoc
 // @Summary Send message to user
-// @Tags         dialogs
+// @Tags        obsolete dialogs
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -70,7 +70,7 @@ func (h *dialogsHandlerImp) GetDialogByUserId(w http.ResponseWriter, req *http.R
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /dialog/{user_id}/send [post]
+// // @Router /dialog/{user_id}/send [post]
 func (h *dialogsHandlerImp) SendMessageToUser(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 

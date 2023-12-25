@@ -20,5 +20,10 @@ type FriendService interface {
 
 type PostService interface {
 	CreatePost(_ context.Context, userId uint, text string) error
-	FeedPosts(_ context.Context, userId uint, offset uint, limit uint) ([]dto.PostDto, error)
+	FeedPosts(_ context.Context, userId uint, offset uint, limit uint) (*dto.UserPostsDto, error)
+}
+
+type DialogsService interface {
+	CreateMessage(_ context.Context, authorId uint, userId uint, text string) (*dto.MessageDto, error)
+	GetMessages(_ context.Context, userId1 uint, userId2 uint) (*dto.UserMessagesDto, error)
 }

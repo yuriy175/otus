@@ -1,3 +1,3 @@
 export { default as dialogsReducer} from './dialogsSlice'
-//export {addUserPost, feedFriendPosts} from './dialogsActions'
-export {selectDialog} from './dialogsSelectors'
+export {addUserMessage, closeUseDialog, getUserDialog} from './dialogsActions'
+export {selectDialog, selectDialogMessages} from './dialogsSelectors'

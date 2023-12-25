@@ -15,12 +15,14 @@ import (
 )
 
 type postServiceImp struct {
-	grpcPostUrl string
+	grpcPostUrl    string
+	grpcProfileUrl string
 }
 
 func NewPostService() service.PostService {
 	grpcPostUrl, _ := os.LookupEnv("GRPC_POSTS")
-	return &postServiceImp{grpcPostUrl: grpcPostUrl}
+	grpcProfileUrl, _ := os.LookupEnv("GRPC_PROFILE")
+	return &postServiceImp{grpcPostUrl: grpcPostUrl, grpcProfileUrl: grpcProfileUrl}
 }
 
 // CreatePost implements service.PostService.
@@ -37,7 +39,7 @@ func (s *postServiceImp) CreatePost(ctx context.Context, userId uint, text strin
 }
 
 // FeedPosts implements service.PostService.
-func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint, limit uint) ([]dto.PostDto, error) {
+func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint, limit uint) (*dto.UserPostsDto, error) {
 	conn, err := grpc.Dial(s.grpcPostUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("fail to dial: %v", err)
@@ -49,7 +51,7 @@ func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint
 	if err != nil {
 		return nil, err
 	}
-	posts := make([]dto.PostDto, 0)
+	posts := make([]*dto.PostDto, 0)
 	for {
 		reply, err := stream.Recv()
 		if err == io.EOF {
@@ -58,7 +60,7 @@ func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint
 		if err != nil {
 			return nil, err
 		}
-		post := dto.PostDto{
+		post := &dto.PostDto{
 			ID:       uint(reply.UserId),
 			AuthorId: uint(reply.AuthorId),
 			Message:  reply.Message,
@@ -67,5 +69,30 @@ func (s *postServiceImp) FeedPosts(ctx context.Context, userId uint, offset uint
 		posts = append(posts, post)
 	}
 
-	return posts, nil
+	userConn, err := grpc.Dial(s.grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("fail to dial: %v", err)
+	}
+	defer userConn.Close()
+	userClient := gen.NewUsersClient(userConn)
+	authors := make([]*dto.UserDto, 0)
+
+	m := map[uint]bool{}
+	for _, v := range posts {
+		authorId := v.AuthorId
+		if !m[authorId] {
+			m[authorId] = true
+			//unique = append(unique, v)
+
+			userRequest := &gen.GetUserByIdRequest{Id: uint32(authorId)}
+			user, err := userClient.GetUserById(ctx, userRequest)
+			if err != nil {
+				return nil, err
+			}
+			author := service.ConvertToUserDto(user)
+			authors = append(authors, author)
+		}
+	}
+
+	return &dto.UserPostsDto{Posts: posts, Authors: authors}, nil
 }

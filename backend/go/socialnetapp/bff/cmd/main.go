@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"os"
 
+	"socialnerworkapp.com/bff/internal/handler/dialoghandler"
 	"socialnerworkapp.com/bff/internal/handler/friendhandler"
 	"socialnerworkapp.com/bff/internal/handler/posthandler"
 	"socialnerworkapp.com/bff/internal/handler/userhandler"
+	"socialnerworkapp.com/bff/internal/service/dialogservice"
 	"socialnerworkapp.com/bff/internal/service/friendservice"
 	"socialnerworkapp.com/bff/internal/service/postservice"
 	"socialnerworkapp.com/bff/internal/service/userservice"
@@ -71,6 +73,9 @@ func main() {
 	postSrv := postservice.NewPostService()
 	postHandler := posthandler.NewPostHandler(postSrv)
 
+	dialogSrv := dialogservice.NewDialogService()
+	dialogHandler := dialoghandler.NewDialogHandler(dialogSrv)
+
 	router := mux.NewRouter()
 	router.HandleFunc("/login", userHandler.Login)
 	router.HandleFunc("/friend/set/{user_id}", friendHandler.AddFriend)
@@ -80,7 +85,8 @@ func main() {
 	router.HandleFunc("/post/feed", postHandler.FeedPosts)
 	router.HandleFunc("/user/register", userHandler.RegisterUser)
 	router.HandleFunc("/user/search", userHandler.FindUser)
-
+	router.HandleFunc("/dialog/{user_id}/list", dialogHandler.GetDialogByUserId)
+	router.HandleFunc("/dialog/{user_id}/send", dialogHandler.SendMessageToUser)
 	router.Use(headersMiddleware)
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.Handle("/", router)

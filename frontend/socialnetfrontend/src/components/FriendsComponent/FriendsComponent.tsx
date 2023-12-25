@@ -16,6 +16,7 @@ import {
   selectFriends,
   deleteUserFriends,
   addUserFriends,
+  getUserDialog,
 } from '../../core/store';
 import TextField from '@mui/material/TextField';
 
@@ -29,6 +30,10 @@ export function FriendsComponent() {
   };
   const onAddFriend = () => {
     newUserId && dispatch(addUserFriends(newUserId));
+  };
+
+  const onOpenDialog = (id: number) => {
+    dispatch(getUserDialog(id));
   };
 
   const onIdChange: ChangeEventHandler<
@@ -76,6 +81,9 @@ export function FriendsComponent() {
             </Typography>
           </CardContent>
           <CardActions>
+            <Button size="small" onClick={() => onOpenDialog(e.id)}>
+              Написать
+            </Button>
             <Button size="small" onClick={() => onDeleteFriend(e.id)}>
               Удалить
             </Button>

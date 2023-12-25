@@ -29,14 +29,15 @@ import { Navigate } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { DrawerComponent } from './DrawerComponent';
 import { ToolbarComponent } from './ToolbarComponent';
-import { PageType, drawerWidth } from './types';
+import { drawerWidth } from './types';
 import {
+  DialogsComponent,
   FriendsComponent,
   PostsComponent,
   ProfileComponent,
   SearchComponent,
-  UsersComponent,
 } from '../../components';
+import { PageType } from '../../core/types';
 
 export function MainPage() {
   const user = useRootSelector(selectCurrentUser);
@@ -70,6 +71,8 @@ export function MainPage() {
         return <PostsComponent />;
       case 'Search':
         return <SearchComponent />;
+      case 'Dialogs':
+        return <DialogsComponent />;
       default:
         return <ProfileComponent />;
     }

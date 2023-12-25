@@ -50,19 +50,7 @@ func (s *friendServiceImp) AddFriend(ctx context.Context, userId uint, friendId 
 		return nil, err
 	}
 
-	userDto := &dto.UserDto{
-		ID:      uint(user.Id),
-		Name:    user.Name,
-		Surname: user.Surname,
-		//Age:     user.Age.Value,
-		//Sex:     user.Sex,
-	}
-	if user.City != nil {
-		userDto.City = &user.City.Value
-	}
-	if user.Info != nil {
-		userDto.Info = &user.Info.Value
-	}
+	userDto := service.ConvertToUserDto(user)
 	return userDto, err
 }
 

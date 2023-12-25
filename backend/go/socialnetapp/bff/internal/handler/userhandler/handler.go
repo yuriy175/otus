@@ -137,7 +137,7 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 // @Tags         users
 // @Accept  json
 // @Param properties query dto.SearchUserDto true "Search user properties"
-// @Success 200 {array} model.User
+// @Success 200 {array} dto.UserPostsDto
 // @Failure      400
 // @Failure      404
 // @Failure      500

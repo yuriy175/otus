@@ -20,3 +20,8 @@ type PostHandler interface {
 	CreatePost(w http.ResponseWriter, req *http.Request)
 	FeedPosts(w http.ResponseWriter, req *http.Request)
 }
+
+type DialogsHandler interface {
+	GetDialogByUserId(w http.ResponseWriter, req *http.Request)
+	SendMessageToUser(w http.ResponseWriter, req *http.Request)
+}
