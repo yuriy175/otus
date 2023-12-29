@@ -44,8 +44,7 @@ namespace Posts
             services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddScoped<IFriendsService, FriendsService>();
-            services.AddScoped<IPostsService, PostsService>();
-            services.AddScoped<IMQSender, MQSender>();            
+            services.AddScoped<IPostsService, PostsService>(); 
 
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

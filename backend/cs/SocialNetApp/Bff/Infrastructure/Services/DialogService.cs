@@ -38,6 +38,7 @@ namespace Bff.Infrastructure.gRpc.Services
                 AuthorId = reply.AuthorId,
                 Id = reply.UserId,
                 Message = reply.Text,
+                Created = reply.Created.ToDateTime(),
             };
         }
 
@@ -56,6 +57,7 @@ namespace Bff.Infrastructure.gRpc.Services
                     AuthorId = e.AuthorId,
                     Id = e.UserId,
                     Message = e.Text,
+                    Created = e.Created.ToDateTime(),
                 })
             };
         }

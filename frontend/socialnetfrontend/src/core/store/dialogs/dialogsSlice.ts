@@ -1,25 +1,18 @@
 import type {PayloadAction} from '@reduxjs/toolkit'
 import {createEntityAdapter, createSlice} from '@reduxjs/toolkit'
-import { Dialog, CurrentUser, Post, User, DialogMessage } from '../../../core/types'
+import { Dialog, CurrentUser, Post, User, DialogMessage, CurrentDialog } from '../../../core/types'
 
-export const dialogsAdapter = createEntityAdapter<Dialog>({
-  selectId: (dialog) => dialog.id,
-})
-
+const initialState : CurrentDialog = {}
 export const dialogsSlice = createSlice({
     name: 'dialogs',
-    initialState: dialogsAdapter.getInitialState(),
+    initialState,
     reducers:{
       setDialog(state, {payload}: PayloadAction<Dialog>){
-        dialogsAdapter.upsertOne(state, payload)
+        state.dialog =  payload
       },
 
-      addDialogMessage(state, {payload}: PayloadAction<{id: number, message: DialogMessage}>){
-        state.entities[payload.id].messages.push(payload.message)
-      },
-
-      closeDialog(state, {payload}: PayloadAction<Dialog['id']>){
-        dialogsAdapter.removeOne(state, payload)
+      addDialogMessage(state, {payload}: PayloadAction<DialogMessage>){
+        state.dialog.messages.push(payload)
       },
     }
 })

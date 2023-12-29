@@ -631,8 +631,8 @@ export interface LoginDto {
 }
 
 export interface MessageDto {
-    id?: number;
-    authorId?: number;
+    id: number;
+    authorId: number;
     message?: string | undefined;
     created?: Date | undefined;
 }
@@ -648,8 +648,8 @@ export interface NewUserDto {
 }
 
 export interface PostDto {
-    id?: number;
-    authorId?: number;
+    id: number;
+    authorId: number;
     message?: string | undefined;
     created?: Date | undefined;
 }

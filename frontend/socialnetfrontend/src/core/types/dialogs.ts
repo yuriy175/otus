@@ -2,7 +2,6 @@ import { User } from "."
 
 export type Dialog = 
 {
-    id: number
     partner: User
     messages: DialogMessage[]
 }
@@ -13,4 +12,8 @@ export type DialogMessage =
     authorId: number
     message: string
     datetime?: Date
+}
+
+export type CurrentDialog = {
+    dialog?: Dialog
 }

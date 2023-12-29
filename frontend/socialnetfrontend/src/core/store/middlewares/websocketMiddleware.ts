@@ -5,7 +5,7 @@
 // import ChatMessage from "./chatMessage";
 
 import { Middleware } from "@reduxjs/toolkit";
-import { delay2 } from "..";
+import { delay } from "..";
 
  
 const websocketMiddleware: Middleware = store => {
@@ -40,7 +40,7 @@ const websocketMiddleware: Middleware = store => {
             console.log("Error!");
         };
         
-        await delay2(2000)
+        await delay(2000)
     }
     if(action.type !== 'websocket/start'){
         next(action);

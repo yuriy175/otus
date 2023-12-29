@@ -1,6 +1,4 @@
 import type { RootState } from "../store"
-import { dialogsAdapter, dialogsSlice } from './dialogsSlice'
+import { dialogsSlice } from './dialogsSlice'
 
-export const {selectById: selectDialog} = dialogsAdapter.getSelectors<RootState>(state => state.dialogs)
-
-export const selectDialogMessages = (state: RootState, id: number) => selectDialog(state, id)?.messages
+export const selectDialogMessages = (state: RootState) => state.dialogs.dialog

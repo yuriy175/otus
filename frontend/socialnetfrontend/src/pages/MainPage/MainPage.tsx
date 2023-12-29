@@ -23,6 +23,8 @@ import {
   useAppDispatch,
   getUserFriends,
   feedFriendPosts,
+  selectCurrentPage,
+  setActivePage,
 } from '../../core/store';
 import Switch from '@mui/material/Switch';
 import { Navigate } from 'react-router-dom';
@@ -43,7 +45,8 @@ export function MainPage() {
   const user = useRootSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [pageType, setPageType] = useState<PageType>('Profile');
+  //const [pageType, setPageType] = useState<PageType>('Profile');
+  const pageType = useRootSelector(selectCurrentPage);
 
   if (!user) {
     return <Navigate to="/" />;
@@ -60,7 +63,7 @@ export function MainPage() {
         break;
       }
     }
-    setPageType(type);
+    dispatch(setActivePage(type));
   };
 
   const renderSwitch = (param: PageType) => {

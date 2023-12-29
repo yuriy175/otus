@@ -16,6 +16,8 @@ import {
   selectFoundUsers,
   searchUsers,
   addUserFriends,
+  getUserDialog,
+  setActivePage,
 } from '../../core/store';
 import TextField from '@mui/material/TextField';
 import { User } from '../../core/types';
@@ -47,7 +49,8 @@ export function SearchComponent() {
   };
 
   const onStartDialog = (user: User) => {
-    //dispatch(addUserFriends(user.id));
+    dispatch(getUserDialog(user.id));
+    dispatch(setActivePage('Dialogs'));
   };
 
   return (

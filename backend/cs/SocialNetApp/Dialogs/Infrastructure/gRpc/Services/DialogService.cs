@@ -1,7 +1,9 @@
 ﻿using DialogGrpc;
+using Dialogs.Core.Model;
 using Dialogs.Core.Model.Interfaces;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.Extensions.Hosting;
 using static DialogGrpc.Dialog;
 
 namespace Dialogs.Infrastructure.gRpc.Services
@@ -22,7 +24,9 @@ namespace Dialogs.Infrastructure.gRpc.Services
             {
                 AuthorId = message.AuthorId,
                 Text = message.Text,
-                UserId = Convert.ToUInt32(message.UserId)
+                UserId = Convert.ToUInt32(message.UserId),
+                Created = message.Created.HasValue ? Timestamp.FromDateTime(
+                            DateTime.SpecifyKind(message.Created.Value, DateTimeKind.Utc)) : new Timestamp(),
             };
         }
 
@@ -34,7 +38,9 @@ namespace Dialogs.Infrastructure.gRpc.Services
             reply.Messages.AddRange(messages.Select(m => new MessageReply{
                 AuthorId = m.AuthorId,
                 Text = m.Text,
-                UserId = Convert.ToUInt32(m.UserId)
+                UserId = Convert.ToUInt32(m.UserId),
+                Created = m.Created.HasValue ? Timestamp.FromDateTime(
+                            DateTime.SpecifyKind(m.Created.Value, DateTimeKind.Utc)) : new Timestamp(),
             }));
             return reply;
         }

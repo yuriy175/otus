@@ -1,4 +1,5 @@
-﻿using Dialogs.Core.Model;
+﻿using Common.MQ.Core.Model.Interfaces;
+using Dialogs.Core.Model;
 using Dialogs.Core.Model.Interfaces;
 using Dialogs.Infrastructure.Repositories;
 using Dialogs.Infrastructure.Repositories.Interfaces;
@@ -8,11 +9,14 @@ namespace Dialogs.Core.Services
     public class DialogsService : IDialogsService
     {        
         private readonly IDialogsRepository _dialogsRepository;
+        private readonly IMQSender _mqSender;
 
         public DialogsService(
-            IDialogsRepository dialogsRepository)
+            IDialogsRepository dialogsRepository,
+            IMQSender mqSender)
         {
             _dialogsRepository = dialogsRepository;
+            _mqSender = mqSender;
         }
 
         public Task<Message> CreateMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken) =>

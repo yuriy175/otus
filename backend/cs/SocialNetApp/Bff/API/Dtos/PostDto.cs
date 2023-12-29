@@ -5,9 +5,11 @@ namespace Bff.API.Dtos
 {
     public readonly record struct PostDto
     {
+        [Required]
         [JsonPropertyName("id")]
         public uint Id { get; init; }
 
+        [Required]
         [JsonPropertyName("authorId")]
         public uint AuthorId { get; init; }
 
