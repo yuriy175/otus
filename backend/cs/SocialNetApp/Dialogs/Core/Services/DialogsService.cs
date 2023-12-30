@@ -24,5 +24,8 @@ namespace Dialogs.Core.Services
 
         public Task<IEnumerable<Message>> GetMessagesAsync(uint userId1, uint userId2, CancellationToken cancellationToken) =>
             _dialogsRepository.GetMessagesAsync(userId1, userId2,cancellationToken);
+
+        public Task<IEnumerable<int>> GetBuddyIdsAsync(uint userId, CancellationToken cancellationToken) =>
+            _dialogsRepository.GetBuddyIdsAsync(userId, cancellationToken);
     }
 }

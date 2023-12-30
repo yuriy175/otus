@@ -14,3 +14,8 @@ export const getDialog = async (userId: number) => {
     const client = getDialogsClient()
     return client.list(userId)
 }
+
+export const getDialogBuddies = async () => {
+    const client = getDialogsClient()
+    return client.buddies()
+}

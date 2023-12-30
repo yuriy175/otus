@@ -9,10 +9,11 @@ export const getUserDialog = (userId: number):AppThunk =>
 async(dispatch, getState) => {
     const dialog = await getDialog(userId)
     dispatch(setDialog({
-        partner: dialog.user,
+        buddy: dialog.user,
         messages: dialog.messages.map(m => ({
             ...m,
-            message: m.message ?? '<Пустое сообщение>'
+            message: m.message ?? '<Пустое сообщение>',
+            datetime: new Date(m.created),   
         }))
     }))
 }

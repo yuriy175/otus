@@ -26,6 +26,57 @@ export class DialogsClient {
     /**
      * @return Success
      */
+    buddies( cancelToken?: CancelToken | undefined): Promise<UserDto[]> {
+        let url_ = this.baseUrl + "/buddies";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processBuddies(_response);
+        });
+    }
+
+    protected processBuddies(response: AxiosResponse): Promise<UserDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<UserDto[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<UserDto[]>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     list(user_id: number, cancelToken?: CancelToken | undefined): Promise<UserMessagesDto> {
         let url_ = this.baseUrl + "/dialog/{user_id}/list";
         if (user_id === undefined || user_id === null)

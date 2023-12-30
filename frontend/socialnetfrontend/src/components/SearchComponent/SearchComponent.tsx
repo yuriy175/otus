@@ -50,7 +50,7 @@ export function SearchComponent() {
 
   const onStartDialog = (user: User) => {
     dispatch(getUserDialog(user.id));
-    dispatch(setActivePage('Dialogs'));
+    dispatch(setActivePage('CurrentDialog'));
   };
 
   return (

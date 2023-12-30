@@ -1,0 +1,1 @@
+export {CurrentDialogComponent} from './CurrentDialogComponent'

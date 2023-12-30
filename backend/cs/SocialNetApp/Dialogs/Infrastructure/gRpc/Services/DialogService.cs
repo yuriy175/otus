@@ -44,5 +44,17 @@ namespace Dialogs.Infrastructure.gRpc.Services
             }));
             return reply;
         }
+
+        public override async Task<GetBuddyIdsReply> GetBuddyIds(GetBuddyIdsRequest request, ServerCallContext context)
+        {
+            var friends = await _dialogsService.GetBuddyIdsAsync(request.Id, context.CancellationToken);
+            var reply = new GetBuddyIdsReply { };
+            if (friends is null)
+            {
+                return reply;
+            }
+            reply.Ids.AddRange(friends.Select(t => Convert.ToUInt32(t)));
+            return reply;
+        }
     }
 }

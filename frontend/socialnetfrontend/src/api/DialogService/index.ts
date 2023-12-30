@@ -1,1 +1,1 @@
-export {createDialogMessage, getDialog} from './DialogService'
+export {createDialogMessage, getDialog, getDialogBuddies} from './DialogService'

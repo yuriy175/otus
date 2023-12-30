@@ -4,8 +4,8 @@ export const drawerWidth = 240;
 
 export const pages = new Map<string,PageType>([
     ['Профиль','Profile' ],
-    ['Друзья','Friends'],
+    ['Подписки','Friends'],
     ['Лента','Feed'],
-    ['Диалоги','Dialogs'],
+    ['Собеседники','Dialogs'],
     ['Поиск','Search'],
 ])

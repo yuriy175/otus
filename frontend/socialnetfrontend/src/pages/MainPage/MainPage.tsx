@@ -25,6 +25,7 @@ import {
   feedFriendPosts,
   selectCurrentPage,
   setActivePage,
+  getUserBuddies,
 } from '../../core/store';
 import Switch from '@mui/material/Switch';
 import { Navigate } from 'react-router-dom';
@@ -33,6 +34,7 @@ import { DrawerComponent } from './DrawerComponent';
 import { ToolbarComponent } from './ToolbarComponent';
 import { drawerWidth } from './types';
 import {
+  CurrentDialogComponent,
   DialogsComponent,
   FriendsComponent,
   PostsComponent,
@@ -62,6 +64,10 @@ export function MainPage() {
         dispatch(feedFriendPosts());
         break;
       }
+      case 'Dialogs': {
+        dispatch(getUserBuddies());
+        break;
+      }
     }
     dispatch(setActivePage(type));
   };
@@ -76,6 +82,8 @@ export function MainPage() {
         return <SearchComponent />;
       case 'Dialogs':
         return <DialogsComponent />;
+      case 'CurrentDialog':
+        return <CurrentDialogComponent />;
       default:
         return <ProfileComponent />;
     }

@@ -61,5 +61,26 @@ namespace Bff.Infrastructure.gRpc.Services
                 })
             };
         }
+
+        public async Task<IEnumerable<UserDto>> GetDialogBuddiesAsync(uint userId, CancellationToken cancellationToken)
+        {
+            var userClient = new Users.UsersClient(_channelsProvider.GetUsersChannel());
+            var dialogClient = new DialogClient(_channelsProvider.GetDialogsChannel());
+
+            try
+            {
+                var buddyIds = await dialogClient.GetBuddyIdsAsync(new GetBuddyIdsRequest { Id = userId });
+                var buddies = new List<UserDto>();
+                foreach (var buddyId in buddyIds.Ids)
+                {
+                    var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = buddyId });
+                    buddies.Add(_mapper.Map<UserDto>(user));
+                }
+                return buddies;
+            }
+            catch (Exception ex) {
+                throw ex;
+            }
+        }
     }
 }

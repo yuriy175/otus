@@ -5,6 +5,7 @@ import {friendsReducer} from '../friends'
 import {postsReducer} from '../posts'
 import {dialogsReducer} from '../dialogs'
 import {layoutReducer} from '../layout'
+import {buddiesReducer} from '../buddies'
 
 const rootReducer = combineReducers({
     users: usersReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     posts: postsReducer,
     dialogs: dialogsReducer,
     layout: layoutReducer,
+    buddies: buddiesReducer,
 })
 
 export default rootReducer

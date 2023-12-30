@@ -2,7 +2,7 @@ import { User } from "."
 
 export type Dialog = 
 {
-    partner: User
+    buddy: User
     messages: DialogMessage[]
 }
 

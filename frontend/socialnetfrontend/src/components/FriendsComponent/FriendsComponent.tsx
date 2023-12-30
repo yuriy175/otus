@@ -35,7 +35,7 @@ export function FriendsComponent() {
 
   const onOpenDialog = (id: number) => {
     dispatch(getUserDialog(id));
-    dispatch(setActivePage('Dialogs'));
+    dispatch(setActivePage('CurrentDialog'));
   };
 
   const onIdChange: ChangeEventHandler<

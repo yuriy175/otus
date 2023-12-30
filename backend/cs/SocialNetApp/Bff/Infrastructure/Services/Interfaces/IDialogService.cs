@@ -6,5 +6,6 @@ namespace Bff.Infrastructure.gRpc.Services.Interfaces
     {
         Task<MessageDto> CreateMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken);
         Task<UserMessagesDto> GetMessagesAsync(uint authorId, uint userId, CancellationToken cancellationToken);
+        Task<IEnumerable<UserDto>> GetDialogBuddiesAsync(uint userId, CancellationToken cancellationToken);
     }
 }

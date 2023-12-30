@@ -17,6 +17,18 @@ namespace Bff.API.Controllers
             _dialogService = dialogService;
         }
 
+        [Authorize]
+        [HttpGet("/buddies")]
+        public async Task<ActionResult<IEnumerable<UserDto>?>> GetDialogBuddies(CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+            return Ok(await _dialogService.GetDialogBuddiesAsync(userId.Value, cancellationToken));
+        }
+
         [HttpGet("/dialog/{user_id}/list")]
         public async Task<ActionResult<UserMessagesDto>> GetDialogByUserId([FromRoute(Name = "user_id")] uint userId, CancellationToken cancellationToken)
         {
