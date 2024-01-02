@@ -8,6 +8,7 @@ namespace Common.MQ.Core.Model
 {
     internal class MQConstants
     {
-        internal const string ChannelName = "/post/feed/posted";
+        internal const string PostChannelName = "/post/feed/posted";
+        internal const string DialogQueueName = "dialogsqueue";
     }
 }

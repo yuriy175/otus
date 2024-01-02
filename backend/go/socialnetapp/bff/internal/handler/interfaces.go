@@ -24,4 +24,5 @@ type PostHandler interface {
 type DialogsHandler interface {
 	GetDialogByUserId(w http.ResponseWriter, req *http.Request)
 	SendMessageToUser(w http.ResponseWriter, req *http.Request)
+	GetDialogBuddies(w http.ResponseWriter, req *http.Request)
 }

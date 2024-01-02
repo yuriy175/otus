@@ -25,7 +25,7 @@ namespace Dialogs.Infrastructure.Repositories
             using var connection = _context.CreateConnection();
             var sql = "INSERT INTO public.dialogs(author_id, user_id, message) " +
                       "VALUES (@authorId, @userId, @text) " +
-                      "RETURNING author_id, user_id, message, created";                      
+                      "RETURNING author_id as authorId, user_id as userId, message as text, created";                      
 
             return await connection.QueryFirstAsync<Message>(new CommandDefinition(
                 sql,

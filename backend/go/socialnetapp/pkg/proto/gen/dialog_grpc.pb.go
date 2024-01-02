@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type DialogClient interface {
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error)
 	CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
+	GetBuddyIds(ctx context.Context, in *GetBuddyIdsRequest, opts ...grpc.CallOption) (*GetBuddyIdsReply, error)
 }
 
 type dialogClient struct {
@@ -52,12 +53,22 @@ func (c *dialogClient) CreateMessage(ctx context.Context, in *CreateMessageReque
 	return out, nil
 }
 
+func (c *dialogClient) GetBuddyIds(ctx context.Context, in *GetBuddyIdsRequest, opts ...grpc.CallOption) (*GetBuddyIdsReply, error) {
+	out := new(GetBuddyIdsReply)
+	err := c.cc.Invoke(ctx, "/Dialog/GetBuddyIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DialogServer is the server API for Dialog service.
 // All implementations must embed UnimplementedDialogServer
 // for forward compatibility
 type DialogServer interface {
 	GetMessages(context.Context, *GetMessagesRequest) (*GetMessagesReply, error)
 	CreateMessage(context.Context, *CreateMessageRequest) (*MessageReply, error)
+	GetBuddyIds(context.Context, *GetBuddyIdsRequest) (*GetBuddyIdsReply, error)
 	mustEmbedUnimplementedDialogServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedDialogServer) GetMessages(context.Context, *GetMessagesReques
 }
 func (UnimplementedDialogServer) CreateMessage(context.Context, *CreateMessageRequest) (*MessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMessage not implemented")
+}
+func (UnimplementedDialogServer) GetBuddyIds(context.Context, *GetBuddyIdsRequest) (*GetBuddyIdsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBuddyIds not implemented")
 }
 func (UnimplementedDialogServer) mustEmbedUnimplementedDialogServer() {}
 
@@ -120,6 +134,24 @@ func _Dialog_CreateMessage_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Dialog_GetBuddyIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBuddyIdsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DialogServer).GetBuddyIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Dialog/GetBuddyIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DialogServer).GetBuddyIds(ctx, req.(*GetBuddyIdsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Dialog_ServiceDesc is the grpc.ServiceDesc for Dialog service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var Dialog_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateMessage",
 			Handler:    _Dialog_CreateMessage_Handler,
+		},
+		{
+			MethodName: "GetBuddyIds",
+			Handler:    _Dialog_GetBuddyIds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -25,5 +25,6 @@ type PostService interface {
 
 type DialogsService interface {
 	CreateMessage(_ context.Context, authorId uint, userId uint, text string) (*dto.MessageDto, error)
-	GetMessages(_ context.Context, userId1 uint, userId2 uint) (*dto.UserMessagesDto, error)
+	GetMessages(_ context.Context, authorId uint, userId uint) (*dto.UserMessagesDto, error)
+	GetDialogBuddies(_ context.Context, userId uint) ([]dto.UserDto, error)
 }

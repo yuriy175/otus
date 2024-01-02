@@ -12,13 +12,13 @@ using WebSockets.Infrastructure.Repositories.Interfaces;
 
 namespace WebSockets.Core.Services
 {
-    public class WebsocketsService : IWebsocketsService
+    public class FeedPostsWebsocketsService : IWebsocketsService
     {
         private readonly ConcurrentDictionary<uint, List<WebSocket>> _websockets = new ConcurrentDictionary<uint, List<WebSocket>> { };
 
         private readonly IFriendsRepository _friendsRepository;
         private readonly IMQReceiver _mqReceiver;
-        public WebsocketsService(IFriendsRepository friendsRepository, IMQReceiver mqReceiver)
+        public FeedPostsWebsocketsService(IFriendsRepository friendsRepository, IMQReceiver mqReceiver)
         {
             _mqReceiver = mqReceiver;
             _friendsRepository = friendsRepository;

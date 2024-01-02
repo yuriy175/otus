@@ -19,8 +19,12 @@ namespace Dialogs.Core.Services
             _mqSender = mqSender;
         }
 
-        public Task<Message> CreateMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken) =>
-            _dialogsRepository.AddMessageAsync(authorId, userId, text, cancellationToken);
+        public async Task<Message> CreateMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken)
+        {
+            var message = await _dialogsRepository.AddMessageAsync(authorId, userId, text, cancellationToken);
+            _mqSender.SendDialogMessage(message);
+            return message;
+        }
 
         public Task<IEnumerable<Message>> GetMessagesAsync(uint userId1, uint userId2, CancellationToken cancellationToken) =>
             _dialogsRepository.GetMessagesAsync(userId1, userId2,cancellationToken);

@@ -87,6 +87,7 @@ func main() {
 	router.HandleFunc("/user/search", userHandler.FindUser)
 	router.HandleFunc("/dialog/{user_id}/list", dialogHandler.GetDialogByUserId)
 	router.HandleFunc("/dialog/{user_id}/send", dialogHandler.SendMessageToUser)
+	router.HandleFunc("/buddies", dialogHandler.GetDialogBuddies)
 	router.Use(headersMiddleware)
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.Handle("/", router)

@@ -46,7 +46,8 @@ namespace WebSockets
                 Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
 
             services.AddSingleton<IMQReceiver, MQReceiver>();
-            services.AddSingleton<IWebsocketsService, WebsocketsService>(); 
+            services.AddSingleton<FeedPostsWebsocketsService>();
+            services.AddSingleton<DialogsWebsocketsService>(); 
             services.AddSingleton<IFriendsRepository, FriendsRepository>();
         }
 
@@ -64,9 +65,14 @@ namespace WebSockets
             app.UseWebSockets();
 
             app.Run(async (context) => {
-                var webService = app.ApplicationServices.GetRequiredService<IWebsocketsService>();
-                if (context.Request.Path == "/post/feed")
+                if (context.Request.Path == "/dialogs")
                 {
+                    var webService = app.ApplicationServices.GetRequiredService<DialogsWebsocketsService>();
+                    var t = await webService.OnWebSocketConnectAsync(context);
+                    await t;
+                } else if (context.Request.Path == "/post/feed")
+                {
+                    var webService = app.ApplicationServices.GetRequiredService<FeedPostsWebsocketsService>();
                     var t = await webService.OnWebSocketConnectAsync(context);
                     await t;
                 }

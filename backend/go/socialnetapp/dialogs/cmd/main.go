@@ -14,6 +14,7 @@ import (
 	"socialnerworkapp.com/dialogs/internal/handler/dialogshandler"
 	"socialnerworkapp.com/dialogs/internal/repository/dialogsrepository"
 	"socialnerworkapp.com/dialogs/internal/service/dialogsservice"
+	"socialnerworkapp.com/pkg/mq"
 	"socialnerworkapp.com/pkg/proto/gen"
 
 	_ "socialnerworkapp.com/docs"
@@ -46,8 +47,10 @@ func main() {
 	log.Println(restPort)
 
 	// TODO: use fasthttp
+	mqSender := mq.NewMqSender()
+
 	repo := dialogsrepository.NewDialogsRepository()
-	dialogsSrv := dialogsservice.NewDialogsService(repo)
+	dialogsSrv := dialogsservice.NewDialogsService(repo, mqSender)
 	dialogsHandler := dialogshandler.NewDialogsHandler(dialogsSrv)
 
 	go func() {

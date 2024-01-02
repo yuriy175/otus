@@ -95,20 +95,8 @@ func (s *friendServiceImp) GetFriends(ctx context.Context, userId uint) ([]dto.U
 			return nil, err
 		}
 
-		userDto := dto.UserDto{
-			ID:      uint(user.Id),
-			Name:    user.Name,
-			Surname: user.Surname,
-			//Age:     user.Age.Value,
-			//Sex:     user.Sex,
-		}
-		if user.City != nil {
-			userDto.City = &user.City.Value
-		}
-		if user.Info != nil {
-			userDto.Info = &user.Info.Value
-		}
-		friends[ind] = userDto
+		userDto := service.ConvertToUserDto(user)
+		friends[ind] = *userDto
 	}
 
 	return friends, err

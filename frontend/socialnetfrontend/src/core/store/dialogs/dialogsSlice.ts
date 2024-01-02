@@ -11,8 +11,11 @@ export const dialogsSlice = createSlice({
         state.dialog =  payload
       },
 
-      addDialogMessage(state, {payload}: PayloadAction<DialogMessage>){
-        state.dialog.messages.push(payload)
+      addDialogMessage(state, {payload}: PayloadAction<{own:boolean, dialog:DialogMessage}>){
+        const {own, dialog} = payload
+        if(state.dialog && (own || dialog.authorId === state.dialog.buddy.id)){
+          state.dialog.messages.unshift(dialog)
+        }
       },
     }
 })

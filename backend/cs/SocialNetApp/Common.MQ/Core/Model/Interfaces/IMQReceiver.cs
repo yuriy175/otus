@@ -12,5 +12,6 @@ namespace Common.MQ.Core.Model.Interfaces
     {
         void CreateReceiver();
         void ReceivePosts(uint userId, Action<uint, string> action);
+        void CreateDialogReceiver(Action<byte[]> action);
     }
 }

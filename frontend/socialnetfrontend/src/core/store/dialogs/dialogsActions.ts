@@ -21,8 +21,13 @@ async(dispatch, getState) => {
 export const addUserMessage = (userId: number, text: string):AppThunk => 
 async(dispatch, getState) => {
     const message = await createDialogMessage(userId, text)
-    dispatch(addDialogMessage({
-        ...message,
-        message: message.message ?? '<Пустое сообщение>'
+    dispatch(addDialogMessage(
+        {
+            own:true, 
+            dialog: {
+                ...message,
+                message: message.message ?? '<Пустое сообщение>',
+                datetime: new Date(message.created),  
+            },
     }))
 }

@@ -31,13 +31,13 @@ func (s *mqSenderImp) SendPost(_ context.Context, userId uint, post string) erro
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
-		channelName, // name
-		"topic",     // type
-		false,       // no durable
-		false,       // auto-deleted
-		false,       // internal
-		false,       // no-wait
-		nil,         // arguments
+		postChannelName, // name
+		"topic",         // type
+		false,           // no durable
+		false,           // auto-deleted
+		false,           // internal
+		false,           // no-wait
+		nil,             // arguments
 	)
 	if err != nil {
 		return err
@@ -48,10 +48,10 @@ func (s *mqSenderImp) SendPost(_ context.Context, userId uint, post string) erro
 
 	routingKey := strconv.Itoa(int(userId))
 	err = ch.PublishWithContext(ctx,
-		channelName, // exchange
-		routingKey,  // routing key
-		false,       // mandatory
-		false,       // immediate
+		postChannelName, // exchange
+		routingKey,      // routing key
+		false,           // mandatory
+		false,           // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(post),
@@ -62,5 +62,49 @@ func (s *mqSenderImp) SendPost(_ context.Context, userId uint, post string) erro
 	}
 
 	log.Printf(" [x] Sent %s", post)
+	return nil
+}
+
+func (s *mqSenderImp) SendDialogMessage(_ context.Context, data []byte) error {
+	conn, err := amqp.Dial(os.Getenv("RABBITMQ_CONNECTION"))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	if err != nil {
+		return err
+	}
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
+		dialogQueueName, // name
+		false,           // durable
+		false,           // delete when unused
+		false,           // exclusive
+		false,           // no-wait
+		nil,             // arguments
+	)
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = ch.PublishWithContext(ctx,
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        data,
+		})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -31,8 +31,6 @@ namespace Common.MQ.Core.Services
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
 
-            channel.ExchangeDeclare(exchange: MQConstants.ChannelName, type: ExchangeType.Topic);
-
             return (connection, channel);
         }
     }

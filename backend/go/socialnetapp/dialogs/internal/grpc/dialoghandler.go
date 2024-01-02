@@ -6,6 +6,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"socialnerworkapp.com/dialogs/internal/model"
 	"socialnerworkapp.com/dialogs/internal/service"
+	"socialnerworkapp.com/pkg/common/helpers"
 	gen "socialnerworkapp.com/pkg/proto/gen"
 )
 
@@ -35,6 +36,17 @@ func (h *GrpcDialogsHandlerImp) GetMessages(ctx context.Context, r *gen.GetMessa
 func (h *GrpcDialogsHandlerImp) CreateMessage(ctx context.Context, r *gen.CreateMessageRequest) (*gen.MessageReply, error) {
 	msg, _ := h.service.CreateMessage(ctx, uint(r.AuthorId), uint(r.UserId), r.Text)
 	return h.toMessageReply(msg), nil
+}
+
+func (h *GrpcDialogsHandlerImp) GetBuddyIds(ctx context.Context, r *gen.GetBuddyIdsRequest) (*gen.GetBuddyIdsReply, error) {
+	buddyIds, err := h.service.GetBuddyIds(ctx, uint(r.Id))
+	if err != nil {
+		return nil, err
+	}
+	reply := &gen.GetBuddyIdsReply{
+		Ids: helpers.ConvertInts[uint32](buddyIds),
+	}
+	return reply, nil
 }
 
 func (h *GrpcDialogsHandlerImp) toMessageReply(msg *model.Message) *gen.MessageReply {

@@ -57,7 +57,6 @@ export function CurrentDialogComponent() {
       <List
         sx={{
           width: '100%',
-          maxWidth: 360,
           bgcolor: 'background.paper',
         }}
       >
@@ -71,6 +70,7 @@ export function CurrentDialogComponent() {
         ) : (
           dialog?.messages?.map((p) => (
             <ListItem
+              key={p.datetime?.toLocaleString()}
               sx={{
                 padding: '0rem',
               }}
@@ -81,7 +81,7 @@ export function CurrentDialogComponent() {
                 } ${p.datetime?.toLocaleString()} - ${p.message}`}
                 sx={{
                   color:
-                    p.authorId === buddy?.id ? '#3f50b5' : '#f44336',
+                    p.authorId === buddy?.id ? 'black' : '#f44336',
                 }}
               />
             </ListItem>
