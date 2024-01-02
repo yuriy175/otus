@@ -17,7 +17,7 @@ type dialogsHandlerImp struct {
 	service service.DialogsService
 }
 
-func NewDialogHandler(service service.DialogsService) handler.DialogsService {
+func NewDialogHandler(service service.DialogsService) handler.DialogsHandler {
 	return &dialogsHandlerImp{service: service}
 }
 

@@ -33,7 +33,7 @@ func (r *dialogsRepositoryImp) CreateMessage(_ context.Context, authorId uint, u
 	message := &model.Message{}
 
 	for rows.Next() {
-		err := rows.Scan(&message.UserID, &message.AuthorId, &message.Text, &message.Created)
+		err := rows.Scan(&message.AuthorId, &message.UserID, &message.Text, &message.Created)
 		if err != nil {
 			return nil, err
 		}
@@ -56,7 +56,8 @@ func (r *dialogsRepositoryImp) GetMessages(_ context.Context, userId1 uint, user
 			"UNION ALL "+
 			"SELECT user_id as userId1, author_id as authorId, message as text, created "+
 			"FROM public.dialogs "+
-			"where author_id = $2 and user_id = $1;",
+			"where author_id = $2 and user_id = $1 "+
+			"ORDER BY created DESC;",
 		userId1, userId2)
 	if err != nil {
 		return nil, err

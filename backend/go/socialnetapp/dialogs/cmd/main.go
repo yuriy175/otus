@@ -74,7 +74,8 @@ func main() {
 	http.Handle("/", router)
 
 	handler := cors.Default().Handler(router)
-	if err := http.ListenAndServe(":80", handler); err != nil {
+	if err := http.ListenAndServe(":"+restPort, handler); err != nil {
+		//if err := http.ListenAndServe(":80", handler); err != nil {
 		panic(err)
 	}
 }

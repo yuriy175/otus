@@ -19,7 +19,7 @@ type websocketsServiceImp struct {
 	websockets map[uint][]*websocket.Conn
 }
 
-func NewWebsocketsService(
+func NewFeedPostsWebsocketsService(
 	repository repository.FriendRepository,
 	mqReceiver mq.MqReceiver) service.WebsocketsService {
 	return &websocketsServiceImp{

@@ -32,17 +32,21 @@ func main() {
 	log.Println("Started Go!")
 	log.Println(os.LookupEnv("POSTGRESQL_CONNECTION"))
 	log.Println(os.LookupEnv("RABBITMQ_CONNECTION"))
-
+	restPort, _ := os.LookupEnv("REST_PORT")
+	log.Println(restPort)
 	// TODO: use fasthttp
 	mqReceiver := mq.NewMqReceiver()
 	friendRepo := friendrepository.NewFriendRepository()
 
-	wsSrv := websocketsservice.NewWebsocketsService(friendRepo, mqReceiver)
-	wsHandler := websocketshandler.NewWebsocketsHandler(wsSrv)
+	wsFeedPostsSrv := websocketsservice.NewFeedPostsWebsocketsService(friendRepo, mqReceiver)
+	wsDialogsSrv := websocketsservice.NewDialogssWebsocketsService(friendRepo, mqReceiver)
+	wsHandler := websocketshandler.NewWebsocketsHandler(wsFeedPostsSrv, wsDialogsSrv)
 	http.HandleFunc("/post/feed", wsHandler.SendPosts)
+	http.HandleFunc("/dialogs", wsHandler.SendDialogMessages)
 
 	//wsSrv.Start()
-	if err := http.ListenAndServe(":80", nil); err != nil {
+	//if err := http.ListenAndServe(":80", nil); err != nil {
+	if err := http.ListenAndServe(":"+restPort, nil); err != nil {
 		panic(err)
 	}
 }

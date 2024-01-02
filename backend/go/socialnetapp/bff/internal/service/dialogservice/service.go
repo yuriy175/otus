@@ -58,3 +58,76 @@ func (s *dialogServiceImp) GetDialogBuddies(ctx context.Context, userId uint) ([
 
 	return buddies, err
 }
+
+// CreateMessage implements service.DialogsService.
+func (s *dialogServiceImp) CreateMessage(ctx context.Context, authorId uint, userId uint, text string) (*dto.MessageDto, error) {
+	conn, err := grpc.Dial(s.grpcDialogUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("fail to dial: %v", err)
+	}
+	defer conn.Close()
+	dialogClient := gen.NewDialogClient(conn)
+	getRequest := &gen.CreateMessageRequest{
+		AuthorId: uint32(authorId),
+		UserId:   uint32(userId),
+		Text:     text,
+	}
+	reply, err := dialogClient.CreateMessage(ctx, getRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.convertToMessageDto(reply), nil
+}
+
+// GetMessages implements service.DialogsService.
+func (s *dialogServiceImp) GetMessages(ctx context.Context, authorId uint, userId uint) (*dto.UserMessagesDto, error) {
+	conn, err := grpc.Dial(s.grpcDialogUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("fail to dial: %v", err)
+	}
+	defer conn.Close()
+	dialogClient := gen.NewDialogClient(conn)
+	getRequest := &gen.GetMessagesRequest{
+		UserId:   uint32(userId),
+		AuthorId: uint32(authorId)}
+	dialogReply, err := dialogClient.GetMessages(ctx, getRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	userConn, err := grpc.Dial(s.grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+	defer userConn.Close()
+	userClient := gen.NewUsersClient(userConn)
+	userRequest := &gen.GetUserByIdRequest{Id: uint32(userId)}
+	user, err := userClient.GetUserById(ctx, userRequest)
+
+	if err != nil {
+		return nil, err
+	}
+
+	messages := make([]*dto.MessageDto, len(dialogReply.Messages))
+	for ind, message := range dialogReply.Messages {
+		messageDto := s.convertToMessageDto(message)
+		messages[ind] = messageDto
+	}
+
+	return &dto.UserMessagesDto{
+		User:     service.ConvertToUserDto(user),
+		Messages: messages,
+	}, err
+}
+
+func (s *dialogServiceImp) convertToMessageDto(message *gen.MessageReply) *dto.MessageDto {
+	messageDto := &dto.MessageDto{
+		ID:       uint(message.UserId),
+		AuthorId: uint(message.AuthorId),
+		Message:  message.Text,
+		Created:  service.ConvertToTime(message.Created),
+	}
+
+	return messageDto
+}
