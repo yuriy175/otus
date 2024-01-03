@@ -54,7 +54,7 @@ func main() {
 	dialogsHandler := dialogshandler.NewDialogsHandler(dialogsSrv)
 
 	go func() {
-		lis, err := net.Listen("tcp", "localhost:"+grpcPort)
+		lis, err := net.Listen("tcp", ":"+grpcPort)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}

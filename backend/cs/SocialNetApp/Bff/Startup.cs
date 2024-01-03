@@ -2,6 +2,9 @@
 using Bff.Infrastructure.gRpc.Services;
 using Bff.Infrastructure.gRpc.Services.Interfaces;
 using Bff.Infrastructure.Services.Interfaces;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace Bff
 {
@@ -41,6 +44,19 @@ namespace Bff
 
             services.AddAuthorization();
             services.ConfigureAuthentication();
+
+            services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+        tracerProviderBuilder
+
+.AddSource(DiagnosticsConfig.ActivitySource.Name)
+            .ConfigureResource(resource => resource
+
+.AddService(DiagnosticsConfig.ServiceName))
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddGrpcClientInstrumentation()
+            .AddJaegerExporter());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +72,7 @@ namespace Bff
             app.UseWebSockets();
 
             app.UseHeadersMiddleware();
+            app.UseTraceMiddleware();
 
             app.UseEndpoints(endpoints =>
             {
@@ -72,4 +89,10 @@ namespace Bff
             return app;
         }
     }
+}
+
+public static class DiagnosticsConfig
+{
+    public const string ServiceName = "UserService";
+    public static ActivitySource ActivitySource = new ActivitySource(ServiceName);
 }

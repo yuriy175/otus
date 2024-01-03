@@ -1,10 +1,10 @@
 ﻿namespace Bff.API.Middlewares
 {
-    public class HeadersMiddleware
+    public class TraceMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public HeadersMiddleware(RequestDelegate next)
+        public TraceMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -22,11 +22,11 @@
     }
 
 
-    public static class HeadersMiddlewareExtensions
+    public static class TraceMiddlewareExtensions
     {
-        public static IApplicationBuilder UseHeadersMiddleware(this IApplicationBuilder app)
+        public static IApplicationBuilder UseTraceMiddleware(this IApplicationBuilder app)
         {
-            return app.UseMiddleware<HeadersMiddleware>();
+            return app.UseMiddleware<TraceMiddleware>();
         }
     }
 }

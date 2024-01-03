@@ -56,7 +56,8 @@ func main() {
 
 	go func() {
 		//lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 55267))
-		lis, err := net.Listen("tcp", "localhost:"+grpcPort)
+		//lis, err := net.Listen("tcp", "localhost:"+grpcPort)
+		lis, err := net.Listen("tcp", ":"+grpcPort)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}

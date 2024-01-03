@@ -19,6 +19,7 @@ export const createDialogStart = (token: string): WebSocketStart => ({
     type: webSocketStartActionType,
     payload:{
         token,
-        endpoint: 'ws://localhost:55230/dialogs?token='
+        //endpoint: 'ws://localhost:55230/dialogs?token='
+        endpoint: 'ws://localhost:8005/dialogs?token='
     }
 })

@@ -63,7 +63,7 @@ func main() {
 	postHandler := posthandler.NewPostHandler(postSrv)
 
 	go func() {
-		lis, err := net.Listen("tcp", "localhost:"+grpcPort)
+		lis, err := net.Listen("tcp", ":"+grpcPort)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
@@ -90,7 +90,7 @@ func main() {
 	http.Handle("/", router)
 
 	handler := cors.Default().Handler(router)
-	if err := http.ListenAndServe(":80", handler); err != nil {
+	if err := http.ListenAndServe(":"+restPort, handler); err != nil {
 		panic(err)
 	}
 }
