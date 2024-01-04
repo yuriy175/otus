@@ -22,6 +22,10 @@ public static class Program
                     "GRPC_POSTS: " + Environment.GetEnvironmentVariable("GRPC_POSTS") +
                     Environment.NewLine+
                     "GRPC_DIALOGS: " + Environment.GetEnvironmentVariable("GRPC_DIALOGS") +
+                    Environment.NewLine +
+                    "OTEL_EXPORTER_JAEGER_ENDPOINT: " + Environment.GetEnvironmentVariable("OTEL_EXPORTER_JAEGER_ENDPOINT") +
+                    Environment.NewLine +
+                    "OTEL_EXPORTER_JAEGER_AGENT_HOST: " + Environment.GetEnvironmentVariable("OTEL_EXPORTER_JAEGER_AGENT_HOST") +
                     Environment.NewLine);
                 webBuilder.UseStartup<Startup>();
             });

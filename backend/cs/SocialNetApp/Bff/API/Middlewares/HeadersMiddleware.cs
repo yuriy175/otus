@@ -1,10 +1,12 @@
-﻿namespace Bff.API.Middlewares
+﻿using System.Diagnostics;
+
+namespace Bff.API.Middlewares
 {
-    public class TraceMiddleware
+    public class HeadersMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public TraceMiddleware(RequestDelegate next)
+        public HeadersMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -13,6 +15,7 @@
         {
             context.Response.OnStarting(() =>
             {
+                Console.WriteLine("!!!CSharp header");
                 context.Response.Headers["Server-Language"] = "CSharp";
                 return Task.CompletedTask;
             });
@@ -22,11 +25,11 @@
     }
 
 
-    public static class TraceMiddlewareExtensions
+    public static class HeadersMiddlewareExtensions
     {
-        public static IApplicationBuilder UseTraceMiddleware(this IApplicationBuilder app)
+        public static IApplicationBuilder UseHeadersMiddleware(this IApplicationBuilder app)
         {
-            return app.UseMiddleware<TraceMiddleware>();
+            return app.UseMiddleware<HeadersMiddleware>();
         }
-    }
+    }    
 }

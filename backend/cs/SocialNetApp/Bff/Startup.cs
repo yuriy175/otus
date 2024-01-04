@@ -93,6 +93,6 @@ namespace Bff
 
 public static class DiagnosticsConfig
 {
-    public const string ServiceName = "UserService";
+    public const string ServiceName = "BffService";
     public static ActivitySource ActivitySource = new ActivitySource(ServiceName);
 }
