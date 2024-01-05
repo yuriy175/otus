@@ -3,13 +3,14 @@ package service
 import (
 	"context"
 
+	"go.opentelemetry.io/otel/trace"
 	"socialnerworkapp.com/bff/internal/handler/dto"
 )
 
 type UserService interface {
-	Login(_ context.Context, userId uint, password string) (*dto.LoggedinUserDto, error)
-	GetUsersByName(_ context.Context, name string, surname string) ([]dto.UserDto, error)
-	PutUser(_ context.Context, dto *dto.NewUserDto, password string) (*dto.UserDto, error)
+	Login(_ context.Context, tracer trace.Tracer, userId uint, password string) (*dto.LoggedinUserDto, error)
+	GetUsersByName(_ context.Context, tracer trace.Tracer, name string, surname string) ([]dto.UserDto, error)
+	PutUser(_ context.Context, tracer trace.Tracer, dto *dto.NewUserDto, password string) (*dto.UserDto, error)
 }
 
 type FriendService interface {
@@ -24,7 +25,7 @@ type PostService interface {
 }
 
 type DialogsService interface {
-	CreateMessage(_ context.Context, authorId uint, userId uint, text string) (*dto.MessageDto, error)
-	GetMessages(_ context.Context, authorId uint, userId uint) (*dto.UserMessagesDto, error)
-	GetDialogBuddies(_ context.Context, userId uint) ([]dto.UserDto, error)
+	CreateMessage(_ context.Context, tracer trace.Tracer, authorId uint, userId uint, text string) (*dto.MessageDto, error)
+	GetMessages(_ context.Context, tracer trace.Tracer, authorId uint, userId uint) (*dto.UserMessagesDto, error)
+	GetDialogBuddies(_ context.Context, tracer trace.Tracer, userId uint) ([]dto.UserDto, error)
 }

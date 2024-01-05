@@ -9,14 +9,21 @@ import (
 	"socialnerworkapp.com/bff/internal/handler/dto"
 	"socialnerworkapp.com/bff/internal/service"
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
+	"socialnerworkapp.com/pkg/trace"
 )
 
 type userHandlerImp struct {
 	service service.UserService
+	tracer  trace.OtelTracer
 }
 
-func NewUserHandler(service service.UserService) handler.UserHandler {
-	return &userHandlerImp{service: service}
+func NewUserHandler(
+	tracer trace.OtelTracer,
+	service service.UserService) handler.UserHandler {
+	return &userHandlerImp{
+		service: service,
+		tracer:  tracer,
+	}
 }
 
 // Login godoc
@@ -29,13 +36,18 @@ func NewUserHandler(service service.UserService) handler.UserHandler {
 // @Failure      500
 // @Router /login [post]
 func (h *userHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	tracer := h.tracer.CreateTracer(req.RequestURI)
+	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "Login")
+	defer endSpan()
+
 	payload := make(map[string]interface{})
 	err := json.NewDecoder(req.Body).Decode(&payload)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ctx := req.Context()
+
 	p, ok := commonhandler.CheckParam(w, payload, "id", "Auth repository error: id\n")
 	if !ok {
 		return
@@ -47,7 +59,7 @@ func (h *userHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	password := p.(string)
-	userDto, err := h.service.Login(ctx, id, password)
+	userDto, err := h.service.Login(ctx, tracer, id, password)
 	if err != nil {
 		log.Printf("Auth service error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -71,6 +83,10 @@ func (h *userHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
 // @Router /user/register [post]
 func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+
+	tracer := h.tracer.CreateTracer(req.RequestURI)
+	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "RegisterUser")
+	defer endSpan()
 
 	payload := make(map[string]interface{})
 	err := json.NewDecoder(req.Body).Decode(&payload)
@@ -119,7 +135,7 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 		user.Info = &pInfo
 	}
 
-	userDto, err := h.service.PutUser(ctx, user, password)
+	userDto, err := h.service.PutUser(ctx, tracer, user, password)
 	if err != nil {
 		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -144,6 +160,10 @@ func (h *userHandlerImp) RegisterUser(w http.ResponseWriter, req *http.Request) 
 // @Router /user/search [get]
 func (h *userHandlerImp) FindUser(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	tracer := h.tracer.CreateTracer(req.RequestURI)
+	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "FindUser")
+	defer endSpan()
+
 	vars := req.URL.Query()
 	name := vars.Get("Name")
 	if name == "" {
@@ -155,7 +175,7 @@ func (h *userHandlerImp) FindUser(w http.ResponseWriter, req *http.Request) {
 		log.Printf("User handler error: empty surname")
 		w.WriteHeader(http.StatusBadRequest)
 	}
-	users, err := h.service.GetUsersByName(ctx, name, surname)
+	users, err := h.service.GetUsersByName(ctx, tracer, name, surname)
 	if err != nil {
 		log.Printf("User handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)

@@ -21,6 +21,7 @@ import (
 	_ "socialnerworkapp.com/docs"
 
 	"github.com/rs/cors"
+	trace "socialnerworkapp.com/pkg/trace"
 )
 
 func init() {
@@ -45,6 +46,7 @@ func main() {
 	log.Println(os.LookupEnv("GRPC_POSTS"))
 	restPort, _ := os.LookupEnv("REST_PORT")
 	log.Println(restPort)
+	log.Println(os.LookupEnv("OTEL_EXPORTER_JAEGER_ENDPOINT"))
 
 	//ctx := context.Background()
 	// conn, err := grpc.Dial(grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials())) // , opts...)
@@ -64,17 +66,18 @@ func main() {
 	// _ = token
 	// _ = user
 
-	userSrv := userservice.NewUserService()
-	userHandler := userhandler.NewUserHandler(userSrv)
+	tracer := trace.NewOtelTracer("Go Bff Service")
+	userSrv := userservice.NewUserService(tracer)
+	userHandler := userhandler.NewUserHandler(tracer, userSrv)
 
-	friendSrv := friendservice.NewFriendService()
-	friendHandler := friendhandler.NewFriendHandler(friendSrv)
+	friendSrv := friendservice.NewFriendService(tracer)
+	friendHandler := friendhandler.NewFriendHandler(tracer, friendSrv)
 
-	postSrv := postservice.NewPostService()
-	postHandler := posthandler.NewPostHandler(postSrv)
+	postSrv := postservice.NewPostService(tracer)
+	postHandler := posthandler.NewPostHandler(tracer, postSrv)
 
-	dialogSrv := dialogservice.NewDialogService()
-	dialogHandler := dialoghandler.NewDialogHandler(dialogSrv)
+	dialogSrv := dialogservice.NewDialogService(tracer)
+	dialogHandler := dialoghandler.NewDialogHandler(tracer, dialogSrv)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/login", userHandler.Login)

@@ -10,14 +10,16 @@ import (
 	"socialnerworkapp.com/bff/internal/handler"
 	"socialnerworkapp.com/bff/internal/service"
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
+	"socialnerworkapp.com/pkg/trace"
 )
 
 type friendHandlerImp struct {
 	service service.FriendService
+	tracer  trace.OtelTracer
 }
 
-func NewFriendHandler(service service.FriendService) handler.FriendHandler {
-	return &friendHandlerImp{service: service}
+func NewFriendHandler(tracer trace.OtelTracer, service service.FriendService) handler.FriendHandler {
+	return &friendHandlerImp{service: service, tracer: tracer}
 }
 
 // AddFriend godoc

@@ -12,17 +12,22 @@ import (
 	"socialnerworkapp.com/bff/internal/handler/dto"
 	"socialnerworkapp.com/bff/internal/service"
 	"socialnerworkapp.com/pkg/proto/gen"
+	"socialnerworkapp.com/pkg/trace"
 )
 
 type postServiceImp struct {
 	grpcPostUrl    string
 	grpcProfileUrl string
+	tracer         trace.OtelTracer
 }
 
-func NewPostService() service.PostService {
+func NewPostService(tracer trace.OtelTracer) service.PostService {
 	grpcPostUrl, _ := os.LookupEnv("GRPC_POSTS")
 	grpcProfileUrl, _ := os.LookupEnv("GRPC_PROFILE")
-	return &postServiceImp{grpcPostUrl: grpcPostUrl, grpcProfileUrl: grpcProfileUrl}
+	return &postServiceImp{
+		grpcPostUrl:    grpcPostUrl,
+		grpcProfileUrl: grpcProfileUrl,
+		tracer:         tracer}
 }
 
 // CreatePost implements service.PostService.

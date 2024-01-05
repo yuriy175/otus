@@ -11,17 +11,22 @@ import (
 	"socialnerworkapp.com/bff/internal/handler/dto"
 	"socialnerworkapp.com/bff/internal/service"
 	"socialnerworkapp.com/pkg/proto/gen"
+	"socialnerworkapp.com/pkg/trace"
 )
 
 type friendServiceImp struct {
 	grpcFriendUrl  string
 	grpcProfileUrl string
+	tracer         trace.OtelTracer
 }
 
-func NewFriendService() service.FriendService {
+func NewFriendService(tracer trace.OtelTracer) service.FriendService {
 	grpcFriendUrl, _ := os.LookupEnv("GRPC_POSTS")
 	grpcProfileUrl, _ := os.LookupEnv("GRPC_PROFILE")
-	return &friendServiceImp{grpcFriendUrl: grpcFriendUrl, grpcProfileUrl: grpcProfileUrl}
+	return &friendServiceImp{
+		grpcFriendUrl:  grpcFriendUrl,
+		grpcProfileUrl: grpcProfileUrl,
+		tracer:         tracer}
 }
 
 // AddFriend implements service.FriendService.

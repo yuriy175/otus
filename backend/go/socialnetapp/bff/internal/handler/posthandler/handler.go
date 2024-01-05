@@ -11,14 +11,16 @@ import (
 	"socialnerworkapp.com/bff/internal/service"
 
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
+	"socialnerworkapp.com/pkg/trace"
 )
 
 type postHandlerImp struct {
 	service service.PostService
+	tracer  trace.OtelTracer
 }
 
-func NewPostHandler(service service.PostService) handler.PostHandler {
-	return &postHandlerImp{service: service}
+func NewPostHandler(tracer trace.OtelTracer, service service.PostService) handler.PostHandler {
+	return &postHandlerImp{service: service, tracer: tracer}
 }
 
 // CreatePost godoc

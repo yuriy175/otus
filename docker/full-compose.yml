@@ -88,11 +88,13 @@ services:
       - GRPC_DIALOGS=$GRPC_DIALOGS_GO
       - REST_PORT=$REST_BFF_PORT_GO
       - SECURITY_KEY=$SECURITY_KEY
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=jaeger:4318
     ports:
       - "8009:8009"
     depends_on:
       - postgres
       - rabbitmq
+      - jaeger
 
   bff_cs:
     container_name: bff_cs
@@ -117,6 +119,7 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - jaeger
 
   profile_go:
     container_name: profile_go

@@ -11,14 +11,16 @@ import (
 	"socialnerworkapp.com/bff/internal/handler"
 	"socialnerworkapp.com/bff/internal/service"
 	commonhandler "socialnerworkapp.com/pkg/common/handler"
+	"socialnerworkapp.com/pkg/trace"
 )
 
 type dialogsHandlerImp struct {
 	service service.DialogsService
+	tracer  trace.OtelTracer
 }
 
-func NewDialogHandler(service service.DialogsService) handler.DialogsHandler {
-	return &dialogsHandlerImp{service: service}
+func NewDialogHandler(tracer trace.OtelTracer, service service.DialogsService) handler.DialogsHandler {
+	return &dialogsHandlerImp{service: service, tracer: tracer}
 }
 
 // GetDialogByUserId godoc
@@ -32,12 +34,16 @@ func NewDialogHandler(service service.DialogsService) handler.DialogsHandler {
 // @Failure      500
 // @Router /dialog/{user_id}/list [get]
 func (h *dialogsHandlerImp) GetDialogByUserId(w http.ResponseWriter, req *http.Request) {
+
+	ctx := req.Context()
+	tracer := h.tracer.CreateTracer(req.RequestURI)
+	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "Login")
+	defer endSpan()
+
 	authorId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}
-
-	ctx := req.Context()
 
 	vars := mux.Vars(req)
 	userId, err := strconv.Atoi(vars["user_id"])
@@ -46,7 +52,7 @@ func (h *dialogsHandlerImp) GetDialogByUserId(w http.ResponseWriter, req *http.R
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	users, err := h.service.GetMessages(ctx, authorId, uint(userId))
+	users, err := h.service.GetMessages(ctx, tracer, authorId, uint(userId))
 	if err != nil {
 		log.Printf("Dialogs handler error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -73,6 +79,9 @@ func (h *dialogsHandlerImp) GetDialogByUserId(w http.ResponseWriter, req *http.R
 // @Router /dialog/{user_id}/send [post]
 func (h *dialogsHandlerImp) SendMessageToUser(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	tracer := h.tracer.CreateTracer(req.RequestURI)
+	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "SendMessageToUser")
+	defer endSpan()
 
 	authorId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
@@ -93,7 +102,7 @@ func (h *dialogsHandlerImp) SendMessageToUser(w http.ResponseWriter, req *http.R
 		return
 	}
 
-	m, err := h.service.CreateMessage(ctx, authorId, uint(userId), text)
+	m, err := h.service.CreateMessage(ctx, tracer, authorId, uint(userId), text)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -116,13 +125,17 @@ func (h *dialogsHandlerImp) SendMessageToUser(w http.ResponseWriter, req *http.R
 // @Failure      500
 // @Router /buddies [get]
 func (h *dialogsHandlerImp) GetDialogBuddies(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	tracer := h.tracer.CreateTracer(req.RequestURI)
+	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "GetDialogBuddies")
+	defer endSpan()
+
 	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
 		return
 	}
 
-	ctx := req.Context()
-	buddies, err := h.service.GetDialogBuddies(ctx, userId)
+	buddies, err := h.service.GetDialogBuddies(ctx, tracer, userId)
 
 	if err != nil {
 		log.Printf("Dialogs handler error: %v\n", err)
