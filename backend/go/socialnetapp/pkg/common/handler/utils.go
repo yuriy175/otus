@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	commonmodel "socialnerworkapp.com/pkg/common/model"
 	"socialnerworkapp.com/pkg/common/service"
@@ -36,6 +37,7 @@ func GetAuthorizedUserId(
 	w http.ResponseWriter,
 	r *http.Request,
 	token string) (uint, error) {
+	token = strings.TrimPrefix(token, "Bearer ")
 	userId := service.GetAuthorizedUserId(token)
 
 	if userId == "" {

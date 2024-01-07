@@ -11,4 +11,5 @@ export type User =
 
 export type CurrentUser = {
     user?: User
+    foundUsers?: User[]
 }

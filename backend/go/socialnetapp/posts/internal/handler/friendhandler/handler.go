@@ -22,7 +22,7 @@ func NewFriendHandler(service service.FriendService) handler.FriendHandler {
 
 // AddFriend godoc
 // @Summary Add user's friend
-// @Tags         friends
+// @Tags        obsolete friends
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -31,7 +31,7 @@ func NewFriendHandler(service service.FriendService) handler.FriendHandler {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /friend/set/{user_id} [put]
+// // @Router /friend/set/{user_id} [put]
 func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	vars := mux.Vars(req)
@@ -59,7 +59,7 @@ func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 
 // DeleteFriend godoc
 // @Summary Delete user's friend
-// @Tags         friends
+// @Tags        obsolete friends
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -68,7 +68,7 @@ func (h *friendHandlerImp) AddFriend(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /friend/delete/{user_id} [delete]
+// // @Router /friend/delete/{user_id} [delete]
 func (h *friendHandlerImp) DeleteFriend(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	token, err := commonhandler.GetAuthorizationToken(w, req)

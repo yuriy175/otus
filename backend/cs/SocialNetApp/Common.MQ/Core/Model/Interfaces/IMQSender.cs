@@ -9,5 +9,6 @@ namespace Common.MQ.Core.Model.Interfaces
     public interface IMQSender
     {
         void SendPost(uint userId, string post);
+        void SendDialogMessage<T>(T data);
     }
 }

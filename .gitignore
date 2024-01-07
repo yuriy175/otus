@@ -2,7 +2,9 @@
 /backend/go/socialnetapp/.vscode/*.*
 /backend/go/socialnetapp/profile/cmd/*.exe
 /backend/go/socialnetapp/dialogs/cmd/*.exe
+/backend/go/socialnetapp/posts/cmd/*.exe
 /backend/go/socialnetapp/websockets/cmd/*.exe
+/backend/go/socialnetapp/bff/cmd/*.exe
 
 
 # VS settings for c#
@@ -19,6 +21,8 @@
 /backend/cs/SocialNetApp/WebSockets/obj
 /backend/cs/SocialNetApp/Posts/bin
 /backend/cs/SocialNetApp/Posts/obj
+/backend/cs/SocialNetApp/Bff/bin
+/backend/cs/SocialNetApp/Bff/obj
 
 
 #docker

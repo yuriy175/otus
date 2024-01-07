@@ -1,3 +1,3 @@
-export { default as usersReducer} from './usersSlice'
-export {loginCurrentUser, logoffCurrentUser} from './usersActions'
-export {selectCurrentUser} from './usersSelectors'
+export { default as friendsReducer} from './friendsSlice'
+export {getUserFriends, addUserFriends, deleteUserFriends} from './friendsActions'
+export {selectFriends} from './friendsSelectors'

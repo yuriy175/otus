@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Infrastructure\gRpc\Protos\auth.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
     <PackageReference Include="Npgsql" Version="7.0.4" />
@@ -21,6 +25,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Common.MQ\Common.MQ.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
+  </ItemGroup>
+  <ItemGroup>
+      <Protobuf Include="Infrastructure\gRpc\Protos\auth.proto" GrpcServices="Server" />
+      <Protobuf Include="Infrastructure\gRpc\Protos\user.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

@@ -17,17 +17,14 @@ namespace Posts.Application.Commands.Posts
             private readonly IPostsRepository _postsRepository;
             private readonly ICacheService _cacheService;
             private readonly IFriendsRepository _friendsRepository;
-            private readonly IMQSender _mqSender;
             public AddPostCommandHandler(
                 IPostsRepository postsRepository,
                 IFriendsRepository friendsRepository,
-                ICacheService cacheService,
-                IMQSender mqSender)
+                ICacheService cacheService)
             {
                 _postsRepository = postsRepository;
                 _friendsRepository = friendsRepository;
                 _cacheService = cacheService;
-                _mqSender = mqSender;
             }
             public async Task<int> Handle(AddPostCommand command, CancellationToken cancellationToken)
             {
@@ -35,7 +32,6 @@ namespace Posts.Application.Commands.Posts
                 var text = command.Text;
 
                 var post = await _postsRepository.AddPostAsync(userId, text, cancellationToken);
-                _mqSender.SendPost(userId, text);
                 var subscriberIds = await _friendsRepository.GetSubscriberIdsAsync(userId, cancellationToken);
                 foreach (var subscriberId in subscriberIds)
                 {

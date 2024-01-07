@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  ChangeEventHandler,
+  useEffect,
+  useState,
+} from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -6,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import css from './LoginComponent.css';
 import Button from '@mui/material/Button';
 import {
+  getUserFriends,
   loginCurrentUser,
   selectCurrentUser,
   useAppDispatch,
@@ -20,9 +25,21 @@ export function LoginComponent() {
   const onLogin = () => {
     dispatch(loginCurrentUser(userId, password));
   };
+
   if (user) {
     return <Navigate to="/main" />;
   }
+
+  const onIdChange: ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (e) => {
+    setUserId(Number(e.target.value));
+  };
+  const onPasswordChange: ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (e) => {
+    setPassword(e.target.value);
+  };
 
   return (
     <div className={css.panel}>
@@ -31,6 +48,7 @@ export function LoginComponent() {
         id="outlined-required"
         label="Id пользователя"
         value={userId}
+        onChange={onIdChange}
       />
       <TextField
         required
@@ -38,6 +56,7 @@ export function LoginComponent() {
         label="Пароль"
         type="password"
         value={password}
+        onChange={onPasswordChange}
       />
       <Button variant="contained" onClick={onLogin}>
         Логин

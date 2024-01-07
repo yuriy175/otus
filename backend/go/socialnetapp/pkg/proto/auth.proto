@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "/gen";
+ 
+service Auth {
+  rpc Login (LoginRequest) returns (LoginReply);
+}
+ 
+message LoginRequest {
+  uint32 id = 1;
+  string password = 2;
+}
+
+message LoginReply {
+  string token = 1;
+}

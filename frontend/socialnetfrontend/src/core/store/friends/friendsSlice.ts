@@ -1,16 +1,25 @@
 import type {PayloadAction} from '@reduxjs/toolkit'
-import {createSlice} from '@reduxjs/toolkit'
-import { STATUS_CODES } from 'http'
+import {createEntityAdapter, createSlice} from '@reduxjs/toolkit'
 import { CurrentUser, User } from '../../../core/types'
 
-const initialState : CurrentUser = {}
+export const friendsAdapter = createEntityAdapter<User>({
+  selectId: (user) => user.id,
+})
 
 export const friendsSlice = createSlice({
     name: 'friends',
-    initialState,
+    initialState: friendsAdapter.getInitialState(),
     reducers:{
-        setFriends(state, {payload}: PayloadAction<User>){
-          state.user =  payload
+        setFriends(state, {payload}: PayloadAction<User[]>){
+          friendsAdapter.setAll(state, payload)
+        },
+
+        addFriends(state, {payload}: PayloadAction<User>){
+          friendsAdapter.addOne(state, payload)
+        },
+
+        deleteFriends(state, {payload}: PayloadAction<User['id']>){
+          friendsAdapter.removeOne(state, payload)
         },
     }
 })

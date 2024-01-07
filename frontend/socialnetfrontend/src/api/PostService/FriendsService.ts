@@ -1,15 +1,20 @@
-import {axiosInstance} from '../common'
+import {axiosCsInstance, axiosGoInstance} from '../common'
 
-import {PostsClient, FriendsClient} from './Client'
+import {FriendsClient} from '../Client'
 
-enum PostsClients {
-    PostsClient, FriendsClient
-}
-
-const getPostsClient = (): PostsClient => new PostsClient('posts', axiosInstance)
-const getFriendsClient = (): FriendsClient => new FriendsClient('friends', axiosInstance)
+const getFriendsClient = (): FriendsClient => new FriendsClient('friends', axiosGoInstance)
 
 export const getFriends = async () => {
     const client = getFriendsClient()
     return client.friends()
+}
+
+export const addFriends = async (friendId: number) => {
+    const client = getFriendsClient()
+    return client.set(friendId)
+}
+
+export const deleteFriends = async (friendId: number) => {
+    const client = getFriendsClient()
+    return client.delete(friendId)
 }

@@ -1,0 +1,45 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "DialogGrpc";
+ 
+package dialog;
+ 
+service Dialog {
+  rpc GetMessages (GetMessagesRequest) returns (GetMessagesReply);
+  rpc CreateMessage (CreateMessageRequest) returns (MessageReply);
+  rpc GetBuddyIds (GetBuddyIdsRequest) returns (GetBuddyIdsReply);
+}
+ 
+message MessageReply {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+  string text = 3;
+  optional google.protobuf.Timestamp created = 4;
+}
+
+message GetMessagesReply {
+  repeated MessageReply messages = 1;
+}
+
+message CreateMessageRequest {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+  string text = 3;
+  optional google.protobuf.Timestamp created = 4;
+}
+
+message GetMessagesRequest {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+}
+
+message GetBuddyIdsRequest {
+  uint32 id = 1;
+}
+
+message GetBuddyIdsReply {
+  repeated uint32 ids = 1;
+}

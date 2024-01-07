@@ -1,0 +1,31 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "PostGrpc";
+ 
+package post;
+ 
+service Post {
+  rpc CreatePost (CreatePostRequest) returns (google.protobuf.Empty) {};
+  rpc FeedPosts (FeedPostsRequest) returns (stream PostReply);
+}
+ 
+message CreatePostRequest {
+  uint32 user_id = 1;
+  string text = 2;
+}
+
+message FeedPostsRequest {
+  uint32 user_id = 1;
+  uint32 offset = 2;
+  uint32 limit = 3;
+}
+
+message PostReply {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+  string message = 3;
+  optional google.protobuf.Timestamp created = 4;
+}

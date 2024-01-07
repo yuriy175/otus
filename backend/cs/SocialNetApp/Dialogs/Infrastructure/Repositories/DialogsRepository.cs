@@ -25,7 +25,7 @@ namespace Dialogs.Infrastructure.Repositories
             using var connection = _context.CreateConnection();
             var sql = "INSERT INTO public.dialogs(author_id, user_id, message) " +
                       "VALUES (@authorId, @userId, @text) " +
-                      "RETURNING author_id, user_id, message, created";                      
+                      "RETURNING author_id as authorId, user_id as userId, message as text, created";                      
 
             return await connection.QueryFirstAsync<Message>(new CommandDefinition(
                 sql,
@@ -42,11 +42,30 @@ namespace Dialogs.Infrastructure.Repositories
                       "UNION ALL "+
                       "SELECT author_id as authorId, user_id as userId, message as text, created " +
                       "FROM public.dialogs "+
-                      "where author_id = @userId2 and user_id = @userId1;";
+                      "where author_id = @userId2 and user_id = @userId1 " +
+                      "ORDER BY created DESC;";
 
             return await connection.QueryAsync<Message>(new CommandDefinition(
                 sql,
                 new { userId1 = (int)userId1, userId2 = (int)userId2 },
+                cancellationToken: cancellationToken));
+        }
+
+        public async Task<IEnumerable<int>> GetBuddyIdsAsync(uint userId, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateReadConnection();
+            var sql = "SELECT DISTINCT * FROM " +
+                       "(SELECT author_id " +
+                       "FROM public.dialogs " +
+                       "WHERE user_id = @userId " +
+                       "UNION ALL " +
+                       "SELECT user_id " +
+                       "FROM public.dialogs " +
+                       "WHERE author_id = @userId) x";
+
+            return await connection.QueryAsync<int>(new CommandDefinition(
+                sql,
+                new { userId = (int)userId },
                 cancellationToken: cancellationToken));
         }
     }

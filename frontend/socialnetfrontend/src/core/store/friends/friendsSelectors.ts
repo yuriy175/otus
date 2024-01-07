@@ -1,8 +1,5 @@
 import type { RootState } from "../store"
-import { friendsSlice } from './friendsSlice'
+import { friendsAdapter, friendsSlice } from './friendsSlice'
 
-export const selectFriends = (state: RootState) => 
-{
-    return state.users?.user
-}
+export const {selectAll: selectFriends} = friendsAdapter.getSelectors<RootState>(state => state.friends)
 

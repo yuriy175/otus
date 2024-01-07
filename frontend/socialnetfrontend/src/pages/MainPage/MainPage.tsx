@@ -21,40 +21,76 @@ import {
   selectCurrentUser,
   logoffCurrentUser,
   useAppDispatch,
+  getUserFriends,
+  feedFriendPosts,
+  selectCurrentPage,
+  setActivePage,
+  getUserBuddies,
 } from '../../core/store';
 import Switch from '@mui/material/Switch';
 import { Navigate } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { DrawerComponent } from './DrawerComponent';
 import { ToolbarComponent } from './ToolbarComponent';
-import { PageType, drawerWidth } from './types';
-import { FriendsComponent, UsersComponent } from '../../components';
+import { drawerWidth } from './types';
+import {
+  CurrentDialogComponent,
+  DialogsComponent,
+  FriendsComponent,
+  PostsComponent,
+  ProfileComponent,
+  SearchComponent,
+} from '../../components';
+import { PageType } from '../../core/types';
 
 export function MainPage() {
   const user = useRootSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [pageType, setPageType] = useState<PageType>('Profile');
+  //const [pageType, setPageType] = useState<PageType>('Profile');
+  const pageType = useRootSelector(selectCurrentPage);
 
   if (!user) {
     return <Navigate to="/" />;
   }
 
   const onPageSelect = (type: PageType) => {
-    setPageType(type);
+    switch (type) {
+      case 'Friends': {
+        dispatch(getUserFriends());
+        break;
+      }
+      case 'Feed': {
+        dispatch(feedFriendPosts());
+        break;
+      }
+      case 'Dialogs': {
+        dispatch(getUserBuddies());
+        break;
+      }
+    }
+    dispatch(setActivePage(type));
   };
 
   const renderSwitch = (param: PageType) => {
     switch (param) {
       case 'Friends':
         return <FriendsComponent />;
+      case 'Feed':
+        return <PostsComponent />;
+      case 'Search':
+        return <SearchComponent />;
+      case 'Dialogs':
+        return <DialogsComponent />;
+      case 'CurrentDialog':
+        return <CurrentDialogComponent />;
       default:
-        return <UsersComponent />;
+        return <ProfileComponent />;
     }
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', flexGrow: '1' }}>
       <ToolbarComponent user={user}></ToolbarComponent>
       <Box
         component="nav"
@@ -85,23 +121,6 @@ export function MainPage() {
       >
         <Toolbar />
         {renderSwitch(pageType)}
-        {/* <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-          do eiusmod tempor incididunt ut labore et dolore magna
-          aliqua. Rhoncus dolor purus non enim praesent elementum
-          facilisis leo vel. Risus at ultrices mi tempus imperdiet.
-          Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id
-          donec ultrices. Odio morbi quis commodo odio aenean sed
-          adipiscing. Amet nisl suscipit adipiscing bibendum est
-          ultricies integer quis. Cursus euismod quis viverra nibh
-          cras. Metus vulputate eu scelerisque felis imperdiet proin
-          fermentum leo. Mauris commodo quis imperdiet massa
-          tincidunt. Cras tincidunt lobortis feugiat vivamus at augue.
-          At augue eget arcu dictum varius duis at consectetur lorem.
-          Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography> */}
       </Box>
     </Box>
   );

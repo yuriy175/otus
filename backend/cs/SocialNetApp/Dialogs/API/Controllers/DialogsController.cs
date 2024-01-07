@@ -2,9 +2,11 @@
 using Common.API.Controllers;
 using Dialogs.Core.Model;
 using Dialogs.Core.Model.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Dialogs.API.Controllers
 {
@@ -42,6 +44,18 @@ namespace Dialogs.API.Controllers
             }
 
             return Ok(await _dialogsService.CreateMessageAsync(authorId.Value, userId, text, cancellationToken));
+        }
+
+        [Authorize]
+        [HttpGet("/buddies")]
+        public async Task<ActionResult<IEnumerable<int>?>> GetBuddies(CancellationToken cancellationToken)
+        {
+            var userId = GetUserId();
+            if (userId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await _dialogsService.GetBuddyIdsAsync(userId.Value, cancellationToken));
         }
     }
 }

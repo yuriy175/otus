@@ -6,10 +6,14 @@
       "launchUrl": "swagger",
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development",
-            "POSTGRESQL_DIALOGDB_CONNECTION": "Server=localhost;Port=5434;User Id=postgres;Password=medtex;Database=postgres;",
+            "POSTGRESQL_DIALOGDB_CONNECTION2": "Server=localhost;Port=5434;User Id=postgres;Password=medtex;Database=postgres;",
+            "POSTGRESQL_DIALOGDB_CONNECTION": "Server=localhost;Port=6432;User Id=sa;Password=medtex;Database=otusdb;",
             "SECURITY_KEY": "mysupersecret_secretkey!123",
             "REDIS_HOST": "localhost:6379",
-            "CACHE_ITEMS_COUNT": "5"
+            "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/",
+            "CACHE_ITEMS_COUNT": "5",
+            "GRPC_PORT": "5093",
+            "REST_PORT": "5092"
         },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5092"

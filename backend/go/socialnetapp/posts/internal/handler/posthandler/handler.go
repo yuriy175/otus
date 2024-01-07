@@ -26,7 +26,7 @@ func NewPostHandler(service service.PostService) handler.PostHandler {
 
 // CreatePost godoc
 // @Summary Add user's post
-// @Tags         posts
+// @Tags        obsolete posts
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -35,7 +35,7 @@ func NewPostHandler(service service.PostService) handler.PostHandler {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /post/create [post]
+// // @Router /post/create [post]
 func (h *postHandlerImp) CreatePost(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
@@ -59,7 +59,7 @@ func (h *postHandlerImp) CreatePost(w http.ResponseWriter, req *http.Request) {
 
 // UpdatePost godoc
 // @Summary Update user's post
-// @Tags         posts
+// @Tags        obsolete posts
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -68,7 +68,7 @@ func (h *postHandlerImp) CreatePost(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /post/update [put]
+// // @Router /post/update [put]
 func (h *postHandlerImp) UpdatePost(w http.ResponseWriter, req *http.Request) {
 	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {
@@ -106,7 +106,7 @@ func (h *postHandlerImp) UpdatePost(w http.ResponseWriter, req *http.Request) {
 
 // DeletePost godoc
 // @Summary Delete user's post
-// @Tags         posts
+// @Tags        obsolete posts
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -115,7 +115,7 @@ func (h *postHandlerImp) UpdatePost(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /post/delete/{id} [delete]
+// // @Router /post/delete/{id} [delete]
 func (h *postHandlerImp) DeletePost(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
@@ -140,7 +140,7 @@ func (h *postHandlerImp) DeletePost(w http.ResponseWriter, req *http.Request) {
 
 // GetPost godoc
 // @Summary Get user's post
-// @Tags         posts
+// @Tags        obsolete posts
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -149,7 +149,7 @@ func (h *postHandlerImp) DeletePost(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /post/get/{id} [get]
+// // @Router /post/get/{id} [get]
 func (h *postHandlerImp) GetPost(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
@@ -180,7 +180,7 @@ func (h *postHandlerImp) GetPost(w http.ResponseWriter, req *http.Request) {
 
 // FeedPosts godoc
 // @Summary Feed friends post
-// @Tags         posts
+// @Tags         obsolete posts
 // @Security BearerAuth
 // @Accept  json
 // @Produce  json
@@ -189,7 +189,7 @@ func (h *postHandlerImp) GetPost(w http.ResponseWriter, req *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Router /post/feed [get]
+// // @Router /post/feed [get]
 func (h *postHandlerImp) FeedPosts(w http.ResponseWriter, req *http.Request) {
 	userId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)
 	if err != nil {

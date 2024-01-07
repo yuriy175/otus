@@ -1,5 +1,4 @@
-﻿using Dapper;
-using SocialNetApp.Core.Model;
+﻿using Posts.Core.Model;
 
 namespace Posts.Infrastructure.Repositories.Interfaces
 {

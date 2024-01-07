@@ -13,62 +13,6 @@ services:
     ports:
       - "5432:5432"
 
-  profile_go:
-    container_name: profile_go
-    image: profile_go:$APP_VERSION
-    build:
-      context: ..
-      dockerfile: docker/go/profile.Dockerfile
-      target: final
-      args:
-        APP_VERSION: $APP_VERSION
-    environment:
-      - EXPOSE_PORT=$EXPOSE_PORT
-      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
-      - SECURITY_KEY=$SECURITY_KEY
-      - REDIS_HOST=$REDIS_HOST
-      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
-      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
-    ports:
-      - "8001:80"
-    depends_on:
-      - postgres
-      - redis-server
-
-  profile_cs:
-    container_name: profile_cs
-    image: profile_cs:$APP_VERSION
-    build:
-      context: ..
-      dockerfile: docker/cs/profile.Dockerfile
-      target: final
-      args:
-        APP_VERSION: $APP_VERSION
-    environment:
-      - EXPOSE_PORT=$EXPOSE_PORT
-      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS	
-      - SECURITY_KEY=$SECURITY_KEY
-      - REDIS_HOST=$REDIS_HOST
-      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
-      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
-    ports:
-      - "8002:80"
-    depends_on:
-      - postgres
-      - redis-server
-
-
-  front:
-    container_name: front
-    build:
-      context: ..
-      dockerfile: docker/front/front.Dockerfile
-    ports:
-      - '1337:80'
-    depends_on:
-      - postgres
-
-
   pgbouncer:
     image: edoburu/pgbouncer
     restart: always
@@ -99,6 +43,275 @@ services:
 
     volumes:
      - redis-data:/var/lib/redis
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.45
+    hostname: "jaeger"
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+      - 14269:14269
+      - 14250:14250
+      - 9411:9411
+      - 4317:4317
+      - 4318:4318
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+  bff_go:
+    container_name: bff_go
+    image: bff_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/bff.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - GRPC_PROFILE=$GRPC_PROFILE_GO
+      - GRPC_POSTS=$GRPC_POSTS_GO
+      - GRPC_DIALOGS=$GRPC_DIALOGS_GO
+      - REST_PORT=$REST_BFF_PORT_GO
+      - SECURITY_KEY=$SECURITY_KEY
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=jaeger:4318
+    ports:
+      - "8009:8009"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - jaeger
+
+  bff_cs:
+    container_name: bff_cs
+    image: bff_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/bff.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - GRPC_PROFILE=$GRPC_PROFILE_CS
+      - GRPC_POSTS=$GRPC_POSTS_CS
+      - GRPC_DIALOGS=$GRPC_DIALOGS_CS
+      - GRPC_PORT=$REST_BFF_PORT_CS
+      - SECURITY_KEY=$SECURITY_KEY
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+      - OTEL_EXPORTER_JAEGER_AGENT_HOST=jaeger
+    ports:
+      - "8010:80"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - jaeger
+
+  profile_go:
+    container_name: profile_go
+    image: profile_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/profile.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - GRPC_PORT=$GRPC_PROFILE_PORT_GO
+      - REST_PORT=$REST_PROFILE_PORT_GO
+    ports:
+      - "8001:8001"
+      - "8101:8101"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  profile_cs:
+    container_name: profile_cs
+    image: profile_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/profile.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - GRPC_PORT=$GRPC_PROFILE_PORT_CS
+      - REST_PORT=$REST_PROFILE_PORT_CS
+    ports:
+      - "8002:8002"
+      - "8102:8102"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  posts_go:
+    container_name: posts_go
+    image: posts_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/posts.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_POSTDB_CONNECTION	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - GRPC_PORT=$GRPC_POSTS_PORT_GO
+      - REST_PORT=$REST_POSTS_PORT_GO
+    ports:
+      - "8007:8007"
+      - "8107:8107"
+    depends_on:
+      - postgres
+      - redis-server
+      - rabbitmq
+
+  posts_cs:
+    container_name: posts_cs
+    image: posts_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/posts.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_POSTDB_CONNECTION_CS	
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - GRPC_PORT=$GRPC_POSTS_PORT_CS
+      - REST_PORT=$REST_POSTS_PORT_CS
+    ports:
+      - "8008:8008"
+      - "8108:8108"
+    depends_on:
+      - postgres
+      - redis-server
+      - rabbitmq
+
+  dialogs_go:
+    container_name: dialogs_go
+    image: dialogs_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/dialogs.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION_DB=$POSTGRESQL_CONNECTION
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - GRPC_PORT=$GRPC_DIALOGS_PORT_GO
+      - REST_PORT=$REST_DIALOGS_PORT_GO
+    ports:
+      - "8003:8003"
+      - "8103:8103"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  dialogs_cs:
+    container_name: dialogs_cs
+    image: dialogs_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/dialogs.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_DIALOGDB_CONNECTION=$POSTGRESQL_CONNECTION_CS
+      - SECURITY_KEY=$SECURITY_KEY
+      - REDIS_HOST=$REDIS_HOST
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - GRPC_PORT=$GRPC_DIALOGS_PORT_CS
+      - REST_PORT=$REST_DIALOGS_PORT_CS
+    ports:
+      - "8004:8004"
+      - "8104:8104"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  websockets_go:
+    container_name: websockets_go
+    image: websockets_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/websockets.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION		
+      - SECURITY_KEY=$SECURITY_KEY
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - REDIS_HOST=$REDIS_HOST
+      - REST_PORT=$REST_WEBSOCK_PORT_GO
+    ports:
+      - "8005:8005"
+    depends_on:
+      - rabbitmq
+
+  websockets_cs:
+    container_name: websockets_cs
+    image: websockets_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/websockets.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - SECURITY_KEY=$SECURITY_KEY
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS		
+      - REDIS_HOST=$REDIS_HOST
+      - REST_PORT=$REST_WEBSOCK_PORT_CS
+    ports:
+      - "8006:80"
+    depends_on:
+      - rabbitmq
 
 volumes:                     
   otusdb-data:

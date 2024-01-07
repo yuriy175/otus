@@ -1,4 +1,4 @@
-﻿using SocialNetApp.Core.Model;
+﻿using Posts.Core.Model;
 
 namespace Posts.Infrastructure.Caches
 {

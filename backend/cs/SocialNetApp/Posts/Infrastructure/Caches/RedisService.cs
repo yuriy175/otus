@@ -1,5 +1,5 @@
 ﻿using NRedisStack;
-using SocialNetApp.Core.Model;
+using Posts.Core.Model;
 using StackExchange.Redis;
 using System.Text.Json;
 

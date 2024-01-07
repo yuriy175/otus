@@ -1,3 +1,4 @@
 package mq
 
-const channelName string = "/post/feed/posted"
+const postChannelName string = "/post/feed/posted"
+const dialogQueueName string = "dialogsqueue"

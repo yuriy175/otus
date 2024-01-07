@@ -12,11 +12,14 @@ import (
 )
 
 type wsHandlerImp struct {
-	service  service.WebsocketsService
-	upgrader websocket.Upgrader
+	feedPostsService service.WebsocketsService
+	diaogsService    service.WebsocketsService
+	upgrader         websocket.Upgrader
 }
 
-func NewWebsocketsHandler(service service.WebsocketsService) handler.WebsocketsHandler {
+func NewWebsocketsHandler(
+	feedPostsService service.WebsocketsService,
+	diaogsService service.WebsocketsService) handler.WebsocketsHandler {
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -24,34 +27,54 @@ func NewWebsocketsHandler(service service.WebsocketsService) handler.WebsocketsH
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 	return &wsHandlerImp{
-		service:  service,
-		upgrader: upgrader,
+		feedPostsService: feedPostsService,
+		diaogsService:    diaogsService,
+		upgrader:         upgrader,
 	}
 }
 
 // SendPosts implements handler.WebsocketsHandler.
 func (h *wsHandlerImp) SendPosts(w http.ResponseWriter, req *http.Request) {
+	websocket, userId, err := h.preHandle(w, req)
+	if err != nil {
+		return
+	}
+
+	ctx := req.Context()
+	h.feedPostsService.OnUserConnected(ctx, websocket, uint(userId))
+}
+
+func (h *wsHandlerImp) SendDialogMessages(w http.ResponseWriter, req *http.Request) {
+	websocket, userId, err := h.preHandle(w, req)
+	if err != nil {
+		return
+	}
+
+	ctx := req.Context()
+	h.diaogsService.OnUserConnected(ctx, websocket, uint(userId))
+}
+
+func (h *wsHandlerImp) preHandle(w http.ResponseWriter, req *http.Request) (*websocket.Conn, int, error) {
 	websocket, err := h.upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Println(err)
-		return
+		return nil, 0, err
 	}
 	log.Println("Websocket Connected!")
 	tokens, ok := req.URL.Query()["token"]
 
 	if !ok {
 		log.Println("Url Param 'token' is missing")
-		return
+		return nil, 0, err
 	}
 	token := commonservice.GetAuthorizedUserId(tokens[0])
 	//protocols := strings.Split(req.Header.Get("Sec-WebSocket-Protocol"), ", ")
 	//token := commonservice.GetAuthorizedUserId(protocols[1])
 	if token == "" {
-		return
+		return nil, 0, err
 	}
 
 	userId, _ := strconv.Atoi(token)
 
-	ctx := req.Context()
-	h.service.OnUserConnected(ctx, websocket, uint(userId))
+	return websocket, userId, nil
 }

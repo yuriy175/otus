@@ -1,7 +1,4 @@
-﻿using Dapper;
-using SocialNetApp.Core.Model;
-
-namespace Posts.Infrastructure.Repositories.Interfaces
+﻿namespace Posts.Infrastructure.Repositories.Interfaces
 {
     public interface IFriendsRepository
     {

@@ -1,0 +1,29 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "/gen";
+ 
+service Friend {
+  rpc GetFriendIds (GetFriendIdsRequest) returns (GetFriendIdsReply);
+  rpc AddFriend (AddFriendRequest) returns (google.protobuf.Empty) {};
+  rpc DeleteFriend (DeleteFriendRequest) returns (google.protobuf.Empty) {};
+}
+ 
+message GetFriendIdsRequest {
+  uint32 id = 1;
+}
+
+message GetFriendIdsReply {
+  repeated uint32 ids = 1;
+}
+
+message AddFriendRequest {
+  uint32 user_id = 1;
+  uint32 friend_id = 2;
+}
+
+message DeleteFriendRequest {
+  uint32 user_id = 1;
+  uint32 friend_id = 2;
+}

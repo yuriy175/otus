@@ -2,15 +2,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using Posts.API.Dtos;
-using Posts.Application.Commands.Friends;
 using Posts.Application.Commands.Posts;
-using Posts.Application.Queries.Friends;
 using Posts.Application.Queries.Posts;
-using Posts.Core.Model.Interfaces;
-using SocialNetApp.Core.Model;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Posts.API.Controllers
 {

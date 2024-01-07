@@ -11,7 +11,9 @@
             "SECURITY_KEY": "mysupersecret_secretkey!123",
             "REDIS_HOST": "localhost:6379",
             "CACHE_ITEMS_COUNT": "5",
-            "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/"
+            "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/",
+            "GRPC_PORT": "5166",
+            "REST_PORT": "5165"
         },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5165"

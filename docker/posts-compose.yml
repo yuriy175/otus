@@ -30,7 +30,7 @@ services:
       - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
       - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
     ports:
-      - "8001:80"
+      - "8007:80"
     depends_on:
       - post_postgres
 
@@ -50,8 +50,11 @@ services:
       - REDIS_HOST=$REDIS_HOST
       - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_POSTDB_READ_CONNECTION
       - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - GRPC_PORT=$GRPC_POSTS_PORT
+      - REST_PORT=$REST_POSTS_PORT
     ports:
-      - "8002:80"
+      - "8008:8008"
+      - "8108:8108"
     depends_on:
       - post_postgres
 

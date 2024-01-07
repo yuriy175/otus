@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json.Serialization;
 
-namespace SocialNetApp.Core.Model
+namespace Posts.Core.Model
 {
     public readonly record  struct Post
     {

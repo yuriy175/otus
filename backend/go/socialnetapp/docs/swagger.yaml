@@ -1,5 +1,19 @@
 definitions:
+  dto.LoggedinUserDto:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserDto'
+    type: object
   dto.LoginDto:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+    type: object
+  dto.LoginUserDto:
     properties:
       id:
         type: integer
@@ -30,6 +44,25 @@ definitions:
       text:
         type: string
     type: object
+  dto.UserDto:
+    properties:
+      age:
+        type: integer
+      city:
+        type: string
+      id:
+        type: integer
+      info:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      sex:
+        type: string
+      surname:
+        type: string
+    type: object
   model.Message:
     properties:
       authorId:
@@ -38,9 +71,7 @@ definitions:
         type: string
       message:
         type: string
-      userId1:
-        type: integer
-      userId2:
+      userId:
         type: integer
     type: object
   model.Post:
@@ -197,19 +228,19 @@ paths:
         name: properties
         required: true
         schema:
-          $ref: '#/definitions/dto.LoginDto'
+          $ref: '#/definitions/dto.LoginUserDto'
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/dto.LoggedinUserDto'
         "400":
           description: Bad Request
         "500":
           description: Internal Server Error
       summary: Login user
       tags:
-      - auth
+      - users
   /post/create:
     post:
       consumes:

@@ -10,6 +10,7 @@ type FriendRepository interface {
 	UpsertFriend(_ context.Context, userId uint, friendId uint) error
 	DeleteFriend(_ context.Context, userId uint, friendId uint) error
 	GetSubscriberIds(_ context.Context, userId uint) ([]uint, error)
+	GetFriendIds(_ context.Context, userId uint) ([]uint, error)
 }
 
 type PostRepository interface {

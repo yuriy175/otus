@@ -26,7 +26,7 @@ func NewAuthHandler(service service.AuthService) handler.AuthHandler {
 // @Success 200 {object} string
 // @Failure      400
 // @Failure      500
-// @Router /login [post]
+// // @Router /login [post]
 func (h *authHandlerImp) Login(w http.ResponseWriter, req *http.Request) {
 	payload := make(map[string]interface{})
 	err := json.NewDecoder(req.Body).Decode(&payload)
