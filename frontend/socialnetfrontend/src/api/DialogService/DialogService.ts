@@ -3,7 +3,7 @@ import {addBearerToken, axiosCsInstance, axiosGoInstance} from '../common'
 import {DialogsClient} from '../Client'
 
 
-const getDialogsClient = (): DialogsClient => new DialogsClient('dialogs', axiosGoInstance) 
+const getDialogsClient = (): DialogsClient => new DialogsClient('', axiosGoInstance) 
 
 export const createDialogMessage = async (userId: number, text: string) => {
     const client = getDialogsClient()

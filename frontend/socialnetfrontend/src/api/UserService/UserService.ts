@@ -7,7 +7,7 @@ enum UserClients {
     AuthClient, UserClient
 }
 
-const getUserClient = (): UserClient => new UserClient('users', axiosGoInstance)
+const getUserClient = (): UserClient => new UserClient('', axiosGoInstance)
 
 export const loginUser = async (
     id: number,

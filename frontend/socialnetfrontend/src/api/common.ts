@@ -1,8 +1,8 @@
 import type {AxiosRequestConfig} from 'axios'
 import axios from 'axios'
 
-const baseCsURL = '/cs'
-const baseGoURL = '/go'
+const baseCsURL = '/api'
+const baseGoURL = '/api'
 
 export const axiosCsInstance = axios.create({
     baseURL:baseCsURL,
