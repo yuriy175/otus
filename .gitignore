@@ -27,6 +27,7 @@
 
 #docker
 /docker/pgslave
+/docker/pgslave1
 /docker/pgslave2
 
 #frontend

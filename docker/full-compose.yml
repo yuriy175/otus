@@ -72,6 +72,15 @@ services:
         - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
 
+  haproxy:
+    image: haproxy
+    container_name: haproxy
+    volumes:
+      - "./config/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg"
+    ports:
+      - "8405:8405"
+      - "8404:8404"
+
   bff_go:
     container_name: bff_go
     image: bff_go:$APP_VERSION
@@ -318,6 +327,9 @@ services:
     build:
       context: ..
       dockerfile: docker/front/front.Dockerfile
+    environment:
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - REST_PORT=$REST_WEBSOCK_PORT_CS
     ports:
       - '3104:80'
 

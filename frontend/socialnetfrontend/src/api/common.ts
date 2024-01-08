@@ -1,28 +1,16 @@
 import type {AxiosRequestConfig} from 'axios'
 import axios from 'axios'
 
-const baseCsURL = '/api'
-const baseGoURL = '/api'
+const baseURL = '/api'
 
-export const axiosCsInstance = axios.create({
-    baseURL:baseCsURL,
-    responseType: 'json',
-    transformResponse: r => r
-})
-
-export const axiosGoInstance = axios.create({
-    baseURL:baseGoURL,
+export const axiosInstance = axios.create({
+    baseURL:baseURL,
     responseType: 'json',
     transformResponse: r => r
 })
 
 export const addBearerToken = (token: string) => {
-    axiosCsInstance.interceptors.request.use(config => {
-        config.headers.authorization = `Bearer ${token}`
-        return config
-    })
-
-    axiosGoInstance.interceptors.request.use(config => {
+    axiosInstance.interceptors.request.use(config => {
         config.headers.authorization = `Bearer ${token}`
         return config
     })

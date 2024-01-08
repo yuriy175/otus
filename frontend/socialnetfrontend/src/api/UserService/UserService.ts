@@ -1,4 +1,4 @@
-import {addBearerToken, axiosCsInstance, axiosGoInstance} from '../common'
+import {addBearerToken, axiosInstance} from '../common'
 
 import {UserClient} from '../Client'
 import { User } from '../../core/types'
@@ -7,7 +7,7 @@ enum UserClients {
     AuthClient, UserClient
 }
 
-const getUserClient = (): UserClient => new UserClient('', axiosGoInstance)
+const getUserClient = (): UserClient => new UserClient('', axiosInstance)
 
 export const loginUser = async (
     id: number,

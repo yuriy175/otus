@@ -20,10 +20,11 @@ const websocketMiddleware: Middleware = store => {
  
   return next => action => {
     const reconnect = async (token: string, endpoint: string) =>{
-        console.log("connecting...");
+        console.log(`connecting...${endpoint}`);
         const webSocket = await createWebSocket(token, endpoint, reconnect)
         webSocket.onmessage = function(event) {
           const message = JSON.parse(event.data)
+          console.log(`onmessage ${endpoint} - ${message}`);
           store. dispatch(addDialogMessage({
             own:true, 
             dialog: {
