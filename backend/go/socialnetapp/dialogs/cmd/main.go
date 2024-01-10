@@ -40,6 +40,7 @@ func init() {
 func main() {
 	log.Println("Started Go!")
 	log.Println(os.LookupEnv("POSTGRESQL_CONNECTION_DB"))
+	log.Println(os.LookupEnv("POSTGRESQL_READ_CONNECTION"))
 	log.Println(os.LookupEnv("REDIS_HOST"))
 	grpcPort, _ := os.LookupEnv("GRPC_PORT")
 	log.Println(grpcPort)
