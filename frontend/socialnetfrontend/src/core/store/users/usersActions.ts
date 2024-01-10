@@ -9,7 +9,7 @@ async(dispatch, getState) => {
     const user = await loginUser(id, password)
     dispatch(setCurrentUser(user.user))
     dispatch(createCsDialogStart(user.token))
-    //dispatch(createGoDialogStart(user.token))
+    dispatch(createGoDialogStart(user.token))
 }
 
 export const logoffCurrentUser = ():AppThunk => 
