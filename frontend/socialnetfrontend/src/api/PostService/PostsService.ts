@@ -1,8 +1,8 @@
-import {axiosCsInstance, axiosGoInstance} from '../common'
+import {axiosInstance} from '../common'
 
 import {PostsClient} from '../Client'
 
-const getPostsClient = (): PostsClient => new PostsClient('posts', axiosGoInstance)
+const getPostsClient = (): PostsClient => new PostsClient('', axiosInstance)
 
 export const createPost = async (text: string) => {
     const client = getPostsClient()

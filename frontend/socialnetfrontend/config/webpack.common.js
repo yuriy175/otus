@@ -1,8 +1,8 @@
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const paths = require('./paths')
-const { resolve } = require('path')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const paths = require('./paths');
+const { resolve } = require('path');
 module.exports = {
   entry: [paths.src + '/index.js'],
 
@@ -40,7 +40,10 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        exclude: [resolve(__dirname, '../node_modules'), resolve(__dirname, '../src/index.css')],
+        exclude: [
+          resolve(__dirname, '../node_modules'),
+          resolve(__dirname, '../src/index.css'),
+        ],
         use: [
           'style-loader',
           {
@@ -58,7 +61,10 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        include: [resolve(__dirname, '../node_modules'), resolve(__dirname, '../src/index.css')],
+        include: [
+          resolve(__dirname, '../node_modules'),
+          resolve(__dirname, '../src/index.css'),
+        ],
         use: [
           'style-loader',
           {
@@ -73,9 +79,15 @@ module.exports = {
           { loader: 'postcss-loader' },
         ],
       },
-      { test: /\.(?:ico|gif|png|jpg|jpeg|xlsx)$/i, type: 'asset/resource' },
+      {
+        test: /\.(?:ico|gif|png|jpg|jpeg|xlsx)$/i,
+        type: 'asset/resource',
+      },
 
-      { test: /\.(woff(2)?|eot|ttf|otf|svg|)$/, type: 'asset/inline' },
+      {
+        test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
+        type: 'asset/inline',
+      },
     ],
   },
   resolve: {
@@ -85,4 +97,4 @@ module.exports = {
       '@': paths.src,
     },
   },
-}
+};

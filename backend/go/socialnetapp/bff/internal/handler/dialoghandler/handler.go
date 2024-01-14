@@ -37,7 +37,7 @@ func (h *dialogsHandlerImp) GetDialogByUserId(w http.ResponseWriter, req *http.R
 
 	ctx := req.Context()
 	tracer := h.tracer.CreateTracer(req.RequestURI)
-	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "Login")
+	ctx, endSpan := h.tracer.StartSpan(ctx, tracer, "GetDialogByUserId")
 	defer endSpan()
 
 	authorId, err := commonhandler.CheckAuthorizationAndGetUserId(w, req)

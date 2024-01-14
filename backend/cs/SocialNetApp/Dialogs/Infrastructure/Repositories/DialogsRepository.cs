@@ -35,7 +35,7 @@ namespace Dialogs.Infrastructure.Repositories
 
         public async Task<IEnumerable<Message>> GetMessagesAsync(uint userId1, uint userId2, CancellationToken cancellationToken)
         {
-            using var connection = _context.CreateConnection();
+            using var connection = _context.CreateReadConnection();
             var sql = "SELECT author_id as authorId, user_id as userId, message as text, created " +
                       "FROM public.dialogs "+
                       "where author_id = @userId1 and user_id = @userId2 " +

@@ -72,6 +72,15 @@ services:
         - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
 
+  haproxy:
+    image: haproxy
+    container_name: haproxy
+    volumes:
+      - "./config/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg"
+    ports:
+      - "8405:8405"
+      - "8404:8404"
+
   bff_go:
     container_name: bff_go
     image: bff_go:$APP_VERSION
@@ -235,6 +244,7 @@ services:
     environment:
       - EXPOSE_PORT=$EXPOSE_PORT
       - POSTGRESQL_CONNECTION_DB=$POSTGRESQL_CONNECTION
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_DIALOGDB_READ_CONNECTION
       - SECURITY_KEY=$SECURITY_KEY
       - REDIS_HOST=$REDIS_HOST
       - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
@@ -261,7 +271,7 @@ services:
       - POSTGRESQL_DIALOGDB_CONNECTION=$POSTGRESQL_CONNECTION_CS
       - SECURITY_KEY=$SECURITY_KEY
       - REDIS_HOST=$REDIS_HOST
-      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_READ_CONNECTION
+      - POSTGRESQL_DIALOGDB_READ_CONNECTION=$POSTGRESQL_DIALOGDB_READ_CONNECTION_CS
       - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
       - GRPC_PORT=$GRPC_DIALOGS_PORT_CS
       - REST_PORT=$REST_DIALOGS_PORT_CS
@@ -312,6 +322,17 @@ services:
       - "8006:80"
     depends_on:
       - rabbitmq
+
+  front:
+    container_name: front
+    build:
+      context: ..
+      dockerfile: docker/front/front.Dockerfile
+    environment:
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - REST_PORT=$REST_WEBSOCK_PORT_CS
+    ports:
+      - '3104:80'
 
 volumes:                     
   otusdb-data:

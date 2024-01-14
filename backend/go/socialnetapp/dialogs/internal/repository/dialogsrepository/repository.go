@@ -18,7 +18,7 @@ func NewDialogsRepository() repository.DialogsRepository {
 }
 
 func (r *dialogsRepositoryImp) CreateMessage(_ context.Context, authorId uint, userId uint, text string) (*model.Message, error) {
-	db, err := r.connectSql()
+	db, err := r.connectSql("POSTGRESQL_CONNECTION_DB")
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (r *dialogsRepositoryImp) CreateMessage(_ context.Context, authorId uint, u
 }
 
 func (r *dialogsRepositoryImp) GetMessages(_ context.Context, userId1 uint, userId2 uint) ([]model.Message, error) {
-	db, err := r.connectSql()
+	db, err := r.connectSql("POSTGRESQL_READ_CONNECTION")
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (r *dialogsRepositoryImp) GetMessages(_ context.Context, userId1 uint, user
 }
 
 func (r *dialogsRepositoryImp) GetBuddyIds(_ context.Context, userId uint) ([]uint, error) {
-	db, err := r.connectSql()
+	db, err := r.connectSql("POSTGRESQL_READ_CONNECTION")
 	if err != nil {
 		return nil, err
 	}
@@ -112,6 +112,6 @@ func (r *dialogsRepositoryImp) GetBuddyIds(_ context.Context, userId uint) ([]ui
 	return buddyIds, nil
 }
 
-func (r *dialogsRepositoryImp) connectSql() (*sql.DB, error) {
-	return sql.Open("postgres", os.Getenv("POSTGRESQL_CONNECTION_DB"))
+func (r *dialogsRepositoryImp) connectSql(dataSourceName string) (*sql.DB, error) {
+	return sql.Open("postgres", os.Getenv(dataSourceName))
 }

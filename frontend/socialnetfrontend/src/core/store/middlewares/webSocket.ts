@@ -16,17 +16,17 @@ export const createWebSocket = async (
     //     }
 
         webSocket.onopen = function(evt) {
-            console.log("onopen.");
+            console.log(`onopen ${endpoint}.`);
         };
 
         webSocket.onclose = async function(evt) {
-            console.log("onclose.");
+            console.log(`onclose ${endpoint}.`);
             await delay(2000)
             await reconnect(token, endpoint)
         };
 
         webSocket.onerror = function(evt) {
-            console.log("Error!");
+            console.log(`Error ${endpoint}.`);
         };
         
         return webSocket
