@@ -40,6 +40,7 @@ namespace Bff
             services.AddScoped<IFriendService, FriendService>();
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<IDialogService, DialogService>();
+            services.AddScoped<ICounterService, CounterService>();
             services.AddSingleton<IGrpcChannelsProvider, GrpcChannelsProvider>();
 
             services.AddAuthorization();

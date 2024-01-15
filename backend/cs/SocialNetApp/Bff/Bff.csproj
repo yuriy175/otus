@@ -38,6 +38,9 @@
     </ItemGroup>
     
     <ItemGroup>
+      <Protobuf Include="..\Counters\Infrastructure\gRpc\Protos\counter.proto">
+        <Link>Infrastructure\gRpc\Protos\counter.proto</Link>
+      </Protobuf>
       <Protobuf Include="..\Dialogs\Infrastructure\gRpc\Protos\dialog.proto">
         <Link>Infrastructure\gRpc\Protos\dialog.proto</Link>
       </Protobuf>

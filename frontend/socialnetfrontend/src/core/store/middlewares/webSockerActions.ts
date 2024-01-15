@@ -1,5 +1,6 @@
 
 export const webSocketStartActionType = "websocket/start"
+export const webSocketWithUserActionType = "websocket/withUser"
 export type WebSocketStart = {
     payload: {
         token: string,
@@ -34,11 +35,18 @@ export const createCsDialogStart = (token: string): WebSocketStart => ({
     payload:{
         token,
         //cs
-        //endpoint: 'ws://localhost:5230/dialogs?token='
+        endpoint: 'ws://localhost:5230/dialogs?token='
         //endpoint: 'ws://localhost:8006/dialogs?token='
         //endpoint: 'ws://localhost:3104/wsapp/cs/dialogs?token='
         //endpoint: 'ws://front:3104/wsapp/cs/dialogs?token='
-        endpoint: 'ws://localhost:8006/dialogs?token='
+        //endpoint: 'ws://localhost:8006/dialogs?token='
         //endpoint: 'ws://localhost:3104/wsapp/cs/dialogs?token='
+    }
+})
+
+export const startDialogWithUser = (buddyId: number) => ({
+    type: webSocketWithUserActionType,
+    payload:{
+        buddyId
     }
 })

@@ -23,7 +23,8 @@
 /backend/cs/SocialNetApp/Posts/obj
 /backend/cs/SocialNetApp/Bff/bin
 /backend/cs/SocialNetApp/Bff/obj
-
+/backend/cs/SocialNetApp/Counters/bin
+/backend/cs/SocialNetApp/Counters/obj
 
 #docker
 /docker/pgslave
