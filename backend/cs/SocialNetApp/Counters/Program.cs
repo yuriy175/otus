@@ -14,9 +14,11 @@ public static class Program
         return Host
             .CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
-            {
+            {                
                 Console.WriteLine(
                     "POSTGRESQL_CONNECTION: " + Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") +
+                    Environment.NewLine +
+                    "POSTGRESQL_READ_CONNECTION: " + Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") +
                     Environment.NewLine +
                     "RABBITMQ_CONNECTION: " + Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION")+
                     Environment.NewLine +

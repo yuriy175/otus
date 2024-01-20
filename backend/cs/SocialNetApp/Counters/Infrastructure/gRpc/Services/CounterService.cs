@@ -19,9 +19,16 @@ namespace Counters.Infrastructure.gRpc.Services
 
         public override async Task<GetUnreadCountReply> GetUnreadCount(GetUnreadCountRequest request, ServerCallContext context)
         {
-            var count = await _counterService.GetUnReadCounterByUserIdAsync(request.UserId, context.CancellationToken);
+            try
+            {
+                var count = await _counterService.GetUnReadCounterByUserIdAsync(request.UserId, context.CancellationToken);
 
-            return new GetUnreadCountReply { Count = count};
+                return new GetUnreadCountReply { Count = count };
+            }
+            catch (Exception ex) {
+                var y = 0;
+                throw;
+            }
         }
     }
 }

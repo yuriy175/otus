@@ -748,6 +748,7 @@ export interface LoginDto {
 
 export interface MessageDto {
     id: number;
+    userId: number;
     authorId: number;
     message?: string | undefined;
     created?: Date | undefined;

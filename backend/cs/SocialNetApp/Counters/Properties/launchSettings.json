@@ -18,7 +18,8 @@
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development",
             "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/",
-            "POSTGRESQL_CONNECTION": "Server=localhost;Port=6433;User Id=sa;Password=medtex;Database=otusdb;",
+            "POSTGRESQL_CONNECTION": "Server=localhost;Port=6432;User Id=sa;Password=medtex;Database=otusdb;",
+            "POSTGRESQL_READ_CONNECTION": "Server=localhost;Port=8405;User Id=sa;Password=medtex;Database=otusdb;",
             "GRPC_PORT": "5014",
             "REST_PORT": "5013"
         }

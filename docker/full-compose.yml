@@ -323,6 +323,50 @@ services:
     depends_on:
       - rabbitmq
 
+..
+  counters_go:
+    container_name: counters_go
+    image: counters_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/counters.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION		
+      - SECURITY_KEY=$SECURITY_KEY
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - REDIS_HOST=$REDIS_HOST
+      - REST_PORT=$REST_COUNTERS_PORT_GO
+    ports:
+      - "8011:8011"
+    depends_on:
+      - rabbitmq
+
+  counters_cs:
+    container_name: counters_cs
+    image: counters_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/counters.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - SECURITY_KEY=$SECURITY_KEY
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS		
+      - REDIS_HOST=$REDIS_HOST
+      - REST_PORT=$REST_COUNTERS_PORT_CS
+    ports:
+      - "8012:8012"
+    depends_on:
+      - rabbitmq
+
+..
+
   front:
     container_name: front
     build:

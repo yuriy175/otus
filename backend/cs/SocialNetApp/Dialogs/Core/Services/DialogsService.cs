@@ -31,5 +31,17 @@ namespace Dialogs.Core.Services
 
         public Task<IEnumerable<int>> GetBuddyIdsAsync(uint userId, CancellationToken cancellationToken) =>
             _dialogsRepository.GetBuddyIdsAsync(userId, cancellationToken);
+
+        public async Task<int> SetUnreadMessagesFromUserAsync(uint authorId, uint userId, CancellationToken cancellationToken)
+        {
+            var unreadMsgIds = (await _dialogsRepository.SetReadDialogMessagesFromUserAsync(authorId, userId, cancellationToken))?.ToArray();
+            var count = unreadMsgIds?.Length ?? 0;
+            if (unreadMsgIds != null)
+            {
+                _mqSender.SendUnreadDialogMessageIds(userId, false, unreadMsgIds);
+            }
+
+            return count;
+        }
     }
 }

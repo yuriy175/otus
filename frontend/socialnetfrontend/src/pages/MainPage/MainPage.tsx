@@ -26,6 +26,7 @@ import {
   selectCurrentPage,
   setActivePage,
   getUserBuddies,
+  setUnreadMessagesCount,
 } from '../../core/store';
 import Switch from '@mui/material/Switch';
 import { Navigate } from 'react-router-dom';
@@ -49,6 +50,12 @@ export function MainPage() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   //const [pageType, setPageType] = useState<PageType>('Profile');
   const pageType = useRootSelector(selectCurrentPage);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(setUnreadMessagesCount());
+    }
+  }, [user]);
 
   if (!user) {
     return <Navigate to="/" />;

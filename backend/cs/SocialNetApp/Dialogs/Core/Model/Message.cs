@@ -5,6 +5,9 @@ namespace Dialogs.Core.Model
 {
     public readonly record  struct Message
     {
+        [JsonPropertyName("id")]
+        public uint Id { get; init; }
+
         [JsonPropertyName("authorId")]
         public uint AuthorId { get; init; }
 

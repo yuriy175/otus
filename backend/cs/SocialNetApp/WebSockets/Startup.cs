@@ -46,6 +46,7 @@ namespace WebSockets
                 Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
 
             services.AddSingleton<IMQReceiver, MQReceiver>();
+            services.AddSingleton<IMQSender, MQSender>();
             services.AddSingleton<FeedPostsWebsocketsService>();
             services.AddSingleton<DialogsWebsocketsService>(); 
             services.AddSingleton<IFriendsRepository, FriendsRepository>();

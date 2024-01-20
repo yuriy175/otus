@@ -23,21 +23,24 @@ namespace WebSockets.Core.Services
         private readonly ConcurrentDictionary<uint, WebSock> _websockets = new ConcurrentDictionary<uint, WebSock> { };
 
         private readonly IMQReceiver _mqReceiver;
-        public DialogsWebsocketsService(IFriendsRepository friendsRepository, IMQReceiver mqReceiver)
+        private readonly IMQSender _mqSender;
+        public DialogsWebsocketsService(IFriendsRepository friendsRepository, IMQReceiver mqReceiver, IMQSender mqSender)
         {
             _mqReceiver = mqReceiver;
+            _mqSender = mqSender;
             _mqReceiver.CreateDialogReceiver(async (data) =>
             {
                 var text = Encoding.UTF8.GetString(data);
                 var message = JsonSerializer.Deserialize<Message>(text);
-                var id = Convert.ToUInt32(message.UserId);
+                var buddyId = Convert.ToUInt32(message.UserId);
+                var authorId = Convert.ToUInt32(message.AuthorId);
                 var text2 = message.Text;
-                Console.WriteLine($"pre [x] WS sent '{id}':'{text2}'");
+                Console.WriteLine($"pre [x] WS sent '{buddyId}':'{text2}'");
                 //byte[] bytes = Encoding.UTF8.GetBytes($"{id}: {text}");
-                if (_websockets.TryGetValue(id, out WebSock ws) && ws.Socket is not null)
+                if (_websockets.TryGetValue(buddyId, out WebSock ws) && ws.Socket is not null)
                 {
                     //a user receives a message from the buddy from the current dialog
-                    if (id == ws.BuddyId)
+                    if (authorId == ws.BuddyId)
                     {
                         //send current dialog message
                         await ws.Socket.SendAsync(
@@ -52,6 +55,11 @@ namespace WebSockets.Core.Services
                         // notify of an unread message
                         // call counters to increase count
                     }
+                }
+                else
+                {
+                    // increase counters
+                    _mqSender.SendUnreadDialogMessageIds(buddyId, true, new[] { Convert.ToInt32(message.Id) });
                 }
             });
         }

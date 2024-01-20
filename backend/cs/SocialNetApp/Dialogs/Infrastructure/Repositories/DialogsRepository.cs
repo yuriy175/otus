@@ -25,7 +25,7 @@ namespace Dialogs.Infrastructure.Repositories
             using var connection = _context.CreateConnection();
             var sql = "INSERT INTO public.dialogs(author_id, user_id, message) " +
                       "VALUES (@authorId, @userId, @text) " +
-                      "RETURNING author_id as authorId, user_id as userId, message as text, created";                      
+                      "RETURNING id, author_id as authorId, user_id as userId, message as text, created";                      
 
             return await connection.QueryFirstAsync<Message>(new CommandDefinition(
                 sql,
@@ -36,11 +36,11 @@ namespace Dialogs.Infrastructure.Repositories
         public async Task<IEnumerable<Message>> GetMessagesAsync(uint userId1, uint userId2, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateReadConnection();
-            var sql = "SELECT author_id as authorId, user_id as userId, message as text, created " +
+            var sql = "SELECT id, author_id as authorId, user_id as userId, message as text, created " +
                       "FROM public.dialogs "+
                       "where author_id = @userId1 and user_id = @userId2 " +
                       "UNION ALL "+
-                      "SELECT author_id as authorId, user_id as userId, message as text, created " +
+                      "SELECT id, author_id as authorId, user_id as userId, message as text, created " +
                       "FROM public.dialogs "+
                       "where author_id = @userId2 and user_id = @userId1 " +
                       "ORDER BY created DESC;";
@@ -66,6 +66,40 @@ namespace Dialogs.Infrastructure.Repositories
             return await connection.QueryAsync<int>(new CommandDefinition(
                 sql,
                 new { userId = (int)userId },
+                cancellationToken: cancellationToken));
+        }
+
+        public async Task<IEnumerable<int>> SetReadDialogMessagesFromUserAsync(uint authorId, uint userId, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "UPDATE public.dialogs " +
+                        "SET \"isRead\" = true " +
+                        "WHERE author_id = @authorId and user_id = @userId and \"isRead\" = false " +
+                        " RETURNING id";
+
+            return await connection.QueryAsync<int>(new CommandDefinition(
+                sql,
+                new
+                {
+                    authorId = (int)authorId,
+                    userId = (int)userId
+                },
+                cancellationToken: cancellationToken));
+        }
+
+        public async Task<int> SetUnreadDialogMessagesAsync(IEnumerable<uint> msgIds, CancellationToken cancellationToken)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "UPDATE public.dialogs " +
+                        "SET \"isRead\" = false " +
+                        "WHERE id in @ids";
+
+            return await connection.ExecuteAsync(new CommandDefinition(
+                sql,
+                new
+                {
+                    ids = msgIds.Select(i => (int)i).ToArray()
+                },
                 cancellationToken: cancellationToken));
         }
     }

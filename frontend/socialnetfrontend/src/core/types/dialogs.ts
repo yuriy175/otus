@@ -10,6 +10,7 @@ export type DialogMessage =
 {
     id: number
     authorId: number
+    userId: number
     message: string
     datetime?: Date
 }
