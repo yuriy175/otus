@@ -48,12 +48,11 @@ namespace WebSockets.Core.Services
                                 WebSocketMessageType.Text,
                                 true,
                                 CancellationToken.None);
-                        // call dialogs to set message as read
                     }
                     else
                     {
-                        // notify of an unread message
-                        // call counters to increase count
+                        // increase counters
+                        _mqSender.SendUnreadDialogMessageIds(buddyId, true, new[] { Convert.ToInt32(message.Id) });
                     }
                 }
                 else

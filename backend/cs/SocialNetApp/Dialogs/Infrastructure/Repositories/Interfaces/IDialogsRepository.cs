@@ -9,6 +9,6 @@ namespace Dialogs.Infrastructure.Repositories.Interfaces
         Task<IEnumerable<Message>> GetMessagesAsync(uint userId1, uint userId2, CancellationToken cancellationToken);
         Task<IEnumerable<int>> GetBuddyIdsAsync(uint userId, CancellationToken cancellationToken);
         Task<IEnumerable<int>> SetReadDialogMessagesFromUserAsync(uint authorId, uint userId, CancellationToken cancellationToken);
-        Task<int> SetUnreadDialogMessagesAsync(IEnumerable<uint> msgIds, CancellationToken cancellationToken);
+        Task<int> SetUnreadDialogMessagesAsync(IEnumerable<int> msgIds, CancellationToken cancellationToken);
     }
 }

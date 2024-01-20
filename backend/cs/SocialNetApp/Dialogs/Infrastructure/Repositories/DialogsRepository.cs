@@ -87,18 +87,19 @@ namespace Dialogs.Infrastructure.Repositories
                 cancellationToken: cancellationToken));
         }
 
-        public async Task<int> SetUnreadDialogMessagesAsync(IEnumerable<uint> msgIds, CancellationToken cancellationToken)
+        public async Task<int> SetUnreadDialogMessagesAsync(IEnumerable<int> msgIds, CancellationToken cancellationToken)
         {
             using var connection = _context.CreateConnection();
             var sql = "UPDATE public.dialogs " +
                         "SET \"isRead\" = false " +
-                        "WHERE id in @ids";
+                        //"WHERE id in @ids";
+                        "WHERE id = ANY(@ids)";
 
             return await connection.ExecuteAsync(new CommandDefinition(
                 sql,
                 new
                 {
-                    ids = msgIds.Select(i => (int)i).ToArray()
+                    ids = msgIds.ToArray()
                 },
                 cancellationToken: cancellationToken));
         }

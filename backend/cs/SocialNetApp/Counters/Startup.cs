@@ -42,6 +42,7 @@ namespace Counters
                 Environment.GetEnvironmentVariable("POSTGRESQL_CONNECTION") ?? string.Empty,
                 Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION") ?? string.Empty));
 
+            services.AddSingleton<IMQSender, MQSender>();
             services.AddSingleton<IMQReceiver, MQReceiver>();
             services.AddScoped<ICountersRepository, CountersRepository>();
             services.AddScoped<ICounterService, CounterService>();

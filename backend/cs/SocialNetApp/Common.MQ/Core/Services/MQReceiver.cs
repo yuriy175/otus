@@ -69,6 +69,11 @@ namespace Common.MQ.Core.Services
             CreateDirectReceiver(MQConstants.CounterQueueName, action);
         }
 
+        public void CreateUnreadDialogMessagesCountFailedReceiver(Action<byte[]> action)
+        {
+            CreateDirectReceiver(MQConstants.CounterDialogQueueName, action);
+        }
+
         private void CreateDirectReceiver(string queueName, Action<byte[]> action)
         {
             var (connection, channel) = CreateMQ();

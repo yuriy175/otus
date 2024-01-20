@@ -13,14 +13,17 @@ namespace Counters.Core.Services
     public class CounterService : ICounterService
     {
         private readonly IMQReceiver _mqReceiver;
+        private readonly IMQSender _mqSender;
         private readonly ICountersRepository _counterRepository;
 
         public CounterService(
             IMQReceiver mqReceiver,
+            IMQSender mqSender,
             ICountersRepository counterRepository)
         {
             _counterRepository = counterRepository;
             _mqReceiver = mqReceiver;
+            _mqSender = mqSender;
 
             _mqReceiver.CreateUnreadDialogMessagesCountReceiver(async (data) =>
             {
@@ -33,11 +36,22 @@ namespace Counters.Core.Services
 
                 if (message.MessageType == MQMessageTypes.UpdateUnreadDialogMessages)
                 {
-                    var count = message.UnreadMessageIds.Count();
-                    _ = await _counterRepository.UpdateUnReadCounterByUserIdAsync(
-                        message.UserId,
-                        message.IsIncrement ? count : -count,
-                        CancellationToken.None);
+                    try
+                    {
+                        throw new Exception();
+                        var count = message.UnreadMessageIds.Count();
+                        _ = await _counterRepository.UpdateUnReadCounterByUserIdAsync(
+                            message.UserId,
+                            message.IsIncrement ? count : -count,
+                            CancellationToken.None);
+                    }
+                    catch(Exception ex)
+                    {
+                        _mqSender.SendUnreadDialogMessageIdsFailed(
+                            message.UserId,
+                            message.IsIncrement,
+                            message.UnreadMessageIds);
+                    }
                 }
             });
         }

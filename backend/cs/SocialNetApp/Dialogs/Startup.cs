@@ -36,9 +36,10 @@ namespace Dialogs
             _ = services.AddSingleton<DataContext>(p => new DataContext(
                 Environment.GetEnvironmentVariable("POSTGRESQL_DIALOGDB_CONNECTION") ?? string.Empty,
                 Environment.GetEnvironmentVariable("POSTGRESQL_DIALOGDB_READ_CONNECTION") ?? string.Empty));
-            services.AddScoped<IDialogsRepository, DialogsRepository>();
-            services.AddScoped<IDialogsService, DialogsService>();
-            services.AddScoped<IMQSender, MQSender>();
+            services.AddSingleton<IDialogsRepository, DialogsRepository>();
+            services.AddSingleton<IDialogsService, DialogsService>();
+            services.AddSingleton<IMQSender, MQSender>();
+            services.AddSingleton<IMQReceiver, MQReceiver>();
 
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

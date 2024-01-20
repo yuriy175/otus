@@ -26,6 +26,18 @@ namespace Common.MQ.Core.Services
                 });
         }
 
+        public void SendUnreadDialogMessageIdsFailed(uint userId, bool isIncrement, int[] unreadMsgIds)
+        {
+            SendDirectMessage(MQConstants.CounterDialogQueueName,
+                new UnreadCountMessage
+                {
+                    MessageType = MQMessageTypes.UpdateUnreadDialogMessagesCompensate,
+                    UserId = userId,
+                    IsIncrement = isIncrement,
+                    UnreadMessageIds = unreadMsgIds
+                });
+        }        
+
         public void SendPost(uint userId, string post)
         {
             var (connection, channel) = CreateMQ();
