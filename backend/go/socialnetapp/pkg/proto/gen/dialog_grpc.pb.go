@@ -25,6 +25,7 @@ type DialogClient interface {
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesReply, error)
 	CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
 	GetBuddyIds(ctx context.Context, in *GetBuddyIdsRequest, opts ...grpc.CallOption) (*GetBuddyIdsReply, error)
+	SetUnreadMessagesFromUser(ctx context.Context, in *SetUnreadMessagesFromUserRequest, opts ...grpc.CallOption) (*SetUnreadMessagesFromUserReply, error)
 }
 
 type dialogClient struct {
@@ -62,6 +63,15 @@ func (c *dialogClient) GetBuddyIds(ctx context.Context, in *GetBuddyIdsRequest, 
 	return out, nil
 }
 
+func (c *dialogClient) SetUnreadMessagesFromUser(ctx context.Context, in *SetUnreadMessagesFromUserRequest, opts ...grpc.CallOption) (*SetUnreadMessagesFromUserReply, error) {
+	out := new(SetUnreadMessagesFromUserReply)
+	err := c.cc.Invoke(ctx, "/Dialog/SetUnreadMessagesFromUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DialogServer is the server API for Dialog service.
 // All implementations must embed UnimplementedDialogServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type DialogServer interface {
 	GetMessages(context.Context, *GetMessagesRequest) (*GetMessagesReply, error)
 	CreateMessage(context.Context, *CreateMessageRequest) (*MessageReply, error)
 	GetBuddyIds(context.Context, *GetBuddyIdsRequest) (*GetBuddyIdsReply, error)
+	SetUnreadMessagesFromUser(context.Context, *SetUnreadMessagesFromUserRequest) (*SetUnreadMessagesFromUserReply, error)
 	mustEmbedUnimplementedDialogServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedDialogServer) CreateMessage(context.Context, *CreateMessageRe
 }
 func (UnimplementedDialogServer) GetBuddyIds(context.Context, *GetBuddyIdsRequest) (*GetBuddyIdsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBuddyIds not implemented")
+}
+func (UnimplementedDialogServer) SetUnreadMessagesFromUser(context.Context, *SetUnreadMessagesFromUserRequest) (*SetUnreadMessagesFromUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUnreadMessagesFromUser not implemented")
 }
 func (UnimplementedDialogServer) mustEmbedUnimplementedDialogServer() {}
 
@@ -152,6 +166,24 @@ func _Dialog_GetBuddyIds_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Dialog_SetUnreadMessagesFromUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUnreadMessagesFromUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DialogServer).SetUnreadMessagesFromUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Dialog/SetUnreadMessagesFromUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DialogServer).SetUnreadMessagesFromUser(ctx, req.(*SetUnreadMessagesFromUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Dialog_ServiceDesc is the grpc.ServiceDesc for Dialog service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var Dialog_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBuddyIds",
 			Handler:    _Dialog_GetBuddyIds_Handler,
+		},
+		{
+			MethodName: "SetUnreadMessagesFromUser",
+			Handler:    _Dialog_SetUnreadMessagesFromUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

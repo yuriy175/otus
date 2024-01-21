@@ -26,3 +26,7 @@ type DialogsHandler interface {
 	SendMessageToUser(w http.ResponseWriter, req *http.Request)
 	GetDialogBuddies(w http.ResponseWriter, req *http.Request)
 }
+
+type CountersHandler interface {
+	GetUnReadCounterByUserId(w http.ResponseWriter, req *http.Request)
+}

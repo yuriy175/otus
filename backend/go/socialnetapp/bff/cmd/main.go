@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"socialnerworkapp.com/bff/internal/handler/counterhandler"
 	"socialnerworkapp.com/bff/internal/handler/dialoghandler"
 	"socialnerworkapp.com/bff/internal/handler/friendhandler"
 	"socialnerworkapp.com/bff/internal/handler/posthandler"
 	"socialnerworkapp.com/bff/internal/handler/userhandler"
+	"socialnerworkapp.com/bff/internal/service/counterservice"
 	"socialnerworkapp.com/bff/internal/service/dialogservice"
 	"socialnerworkapp.com/bff/internal/service/friendservice"
 	"socialnerworkapp.com/bff/internal/service/postservice"
@@ -44,27 +46,10 @@ func main() {
 	log.Println(grpcProfileUrl)
 	log.Println(os.LookupEnv("GRPC_DIALOGS"))
 	log.Println(os.LookupEnv("GRPC_POSTS"))
+	log.Println(os.LookupEnv("GRPC_COUNTERS"))
 	restPort, _ := os.LookupEnv("REST_PORT")
 	log.Println(restPort)
 	log.Println(os.LookupEnv("OTEL_EXPORTER_JAEGER_ENDPOINT"))
-
-	//ctx := context.Background()
-	// conn, err := grpc.Dial(grpcProfileUrl, grpc.WithTransportCredentials(insecure.NewCredentials())) // , opts...)
-	// if err != nil {
-	// 	log.Fatalf("fail to dial: %v", err)
-	// }
-	// defer conn.Close()
-	// var id uint32 = 1645801
-	// authClient := gen.NewAuthClient(conn)
-	// loginRequest := &gen.LoginRequest{Id: id, Password: "Абрамов"}
-	// token, err := authClient.Login(ctx, loginRequest)
-
-	// userClient := gen.NewUsersClient(conn)
-	// userRequest := &gen.GetUserByIdRequest{Id: id}
-	// user, err := userClient.GetUserById(ctx, userRequest)
-
-	// _ = token
-	// _ = user
 
 	tracer := trace.NewOtelTracer("Go Bff Service")
 	userSrv := userservice.NewUserService(tracer)
@@ -79,6 +64,9 @@ func main() {
 	dialogSrv := dialogservice.NewDialogService(tracer)
 	dialogHandler := dialoghandler.NewDialogHandler(tracer, dialogSrv)
 
+	counterSrv := counterservice.NewCounterService(tracer)
+	counterHandler := counterhandler.NewCounterHandler(tracer, counterSrv)
+
 	router := mux.NewRouter()
 	router.HandleFunc("/login", userHandler.Login)
 	router.HandleFunc("/friend/set/{user_id}", friendHandler.AddFriend)
@@ -91,6 +79,7 @@ func main() {
 	router.HandleFunc("/dialog/{user_id}/list", dialogHandler.GetDialogByUserId)
 	router.HandleFunc("/dialog/{user_id}/send", dialogHandler.SendMessageToUser)
 	router.HandleFunc("/buddies", dialogHandler.GetDialogBuddies)
+	router.HandleFunc("/unread/count", counterHandler.GetUnReadCounterByUserId)
 	router.Use(headersMiddleware)
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.Handle("/", router)

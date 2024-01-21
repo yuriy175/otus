@@ -29,3 +29,7 @@ type DialogsService interface {
 	GetMessages(_ context.Context, tracer trace.Tracer, authorId uint, userId uint) (*dto.UserMessagesDto, error)
 	GetDialogBuddies(_ context.Context, tracer trace.Tracer, userId uint) ([]dto.UserDto, error)
 }
+
+type CounterService interface {
+	GetUnReadCounterByUserId(_ context.Context, tracer trace.Tracer, userId uint) (uint, error)
+}
