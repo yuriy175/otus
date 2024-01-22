@@ -34,8 +34,10 @@ func main() {
 	log.Println(os.LookupEnv("RABBITMQ_CONNECTION"))
 	restPort, _ := os.LookupEnv("REST_PORT")
 	log.Println(restPort)
-	// TODO: use fasthttp
+
 	mqReceiver := mq.NewMqReceiver()
+	mqSender := mq.NewMqSender()
+
 	friendRepo := friendrepository.NewFriendRepository()
 
 	wsFeedPostsSrv := websocketsservice.NewFeedPostsWebsocketsService(friendRepo, mqReceiver)
@@ -44,8 +46,6 @@ func main() {
 	http.HandleFunc("/post/feed", wsHandler.SendPosts)
 	http.HandleFunc("/dialogs", wsHandler.SendDialogMessages)
 
-	//wsSrv.Start()
-	//if err := http.ListenAndServe(":80", nil); err != nil {
 	if err := http.ListenAndServe(":"+restPort, nil); err != nil {
 		panic(err)
 	}

@@ -16,6 +16,7 @@ import (
 type dlgWebsocketsServiceImp struct {
 	repository repository.FriendRepository
 	mqReceiver mq.MqReceiver
+	mqSender   mq.MqSender
 
 	mtx        sync.RWMutex
 	websockets map[uint]*websocket.Conn
@@ -23,11 +24,13 @@ type dlgWebsocketsServiceImp struct {
 
 func NewDialogssWebsocketsService(
 	repository repository.FriendRepository,
-	mqReceiver mq.MqReceiver) service.WebsocketsService {
+	mqReceiver mq.MqReceiver,
+	mqSender mq.MqSender) service.WebsocketsService {
 
 	srv := &dlgWebsocketsServiceImp{
 		repository: repository,
 		mqReceiver: mqReceiver,
+		mqSender:   mqSender,
 		websockets: make(map[uint]*websocket.Conn)}
 	mqReceiver.CreateDialogReceiver(func(data []byte) {
 		message := &model.Message{}

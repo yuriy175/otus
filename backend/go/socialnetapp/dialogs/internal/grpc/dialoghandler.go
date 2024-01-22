@@ -15,7 +15,7 @@ type GrpcDialogsHandlerImp struct {
 	service service.DialogsService
 }
 
-func (*GrpcDialogsHandlerImp) mustEmbedUnimplementedAuthServer() {
+func (*GrpcDialogsHandlerImp) mustEmbedUnimplementedDialogServer() {
 	panic("unimplemented")
 }
 
@@ -49,6 +49,13 @@ func (h *GrpcDialogsHandlerImp) GetBuddyIds(ctx context.Context, r *gen.GetBuddy
 	return reply, nil
 }
 
+func (h *GrpcDialogsHandlerImp) SetUnreadMessagesFromUser(ctx context.Context, r *gen.SetUnreadMessagesFromUserRequest) (*gen.SetUnreadMessagesFromUserReply, error) {
+	count, err := h.service.SetUnreadMessagesFromUser(ctx, uint(r.AuthorId), uint(r.UserId))
+	return &gen.SetUnreadMessagesFromUserReply{
+		Count: uint32(count),
+	}, err
+}
+
 func (h *GrpcDialogsHandlerImp) toMessageReply(msg *model.Message) *gen.MessageReply {
 	created := msg.Created
 	timestamp := timestamppb.Timestamp{
@@ -56,6 +63,7 @@ func (h *GrpcDialogsHandlerImp) toMessageReply(msg *model.Message) *gen.MessageR
 		Nanos:   int32(created.Nanosecond()),
 	}
 	reply := &gen.MessageReply{
+		Id:       uint32(msg.Id),
 		UserId:   uint32(msg.UserID),
 		AuthorId: uint32(msg.AuthorId),
 		Text:     msg.Text,

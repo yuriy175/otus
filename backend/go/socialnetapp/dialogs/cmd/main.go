@@ -47,11 +47,11 @@ func main() {
 	restPort, _ := os.LookupEnv("REST_PORT")
 	log.Println(restPort)
 
-	// TODO: use fasthttp
+	mqReceiver := mq.NewMqReceiver()
 	mqSender := mq.NewMqSender()
 
 	repo := dialogsrepository.NewDialogsRepository()
-	dialogsSrv := dialogsservice.NewDialogsService(repo, mqSender)
+	dialogsSrv := dialogsservice.NewDialogsService(repo, mqSender, mqReceiver)
 	dialogsHandler := dialogshandler.NewDialogsHandler(dialogsSrv)
 
 	go func() {

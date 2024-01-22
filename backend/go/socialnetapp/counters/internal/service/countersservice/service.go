@@ -31,7 +31,20 @@ func NewCountersService(
 		}
 
 		if message.MessageType == mq.UpdateUnreadDialogMessages {
-
+			count := len(message.UnreadMessageIds)
+			ctx := context.Background()
+			if message.IsIncrement {
+				count = -count
+			}
+			_, err := srv.repository.UpdateUnReadCounterByUserId(ctx, message.UserId, count)
+			if err != nil {
+				message.MessageType = mq.UpdateUnreadDialogMessagesCompensate
+				bytes, err := json.Marshal(message)
+				if err != nil {
+					return
+				}
+				srv.mqSender.SendUnreadDialogMessageIdsFailed(ctx, bytes)
+			}
 		}
 	})
 

@@ -2,16 +2,19 @@ package main
 
 import (
 	"log"
+	"net"
 	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
 
+	countersgrpc "socialnerworkapp.com/counters/internal/grpc"
+	"socialnerworkapp.com/counters/internal/repository/countersrepository"
+	"socialnerworkapp.com/counters/internal/service/countersservice"
 	_ "socialnerworkapp.com/docs"
 	"socialnerworkapp.com/pkg/mq"
-	"socialnerworkapp.com/websockets/internal/handler/websocketshandler"
-	"socialnerworkapp.com/websockets/internal/repository/friendrepository"
-	"socialnerworkapp.com/websockets/internal/service/websocketsservice"
+	"socialnerworkapp.com/pkg/proto/gen"
 )
 
 func init() {
@@ -32,20 +35,30 @@ func main() {
 	log.Println("Started Go!")
 	log.Println(os.LookupEnv("POSTGRESQL_CONNECTION"))
 	log.Println(os.LookupEnv("RABBITMQ_CONNECTION"))
+	grpcPort, _ := os.LookupEnv("GRPC_PORT")
+	log.Println(grpcPort)
 	restPort, _ := os.LookupEnv("REST_PORT")
 	log.Println(restPort)
-	// TODO: use fasthttp
+
 	mqReceiver := mq.NewMqReceiver()
-	friendRepo := friendrepository.NewFriendRepository()
+	mqSender := mq.NewMqSender()
 
-	wsFeedPostsSrv := websocketsservice.NewFeedPostsWebsocketsService(friendRepo, mqReceiver)
-	wsDialogsSrv := websocketsservice.NewDialogssWebsocketsService(friendRepo, mqReceiver)
-	wsHandler := websocketshandler.NewWebsocketsHandler(wsFeedPostsSrv, wsDialogsSrv)
-	http.HandleFunc("/post/feed", wsHandler.SendPosts)
-	http.HandleFunc("/dialogs", wsHandler.SendDialogMessages)
+	repo := countersrepository.NewCountersRepository()
+	countersSrv := countersservice.NewCountersService(repo, mqSender, mqReceiver)
+	//countersHandler := countershandler.(countersSrv)
 
-	//wsSrv.Start()
-	//if err := http.ListenAndServe(":80", nil); err != nil {
+	go func() {
+		lis, err := net.Listen("tcp", ":"+grpcPort)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		var opts []grpc.ServerOption
+		grpcServer := grpc.NewServer(opts...)
+		gen.RegisterCounterServer(grpcServer, countersgrpc.NewGrpcCountersHandler(countersSrv))
+		if err = grpcServer.Serve(lis); err != nil {
+			panic(err)
+		}
+	}()
 	if err := http.ListenAndServe(":"+restPort, nil); err != nil {
 		panic(err)
 	}
