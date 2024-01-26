@@ -16,7 +16,7 @@ func NewCountersRepository() repository.CountersRepository {
 }
 
 func (r *countersRepositoryImp) UpdateUnReadCounterByUserId(_ context.Context, userId uint, delta int) (int, error) {
-	db, err := r.connectSql("POSTGRESQL_CONNECTION_DB")
+	db, err := r.connectSql("POSTGRESQL_CONNECTION")
 	if err != nil {
 		return 0, err
 	}

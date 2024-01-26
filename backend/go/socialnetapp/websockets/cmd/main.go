@@ -41,7 +41,7 @@ func main() {
 	friendRepo := friendrepository.NewFriendRepository()
 
 	wsFeedPostsSrv := websocketsservice.NewFeedPostsWebsocketsService(friendRepo, mqReceiver)
-	wsDialogsSrv := websocketsservice.NewDialogssWebsocketsService(friendRepo, mqReceiver)
+	wsDialogsSrv := websocketsservice.NewDialogssWebsocketsService(friendRepo, mqReceiver, mqSender)
 	wsHandler := websocketshandler.NewWebsocketsHandler(wsFeedPostsSrv, wsDialogsSrv)
 	http.HandleFunc("/post/feed", wsHandler.SendPosts)
 	http.HandleFunc("/dialogs", wsHandler.SendDialogMessages)

@@ -11,6 +11,6 @@ FROM golang:alpine AS final
 
 WORKDIR /build
 
-COPY --from=builder /build/websockets /build/counters
+COPY --from=builder /build/counters /build/counters
 
 CMD ["/build/counters/main"]

@@ -22,10 +22,10 @@ export const createGoDialogStart = (token: string): WebSocketStart => ({
     payload:{
         token,
         //golang
-        //endpoint: 'ws://localhost:55230/dialogs?token='
+        endpoint: 'ws://localhost:55230/dialogs?token='
         //endpoint: 'ws://localhost:8005/dialogs?token='
         //endpoint: 'ws://localhost:3004/wsapp/go/dialogs?token='
-        endpoint: 'ws://localhost:8005/dialogs?token='
+        //endpoint: 'ws://localhost:8005/dialogs?token='
         //endpoint: 'ws://localhost:3104/wsapp/go/dialogs?token='
     }
 })

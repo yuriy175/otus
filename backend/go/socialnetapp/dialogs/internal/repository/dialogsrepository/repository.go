@@ -33,7 +33,7 @@ func (r *dialogsRepositoryImp) CreateMessage(_ context.Context, authorId uint, u
 	message := &model.Message{}
 
 	for rows.Next() {
-		err := rows.Scan(&message.AuthorId, &message.UserID, &message.Text, &message.Created)
+		err := rows.Scan(&message.Id, &message.AuthorId, &message.UserID, &message.Text, &message.Created)
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +67,7 @@ func (r *dialogsRepositoryImp) GetMessages(_ context.Context, userId1 uint, user
 
 	for rows.Next() {
 		m := model.Message{}
-		err := rows.Scan(&m.UserID, &m.AuthorId, &m.Text, &m.Created)
+		err := rows.Scan(&m.Id, &m.UserID, &m.AuthorId, &m.Text, &m.Created)
 		if err != nil {
 			return nil, err
 		}
@@ -98,15 +98,13 @@ func (r *dialogsRepositoryImp) GetBuddyIds(_ context.Context, userId uint) ([]ui
 	defer rows.Close()
 	buddyIds := make([]uint, 0)
 
-	ind := 0
 	for rows.Next() {
 		var p uint
 		err := rows.Scan(&p)
 		if err != nil {
 			return nil, err
 		}
-		buddyIds[ind] = p
-		ind += 1
+		buddyIds = append(buddyIds, p)
 	}
 	return buddyIds, nil
 }
@@ -129,15 +127,13 @@ func (r *dialogsRepositoryImp) SetReadDialogMessagesFromUser(_ context.Context, 
 	}
 	defer rows.Close()
 	ids := make([]int, 0)
-	ind := 0
 	for rows.Next() {
 		var p int
 		err := rows.Scan(&p)
 		if err != nil {
 			return nil, err
 		}
-		ids[ind] = p
-		ind += 1
+		ids = append(ids, p)
 	}
 	return ids, nil
 }

@@ -8,8 +8,8 @@ export const loginCurrentUser = (id: number, password: string):AppThunk =>
 async(dispatch, getState) => {
     const user = await loginUser(id, password)
     dispatch(setCurrentUser(user.user))
-    dispatch(createCsDialogStart(user.token))
-    //dispatch(createGoDialogStart(user.token))
+    //dispatch(createCsDialogStart(user.token))
+    dispatch(createGoDialogStart(user.token))
 }
 
 export const logoffCurrentUser = ():AppThunk => 

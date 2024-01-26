@@ -38,7 +38,7 @@ namespace Counters.Core.Services
                 {
                     try
                     {
-                        throw new Exception();
+                        //throw new Exception();
                         var count = message.UnreadMessageIds.Count();
                         _ = await _counterRepository.UpdateUnReadCounterByUserIdAsync(
                             message.UserId,
