@@ -61,11 +61,26 @@ namespace Common.MQ.Core.Services
 
         public void CreateDialogReceiver(Action<byte[]> action)
         {
+            CreateDirectReceiver(MQConstants.DialogWebsockQueueName, action);
+        }
+
+        public void CreateUnreadDialogMessagesCountReceiver(Action<byte[]> action)
+        {
+            CreateDirectReceiver(MQConstants.CounterQueueName, action);
+        }
+
+        public void CreateUnreadDialogMessagesCountFailedReceiver(Action<byte[]> action)
+        {
+            CreateDirectReceiver(MQConstants.CounterDialogQueueName, action);
+        }
+
+        private void CreateDirectReceiver(string queueName, Action<byte[]> action)
+        {
             var (connection, channel) = CreateMQ();
 
             _connection = connection;
             _channel = channel;
-            _channel.QueueDeclare(queue: MQConstants.DialogQueueName,
+            _channel.QueueDeclare(queue: queueName,
                 durable: false,
                      exclusive: false,
                      autoDelete: false,
@@ -78,13 +93,9 @@ namespace Common.MQ.Core.Services
             {
                 var body = ea.Body.ToArray();
                 var text = Encoding.UTF8.GetString(body);
-                //var routingKey = ea.RoutingKey;
-                //var id = Convert.ToUInt32(routingKey);
-                //var message = JsonSerializer.Deserialize<T>(text);
                 action(body);
-                //Console.WriteLine($" [x] Received {message}");
             };
-            _channel.BasicConsume(queue: MQConstants.DialogQueueName,
+            _channel.BasicConsume(queue: queueName,
                                  autoAck: true,
                                  consumer: consumer);
         }

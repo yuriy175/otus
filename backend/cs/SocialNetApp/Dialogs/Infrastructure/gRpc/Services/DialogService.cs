@@ -22,6 +22,7 @@ namespace Dialogs.Infrastructure.gRpc.Services
             var message = await _dialogsService.CreateMessageAsync(request.AuthorId, request.UserId, request.Text, context.CancellationToken);
             return new MessageReply
             {
+                Id = message.Id,
                 AuthorId = message.AuthorId,
                 Text = message.Text,
                 UserId = Convert.ToUInt32(message.UserId),
@@ -36,6 +37,7 @@ namespace Dialogs.Infrastructure.gRpc.Services
             var reply = new GetMessagesReply { };
 
             reply.Messages.AddRange(messages.Select(m => new MessageReply{
+                Id = m.Id,
                 AuthorId = m.AuthorId,
                 Text = m.Text,
                 UserId = Convert.ToUInt32(m.UserId),
@@ -55,6 +57,12 @@ namespace Dialogs.Infrastructure.gRpc.Services
             }
             reply.Ids.AddRange(friends.Select(t => Convert.ToUInt32(t)));
             return reply;
+        }
+
+        public override async Task<SetUnreadMessagesFromUserReply> SetUnreadMessagesFromUser(SetUnreadMessagesFromUserRequest request, ServerCallContext context)
+        {
+            var count = await _dialogsService.SetUnreadMessagesFromUserAsync(request.AuthorId, request.UserId, context.CancellationToken);
+            return new SetUnreadMessagesFromUserReply { Count = Convert.ToUInt32(count) };
         }
     }
 }

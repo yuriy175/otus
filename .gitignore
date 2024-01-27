@@ -4,6 +4,7 @@
 /backend/go/socialnetapp/dialogs/cmd/*.exe
 /backend/go/socialnetapp/posts/cmd/*.exe
 /backend/go/socialnetapp/websockets/cmd/*.exe
+/backend/go/socialnetapp/counters/cmd/*.exe
 /backend/go/socialnetapp/bff/cmd/*.exe
 
 
@@ -23,7 +24,8 @@
 /backend/cs/SocialNetApp/Posts/obj
 /backend/cs/SocialNetApp/Bff/bin
 /backend/cs/SocialNetApp/Bff/obj
-
+/backend/cs/SocialNetApp/Counters/bin
+/backend/cs/SocialNetApp/Counters/obj
 
 #docker
 /docker/pgslave

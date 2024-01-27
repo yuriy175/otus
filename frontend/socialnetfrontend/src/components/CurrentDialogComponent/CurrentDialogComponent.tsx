@@ -14,6 +14,7 @@ import {
   addUserPost,
   selectDialogMessages,
   selectPosts,
+  startDialogWithUser,
   useAppDispatch,
   useRootSelector,
 } from '../../core/store';
@@ -33,6 +34,18 @@ export function CurrentDialogComponent() {
       dispatch(addUserMessage(buddy.id, newMessage));
     }
   };
+
+  // useEffect(() => {
+  //   if (buddyId) {
+  //     dispatch(startDialogWithUser(buddyId));
+  //   }
+
+  //   // const connection = createConnection(serverUrl, roomId);
+  //   // connection.connect();
+  //   // return () => {
+  //   //   connection.disconnect();
+  //   // };
+  // }, [buddyId]);
 
   const onNewMessageChange: ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement

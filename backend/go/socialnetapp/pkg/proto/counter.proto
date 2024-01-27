@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "/gen";
+
+service Counter {
+  rpc GetUnreadCount (GetUnreadCountRequest) returns (GetUnreadCountReply);
+}
+
+message GetUnreadCountRequest {
+  uint32 user_id = 1;
+}
+
+message GetUnreadCountReply {
+  uint32 count = 1;
+}

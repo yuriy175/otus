@@ -107,6 +107,18 @@ func (s *mqReceiverImp) CloseReceiver(_ context.Context) error {
 
 // CreateDialogReceiver implements MqReceiver.
 func (s *mqReceiverImp) CreateDialogReceiver(action func(data []byte)) error {
+	return s.createDirectReceiver(dialogWebsockQueueName, action)
+}
+
+func (s *mqReceiverImp) CreateUnreadDialogMessagesCountReceiver(action func(data []byte)) error {
+	return s.createDirectReceiver(counterQueueName, action)
+}
+
+func (s *mqReceiverImp) CreateUnreadDialogMessagesCountFailedReceiver(action func(data []byte)) error {
+	return s.createDirectReceiver(counterDialogQueueName, action)
+}
+
+func (s *mqReceiverImp) createDirectReceiver(queueName string, action func(data []byte)) error {
 	conn, err := amqp.Dial(os.Getenv("RABBITMQ_CONNECTION"))
 	if err != nil {
 		return err
@@ -120,12 +132,12 @@ func (s *mqReceiverImp) CreateDialogReceiver(action func(data []byte)) error {
 	s.channel = ch
 
 	q, err := ch.QueueDeclare(
-		dialogQueueName, // name
-		false,           // durable
-		false,           // delete when unused
-		false,           // exclusive
-		false,           // no-wait
-		nil,             // arguments
+		queueName, // name
+		false,     // durable
+		false,     // delete when unused
+		false,     // exclusive
+		false,     // no-wait
+		nil,       // arguments
 	)
 	if err != nil {
 		return err

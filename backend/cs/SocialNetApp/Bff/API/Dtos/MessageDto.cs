@@ -10,6 +10,10 @@ namespace Bff.API.Dtos
         public uint Id { get; init; }
 
         [Required]
+        [JsonPropertyName("userId")]
+        public uint UserId { get; init; }
+
+        [Required]
         [JsonPropertyName("authorId")]
         public uint AuthorId { get; init; }
 

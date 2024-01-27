@@ -39,6 +39,11 @@ namespace Bff.API.Controllers
             }
 
             return Ok(await _dialogService.GetMessagesAsync(authorId.Value, userId, cancellationToken));
+
+            //here we have SAGA -> 
+            // call counters to decrease unread counter
+            // call dialogs to set all unread as read
+            // if fail -> call counters to compensate decrease
         }
 
         [HttpPost("/dialog/{user_id}/send")]

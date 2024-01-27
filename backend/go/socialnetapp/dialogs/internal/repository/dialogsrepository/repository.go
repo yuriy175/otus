@@ -27,13 +27,13 @@ func (r *dialogsRepositoryImp) CreateMessage(_ context.Context, authorId uint, u
 	rows, err := db.Query(
 		"INSERT INTO public.dialogs(author_id, user_id, message) "+
 			"VALUES ($1, $2, $3) "+
-			"RETURNING author_id, user_id, message, created",
+			"RETURNING id, author_id, user_id, message, created",
 		authorId, userId, text)
 
 	message := &model.Message{}
 
 	for rows.Next() {
-		err := rows.Scan(&message.AuthorId, &message.UserID, &message.Text, &message.Created)
+		err := rows.Scan(&message.Id, &message.AuthorId, &message.UserID, &message.Text, &message.Created)
 		if err != nil {
 			return nil, err
 		}
@@ -50,11 +50,11 @@ func (r *dialogsRepositoryImp) GetMessages(_ context.Context, userId1 uint, user
 	}
 	defer db.Close()
 	rows, err := db.Query(
-		"SELECT user_id as userId, author_id as authorId, message as text, created "+
+		"SELECT id, user_id as userId, author_id as authorId, message as text, created "+
 			"FROM public.dialogs "+
 			"where author_id = $1 and user_id = $2 "+
 			"UNION ALL "+
-			"SELECT user_id as userId1, author_id as authorId, message as text, created "+
+			"SELECT id, user_id as userId1, author_id as authorId, message as text, created "+
 			"FROM public.dialogs "+
 			"where author_id = $2 and user_id = $1 "+
 			"ORDER BY created DESC;",
@@ -67,7 +67,7 @@ func (r *dialogsRepositoryImp) GetMessages(_ context.Context, userId1 uint, user
 
 	for rows.Next() {
 		m := model.Message{}
-		err := rows.Scan(&m.UserID, &m.AuthorId, &m.Text, &m.Created)
+		err := rows.Scan(&m.Id, &m.UserID, &m.AuthorId, &m.Text, &m.Created)
 		if err != nil {
 			return nil, err
 		}
@@ -82,10 +82,7 @@ func (r *dialogsRepositoryImp) GetBuddyIds(_ context.Context, userId uint) ([]ui
 		return nil, err
 	}
 	defer db.Close()
-	// rows, err := db.Query(
-	// 	"SELECT friend_id "+
-	// 		"FROM public.friends "+
-	// 		"WHERE user_id = $1 and \"isDeleted\" = false", userId)
+
 	rows, err := db.Query(
 		"SELECT DISTINCT * FROM "+
 			"(SELECT author_id "+
@@ -110,6 +107,56 @@ func (r *dialogsRepositoryImp) GetBuddyIds(_ context.Context, userId uint) ([]ui
 		buddyIds = append(buddyIds, p)
 	}
 	return buddyIds, nil
+}
+
+func (r *dialogsRepositoryImp) SetReadDialogMessagesFromUser(_ context.Context, authorId uint, userId uint) ([]int, error) {
+	db, err := r.connectSql("POSTGRESQL_CONNECTION_DB")
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(
+		"UPDATE public.dialogs "+
+			"SET \"isRead\" = true "+
+			"WHERE author_id = $1 and user_id = $2 and \"isRead\" = false "+
+			" RETURNING id",
+		authorId, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	ids := make([]int, 0)
+	for rows.Next() {
+		var p int
+		err := rows.Scan(&p)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, p)
+	}
+	return ids, nil
+}
+
+func (r *dialogsRepositoryImp) SetUnreadDialogMessages(_ context.Context, msgIds []int) (int, error) {
+	db, err := r.connectSql("POSTGRESQL_CONNECTION_DB")
+	if err != nil {
+		return 0, err
+	}
+	defer db.Close()
+
+	result, err := db.Exec(
+		"UPDATE public.dialogs "+
+			"SET \"isRead\" = false "+
+			"WHERE id = ANY($1)",
+		msgIds)
+
+	if err != nil {
+		return 0, err
+	}
+	val, err := result.RowsAffected()
+
+	return int(val), err
 }
 
 func (r *dialogsRepositoryImp) connectSql(dataSourceName string) (*sql.DB, error) {

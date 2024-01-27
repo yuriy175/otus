@@ -36,7 +36,8 @@ namespace Bff.Infrastructure.gRpc.Services
             return new MessageDto
             {
                 AuthorId = reply.AuthorId,
-                Id = reply.UserId,
+                UserId = reply.UserId,
+                Id = reply.Id,
                 Message = reply.Text,
                 Created = reply.Created.ToDateTime(),
             };
@@ -48,14 +49,16 @@ namespace Bff.Infrastructure.gRpc.Services
             var dialogClient = new DialogClient(_channelsProvider.GetDialogsChannel());
             var user = await userClient.GetUserByIdAsync(new GetUserByIdRequest { Id = userId });
 
-            var reply = dialogClient.GetMessages(new GetMessagesRequest { AuthorId = authorId, UserId = userId }, cancellationToken: cancellationToken);
-            
+            var reply = await dialogClient.GetMessagesAsync(new GetMessagesRequest { AuthorId = authorId, UserId = userId }, cancellationToken: cancellationToken);
+            _ = dialogClient.SetUnreadMessagesFromUserAsync(new SetUnreadMessagesFromUserRequest { AuthorId = userId, UserId = authorId });
+
             return new UserMessagesDto { 
                 User = _mapper.Map<UserDto>(user), 
                 Messages = reply.Messages.Select(e => new MessageDto
                 {
                     AuthorId = e.AuthorId,
-                    Id = e.UserId,
+                    UserId = e.UserId,
+                    Id = e.Id,
                     Message = e.Text,
                     Created = e.Created.ToDateTime(),
                 })

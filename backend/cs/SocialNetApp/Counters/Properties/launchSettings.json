@@ -1,0 +1,36 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:1184",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "Counters": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "launchUrl": "swagger",
+        "applicationUrl": "http://localhost:5013",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/",
+            "POSTGRESQL_CONNECTION": "Server=localhost;Port=6432;User Id=sa;Password=medtex;Database=otusdb;",
+            "POSTGRESQL_READ_CONNECTION": "Server=localhost;Port=8405;User Id=sa;Password=medtex;Database=otusdb;",
+            "GRPC_PORT": "5014",
+            "REST_PORT": "5013"
+        }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

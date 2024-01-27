@@ -108,6 +108,11 @@ func (s *dialogServiceImp) GetMessages(ctx context.Context, tracer oteltrace.Tra
 		UserId:   uint32(userId),
 		AuthorId: uint32(authorId)}
 	dialogReply, err := dialogClient.GetMessages(ctx, getRequest)
+	go dialogClient.SetUnreadMessagesFromUser(ctx,
+		&gen.SetUnreadMessagesFromUserRequest{
+			AuthorId: uint32(userId),
+			UserId:   uint32(authorId)})
+
 	endSpan()
 	if err != nil {
 		return nil, err
@@ -141,7 +146,8 @@ func (s *dialogServiceImp) GetMessages(ctx context.Context, tracer oteltrace.Tra
 
 func (s *dialogServiceImp) convertToMessageDto(message *gen.MessageReply) *dto.MessageDto {
 	messageDto := &dto.MessageDto{
-		ID:       uint(message.UserId),
+		ID:       uint(message.Id),
+		UserId:   uint(message.UserId),
 		AuthorId: uint(message.AuthorId),
 		Message:  message.Text,
 		Created:  service.ConvertToTime(message.Created),

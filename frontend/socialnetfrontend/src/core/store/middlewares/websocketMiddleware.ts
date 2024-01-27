@@ -6,7 +6,7 @@
 
 import { Middleware } from "@reduxjs/toolkit";
 import { delay } from "..";
-import { webSocketStartActionType } from "./webSockerActions";
+import { webSocketStartActionType, webSocketWithUserActionType } from "./webSockerActions";
 import { createWebSocket } from "./webSocket";
 import {dialogsSlice} from "../dialogs/dialogsSlice";
 
@@ -37,12 +37,15 @@ const websocketMiddleware: Middleware = store => {
 
         webSockets.set(endpoint, webSocket)
     }
-    if(action.type !== webSocketStartActionType){
-        next(action);
-        return
+    if(action.type === webSocketStartActionType){
+      const {token, endpoint} = action.payload
+      reconnect(token, endpoint)
+    } else if(action.type === webSocketWithUserActionType){
+      webSockets.forEach((w, key) => {
+        w?.send(action.payload.buddyId.toString())
+      })
     }
-    const {token, endpoint} = action.payload
-    reconnect(token, endpoint)
+    
     // const reconnect = async (token: string) =>{
     //     console.log("connecting...");
     //     webSocket = new WebSocket(endpoint + token);

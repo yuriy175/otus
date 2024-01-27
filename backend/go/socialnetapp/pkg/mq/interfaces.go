@@ -7,6 +7,8 @@ import (
 type MqSender interface {
 	SendPost(_ context.Context, userId uint, post string) error
 	SendDialogMessage(_ context.Context, data []byte) error
+	SendUnreadDialogMessageIds(_ context.Context, data []byte) error
+	SendUnreadDialogMessageIdsFailed(_ context.Context, data []byte) error
 }
 
 type MqReceiver interface {
@@ -14,4 +16,6 @@ type MqReceiver interface {
 	ReceivePosts(_ context.Context, userId uint, action func(friendId uint, post string)) error
 	CloseReceiver(_ context.Context) error
 	CreateDialogReceiver(action func(data []byte)) error
+	CreateUnreadDialogMessagesCountReceiver(action func(data []byte)) error
+	CreateUnreadDialogMessagesCountFailedReceiver(action func(data []byte)) error
 }

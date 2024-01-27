@@ -9,17 +9,20 @@ namespace Bff.Infrastructure.gRpc.Services
         private readonly static string _grpcPostsUrl = Environment.GetEnvironmentVariable("GRPC_POSTS");
         private readonly static string _grpcUsersUrl = Environment.GetEnvironmentVariable("GRPC_PROFILE");
         private readonly static string _grpcDialogsUrl = Environment.GetEnvironmentVariable("GRPC_DIALOGS");
+        private readonly static string _grpcCountersUrl = Environment.GetEnvironmentVariable("GRPC_COUNTERS");        
 
         private GrpcChannel _authChannel = null;
         private GrpcChannel _usersChannel = null;
         private GrpcChannel _dialogsChannel = null;
         private GrpcChannel _postsChannel = null;
+        private GrpcChannel _countersChannel = null;
 
         private readonly GrpcChannelOptions _options = null;
         private readonly object _authLock = new object();
         private readonly object _usersLock = new object();
         private readonly object _dialogsLock = new object();
         private readonly object _postsLock = new object();
+        private readonly object _countersLock = new object();
 
         public GrpcChannelsProvider()
         {
@@ -36,6 +39,7 @@ namespace Bff.Infrastructure.gRpc.Services
         public GrpcChannel GetUsersChannel() => CreateChannelAsync(ref _usersChannel, _grpcUsersUrl, _usersLock);
         public GrpcChannel GetDialogsChannel() => CreateChannelAsync(ref _dialogsChannel, _grpcDialogsUrl, _dialogsLock);
         public GrpcChannel GetPostsChannel() => CreateChannelAsync(ref _postsChannel, _grpcPostsUrl, _postsLock);
+        public GrpcChannel GetCountsChannel() => CreateChannelAsync(ref _countersChannel, _grpcCountersUrl, _countersLock);
 
         private GrpcChannel CreateChannelAsync(ref GrpcChannel channel, string url, object locker)
         {

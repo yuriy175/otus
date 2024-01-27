@@ -11,6 +11,7 @@ import {
   getUserDialog,
   setActivePage,
   selectBuddies,
+  startDialogWithUser,
 } from '../../core/store';
 
 export function DialogsComponent() {
@@ -18,6 +19,7 @@ export function DialogsComponent() {
   const buddies = useRootSelector(selectBuddies);
 
   const onOpenDialog = (id: number) => {
+    dispatch(startDialogWithUser(id));
     dispatch(getUserDialog(id));
     dispatch(setActivePage('CurrentDialog'));
   };

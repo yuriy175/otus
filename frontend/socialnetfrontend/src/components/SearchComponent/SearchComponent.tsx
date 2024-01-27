@@ -18,6 +18,7 @@ import {
   addUserFriends,
   getUserDialog,
   setActivePage,
+  startDialogWithUser,
 } from '../../core/store';
 import TextField from '@mui/material/TextField';
 import { User } from '../../core/types';
@@ -49,6 +50,7 @@ export function SearchComponent() {
   };
 
   const onStartDialog = (user: User) => {
+    dispatch(startDialogWithUser(user.id));
     dispatch(getUserDialog(user.id));
     dispatch(setActivePage('CurrentDialog'));
   };

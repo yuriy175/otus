@@ -4,8 +4,9 @@ import "time"
 
 // Message represents model for a dialog message
 type Message struct {
+	Id       uint       `json:"id"`
 	AuthorId uint       `json:"authorId"`
-	UserID   uint       `json:"userId"`
+	UserId   uint       `json:"userId"`
 	Text     string     `json:"message"`
 	Created  *time.Time `json:"created"`
 }

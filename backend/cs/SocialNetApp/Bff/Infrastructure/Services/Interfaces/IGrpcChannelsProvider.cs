@@ -8,5 +8,6 @@ namespace Bff.Infrastructure.Services.Interfaces
         GrpcChannel GetUsersChannel();
         GrpcChannel GetDialogsChannel();
         GrpcChannel GetPostsChannel();
+        GrpcChannel GetCountsChannel();
     }
 }

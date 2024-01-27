@@ -18,6 +18,7 @@ import {
   addUserFriends,
   getUserDialog,
   setActivePage,
+  startDialogWithUser,
 } from '../../core/store';
 import TextField from '@mui/material/TextField';
 
@@ -34,6 +35,7 @@ export function FriendsComponent() {
   };
 
   const onOpenDialog = (id: number) => {
+    dispatch(startDialogWithUser(id));
     dispatch(getUserDialog(id));
     dispatch(setActivePage('CurrentDialog'));
   };

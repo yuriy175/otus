@@ -9,13 +9,15 @@ service Dialog {
   rpc GetMessages (GetMessagesRequest) returns (GetMessagesReply);
   rpc CreateMessage (CreateMessageRequest) returns (MessageReply);
   rpc GetBuddyIds (GetBuddyIdsRequest) returns (GetBuddyIdsReply);
+  rpc SetUnreadMessagesFromUser(SetUnreadMessagesFromUserRequest) returns (SetUnreadMessagesFromUserReply);
 }
  
 message MessageReply {
-  uint32 user_id = 1;
-  uint32 author_id = 2;
-  string text = 3;
-  google.protobuf.Timestamp created = 4;
+  uint32 id = 1;
+  uint32 user_id = 2;
+  uint32 author_id = 3;
+  string text = 4;
+  optional google.protobuf.Timestamp created = 5;
 }
 
 message GetMessagesReply {
@@ -40,4 +42,13 @@ message GetBuddyIdsRequest {
 
 message GetBuddyIdsReply {
   repeated uint32 ids = 1;
+}
+
+message SetUnreadMessagesFromUserRequest {
+  uint32 user_id = 1;
+  uint32 author_id = 2;
+}
+
+message SetUnreadMessagesFromUserReply {
+  uint32 count = 1;
 }

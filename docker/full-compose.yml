@@ -95,6 +95,7 @@ services:
       - GRPC_PROFILE=$GRPC_PROFILE_GO
       - GRPC_POSTS=$GRPC_POSTS_GO
       - GRPC_DIALOGS=$GRPC_DIALOGS_GO
+      - GRPC_COUNTERS=$GRPC_COUNTERS_GO
       - REST_PORT=$REST_BFF_PORT_GO
       - SECURITY_KEY=$SECURITY_KEY
       - OTEL_EXPORTER_JAEGER_ENDPOINT=jaeger:4318
@@ -119,6 +120,7 @@ services:
       - GRPC_PROFILE=$GRPC_PROFILE_CS
       - GRPC_POSTS=$GRPC_POSTS_CS
       - GRPC_DIALOGS=$GRPC_DIALOGS_CS
+      - GRPC_COUNTERS=$GRPC_COUNTERS_CS
       - GRPC_PORT=$REST_BFF_PORT_CS
       - SECURITY_KEY=$SECURITY_KEY
       - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
@@ -320,6 +322,51 @@ services:
       - REST_PORT=$REST_WEBSOCK_PORT_CS
     ports:
       - "8006:80"
+    depends_on:
+      - rabbitmq
+
+  counters_go:
+    container_name: counters_go
+    image: counters_go:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/go/counters.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - EXPOSE_PORT=$EXPOSE_PORT
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION		
+      - SECURITY_KEY=$SECURITY_KEY
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - REDIS_HOST=$REDIS_HOST
+      - REST_PORT=$REST_COUNTERS_PORT_GO
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_DIALOGDB_READ_CONNECTION
+      - GRPC_PORT=$GRPC_COUNTERS_PORT_GO
+    ports:
+      - "8011:8011"
+    depends_on:
+      - rabbitmq
+
+  counters_cs:
+    container_name: counters_cs
+    image: counters_cs:$APP_VERSION
+    build:
+      context: ..
+      dockerfile: docker/cs/counters.Dockerfile
+      target: final
+      args:
+        APP_VERSION: $APP_VERSION
+    environment:
+      - RABBITMQ_CONNECTION=$RABBITMQ_CONNECTION
+      - SECURITY_KEY=$SECURITY_KEY
+      - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS		
+      - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_DIALOGDB_READ_CONNECTION_CS
+      - REDIS_HOST=$REDIS_HOST
+      - REST_PORT=$REST_COUNTERS_PORT_CS
+      - GRPC_PORT=$GRPC_COUNTERS_PORT_CS
+    ports:
+      - "8012:8012"
     depends_on:
       - rabbitmq
 
