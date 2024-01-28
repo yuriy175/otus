@@ -304,6 +304,7 @@ services:
       - "8005:8005"
     depends_on:
       - rabbitmq
+      - redis-server
 
   websockets_cs:
     container_name: websockets_cs
@@ -321,9 +322,10 @@ services:
       - REDIS_HOST=$REDIS_HOST
       - REST_PORT=$REST_WEBSOCK_PORT_CS
     ports:
-      - "8006:80"
+      - "8006:8006"
     depends_on:
       - rabbitmq
+      - redis-server
 
   counters_go:
     container_name: counters_go
@@ -343,6 +345,7 @@ services:
       - REST_PORT=$REST_COUNTERS_PORT_GO
       - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_DIALOGDB_READ_CONNECTION
       - GRPC_PORT=$GRPC_COUNTERS_PORT_GO
+      - REDIS_HOST=$REDIS_HOST
     ports:
       - "8011:8011"
     depends_on:
@@ -365,6 +368,7 @@ services:
       - REDIS_HOST=$REDIS_HOST
       - REST_PORT=$REST_COUNTERS_PORT_CS
       - GRPC_PORT=$GRPC_COUNTERS_PORT_CS
+      - REDIS_HOST=$REDIS_HOST
     ports:
       - "8012:8012"
     depends_on:

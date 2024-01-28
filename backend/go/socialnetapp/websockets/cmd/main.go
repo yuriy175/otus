@@ -34,6 +34,7 @@ func main() {
 	log.Println(os.LookupEnv("RABBITMQ_CONNECTION"))
 	restPort, _ := os.LookupEnv("REST_PORT")
 	log.Println(restPort)
+	log.Println(os.Hostname())
 
 	mqReceiver := mq.NewMqReceiver()
 	mqSender := mq.NewMqSender()

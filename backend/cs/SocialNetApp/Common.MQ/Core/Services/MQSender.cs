@@ -10,9 +10,9 @@ namespace Common.MQ.Core.Services
 {
     public class MQSender : MQBase, IMQSender
     {
-        public void SendDialogMessage<T>(T data)
+        public void SendNewDialogMessage<T>(string queuePostfix, T data)
         {
-            SendDirectMessage(MQConstants.DialogWebsockQueueName, data);
+            SendDirectMessage($"{MQConstants.DialogWebsockQueueName}_{queuePostfix}", data);
         }
 
         public void SendUnreadDialogMessageIds(uint userId, bool isIncrement, int[] unreadMsgIds)

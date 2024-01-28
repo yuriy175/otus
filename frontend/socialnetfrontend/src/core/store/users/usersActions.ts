@@ -1,5 +1,5 @@
 import { getFriends, getUsers, loginUser } from "../../../api";
-import { createCsDialogStart, createGoDialogStart } from "../middlewares";
+import { createDialogStart } from "../middlewares";
 import { AppThunk } from "../store";
 import {usersSlice} from "./usersSlice";
 
@@ -8,8 +8,7 @@ export const loginCurrentUser = (id: number, password: string):AppThunk =>
 async(dispatch, getState) => {
     const user = await loginUser(id, password)
     dispatch(setCurrentUser(user.user))
-    //dispatch(createCsDialogStart(user.token))
-    dispatch(createGoDialogStart(user.token))
+    dispatch(createDialogStart(user.token))
 }
 
 export const logoffCurrentUser = ():AppThunk => 
