@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 
 	httpSwagger "github.com/swaggo/http-swagger"
+	"socialnerworkapp.com/dialogs/internal/cache/redis"
 	"socialnerworkapp.com/dialogs/internal/handler/dialogshandler"
 	"socialnerworkapp.com/dialogs/internal/repository/dialogsrepository"
 	"socialnerworkapp.com/dialogs/internal/service/dialogsservice"
@@ -49,9 +50,10 @@ func main() {
 
 	mqReceiver := mq.NewMqReceiver()
 	mqSender := mq.NewMqSender()
+	cacheSrv := redis.NewRedisService()
 
 	repo := dialogsrepository.NewDialogsRepository()
-	dialogsSrv := dialogsservice.NewDialogsService(repo, mqSender, mqReceiver)
+	dialogsSrv := dialogsservice.NewDialogsService(repo, mqSender, mqReceiver, cacheSrv)
 	dialogsHandler := dialogshandler.NewDialogsHandler(dialogsSrv)
 
 	go func() {

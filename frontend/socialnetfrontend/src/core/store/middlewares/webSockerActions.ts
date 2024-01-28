@@ -17,6 +17,15 @@ export const createFeedPostStart = (token: string): WebSocketStart => ({
     }
 })
 
+export const createDialogStart = (token: string): WebSocketStart => ({
+    type: webSocketStartActionType,
+    payload:{
+        token,
+        endpoint: 'ws://localhost:3004/wsapp/dialogs?token='        
+    }
+})
+
+
 export const createGoDialogStart = (token: string): WebSocketStart => ({
     type: webSocketStartActionType,
     payload:{

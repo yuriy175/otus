@@ -1,1 +1,1 @@
-export {createCsDialogStart, createGoDialogStart, createFeedPostStart, startDialogWithUser} from './webSockerActions'
+export {createDialogStart, createFeedPostStart, startDialogWithUser} from './webSockerActions'

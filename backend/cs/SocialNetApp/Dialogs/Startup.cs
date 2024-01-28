@@ -2,6 +2,7 @@
 using Common.MQ.Core.Services;
 using Dialogs.Core.Model.Interfaces;
 using Dialogs.Core.Services;
+using Dialogs.Infrastructure.Caches;
 using Dialogs.Infrastructure.Repositories;
 using Dialogs.Infrastructure.Repositories.Interfaces;
 using grpc = Dialogs.Infrastructure.gRpc.Services;
@@ -40,6 +41,7 @@ namespace Dialogs
             services.AddSingleton<IDialogsService, DialogsService>();
             services.AddSingleton<IMQSender, MQSender>();
             services.AddSingleton<IMQReceiver, MQReceiver>();
+            services.AddSingleton<ICacheService, RedisService>();
 
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

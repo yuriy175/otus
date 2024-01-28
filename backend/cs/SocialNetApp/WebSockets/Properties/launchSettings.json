@@ -19,7 +19,9 @@
             "ASPNETCORE_ENVIRONMENT": "Development",
             "SECURITY_KEY": "mysupersecret_secretkey!123",
             "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/",
-            "POSTGRESQL_CONNECTION": "Server=localhost;Port=6433;User Id=sa;Password=medtex;Database=postdb;"
+            "POSTGRESQL_CONNECTION": "Server=localhost;Port=6433;User Id=sa;Password=medtex;Database=postdb;",
+            "REST_PORT": "5230",
+            "REDIS_HOST": "localhost:6379",
         }
     },
     "IIS Express": {

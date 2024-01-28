@@ -23,6 +23,8 @@ public static class Program
                     Environment.NewLine +
                     "REST_PORT: " + Environment.GetEnvironmentVariable("REST_PORT") +
                     Environment.NewLine +
+                    "REDIS_HOST: " + Environment.GetEnvironmentVariable("REDIS_HOST") +
+                    Environment.NewLine +
                     "GRPC_PORT: " + Environment.GetEnvironmentVariable("GRPC_PORT"));
                 webBuilder.ConfigureKestrel(options =>
                 {

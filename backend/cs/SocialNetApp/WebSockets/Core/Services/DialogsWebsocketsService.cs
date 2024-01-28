@@ -4,6 +4,7 @@ using Common.MQ.Core.Services;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Data.SqlTypes;
+using System.Net;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Text.Json;
 using System.Threading;
 using Websockets.Core.Model;
 using Websockets.Core.Model.Interfaces;
+using WebSockets.Infrastructure.Caches;
 using WebSockets.Infrastructure.Repositories.Interfaces;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -24,11 +26,22 @@ namespace WebSockets.Core.Services
 
         private readonly IMQReceiver _mqReceiver;
         private readonly IMQSender _mqSender;
-        public DialogsWebsocketsService(IFriendsRepository friendsRepository, IMQReceiver mqReceiver, IMQSender mqSender)
+        private readonly ICacheService _cacheService;
+
+        private string _wsServiceName = Dns.GetHostName();
+        private string _wsServicePort = Environment.GetEnvironmentVariable("REST_PORT");
+
+        public DialogsWebsocketsService(
+            IMQReceiver mqReceiver, 
+            IMQSender mqSender,
+            ICacheService cacheService)
         {
             _mqReceiver = mqReceiver;
             _mqSender = mqSender;
-            _mqReceiver.CreateDialogReceiver(async (data) =>
+            _cacheService = cacheService;
+            _mqReceiver.NewDialogMessageReceiver(
+                $"{_wsServiceName}_{_wsServicePort}", 
+                async (data) =>
             {
                 var text = Encoding.UTF8.GetString(data);
                 var message = JsonSerializer.Deserialize<Message>(text);
@@ -76,6 +89,7 @@ namespace WebSockets.Core.Services
                 }
                 var cancellationToken = new CancellationTokenSource();
                 var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                await _cacheService.UpsertUserWebSocketAsync(userId.Value, _wsServiceName, _wsServicePort);
                 var webSock = new WebSock
                 {
                     BuddyId = null,

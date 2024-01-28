@@ -59,9 +59,9 @@ namespace Common.MQ.Core.Services
                                  consumer: consumer);
         }
 
-        public void CreateDialogReceiver(Action<byte[]> action)
+        public void NewDialogMessageReceiver(string queuePostfix, Action<byte[]> action)
         {
-            CreateDirectReceiver(MQConstants.DialogWebsockQueueName, action);
+            CreateDirectReceiver($"{MQConstants.DialogWebsockQueueName}_{queuePostfix}", action);
         }
 
         public void CreateUnreadDialogMessagesCountReceiver(Action<byte[]> action)

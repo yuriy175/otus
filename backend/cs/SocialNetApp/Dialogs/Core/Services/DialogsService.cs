@@ -3,6 +3,7 @@ using Common.MQ.Core.Model.Interfaces;
 using Common.MQ.Core.Model.Types;
 using Dialogs.Core.Model;
 using Dialogs.Core.Model.Interfaces;
+using Dialogs.Infrastructure.Caches;
 using Dialogs.Infrastructure.Repositories;
 using Dialogs.Infrastructure.Repositories.Interfaces;
 using System.Text;
@@ -15,15 +16,18 @@ namespace Dialogs.Core.Services
         private readonly IDialogsRepository _dialogsRepository;
         private readonly IMQSender _mqSender;
         private readonly IMQReceiver _mqReceiver;
+        private readonly ICacheService _cacheService;
 
         public DialogsService(
             IDialogsRepository dialogsRepository,
             IMQSender mqSender,
-            IMQReceiver mqReceiver)
+            IMQReceiver mqReceiver,
+            ICacheService cacheService)
         {
             _dialogsRepository = dialogsRepository;
             _mqSender = mqSender;
             _mqReceiver = mqReceiver;
+            _cacheService = cacheService;
 
             _mqReceiver.CreateUnreadDialogMessagesCountFailedReceiver(async (data) =>
             {
@@ -45,8 +49,19 @@ namespace Dialogs.Core.Services
 
         public async Task<Message> CreateMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken)
         {
-            var message = await _dialogsRepository.AddMessageAsync(authorId, userId, text, cancellationToken);
-            _mqSender.SendDialogMessage(message);
+            var loaclMessage = await _dialogsRepository.AddMessageAsync(authorId, userId, text, cancellationToken);
+            var message = loaclMessage with { Created = DateTime.SpecifyKind(loaclMessage.Created.Value, DateTimeKind.Utc) };
+            var wsAddress = await _cacheService.GetUserWebSocketAddressAsync(userId);
+            if (string.IsNullOrEmpty(wsAddress))
+            {
+                // increment unread counter
+                _mqSender.SendUnreadDialogMessageIds(userId, true, new[] { Convert.ToInt32(message.Id) });
+            }
+            else
+            {
+                _mqSender.SendNewDialogMessage(wsAddress, message);
+            }
+
             return message;
         }
 
