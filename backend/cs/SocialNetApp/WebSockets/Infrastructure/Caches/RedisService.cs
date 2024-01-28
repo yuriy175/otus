@@ -37,8 +37,7 @@ namespace WebSockets.Infrastructure.Caches
             {
                 throw new ApplicationException("Пустой redis db");
             }
-            var res1 = await _db.StringSetAsync(userKey, $"{hostName}_{port}");
-            var res2 = await _db.StringGetAsync(userKey);
+            await _db.StringSetAsync(userKey, $"{hostName}_{port}");
         }
 
         public ValueTask DisposeAsync()

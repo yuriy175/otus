@@ -106,8 +106,8 @@ func (s *mqReceiverImp) CloseReceiver(_ context.Context) error {
 }
 
 // CreateDialogReceiver implements MqReceiver.
-func (s *mqReceiverImp) CreateDialogReceiver(action func(data []byte)) error {
-	return s.createDirectReceiver(dialogWebsockQueueName, action)
+func (s *mqReceiverImp) NewDialogMessageReceiver(queuePostfix string, action func(data []byte)) error {
+	return s.createDirectReceiver(dialogWebsockQueueName+"_"+queuePostfix, action)
 }
 
 func (s *mqReceiverImp) CreateUnreadDialogMessagesCountReceiver(action func(data []byte)) error {

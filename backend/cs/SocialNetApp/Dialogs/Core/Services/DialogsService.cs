@@ -49,7 +49,8 @@ namespace Dialogs.Core.Services
 
         public async Task<Message> CreateMessageAsync(uint authorId, uint userId, string text, CancellationToken cancellationToken)
         {
-            var message = await _dialogsRepository.AddMessageAsync(authorId, userId, text, cancellationToken);
+            var loaclMessage = await _dialogsRepository.AddMessageAsync(authorId, userId, text, cancellationToken);
+            var message = loaclMessage with { Created = DateTime.SpecifyKind(loaclMessage.Created.Value, DateTimeKind.Utc) };
             var wsAddress = await _cacheService.GetUserWebSocketAddressAsync(userId);
             if (string.IsNullOrEmpty(wsAddress))
             {

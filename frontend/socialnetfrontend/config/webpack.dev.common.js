@@ -46,8 +46,8 @@ module.exports = merge(common, {
       // },
       {
         path: '/wsapp',
-        target: 'ws://localhost:5230/',
-        //target: 'ws://localhost:55230/',
+        //target: 'ws://localhost:5230/',
+        target: 'ws://localhost:55230/',
         changeOrigin: true,
         pathRewrite: { '/wsapp': '' },
         ws: true,

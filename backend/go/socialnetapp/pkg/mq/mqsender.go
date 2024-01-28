@@ -65,8 +65,8 @@ func (s *mqSenderImp) SendPost(_ context.Context, userId uint, post string) erro
 	return nil
 }
 
-func (s *mqSenderImp) SendDialogMessage(ctx context.Context, data []byte) error {
-	return s.sendDirectMessage(ctx, dialogWebsockQueueName, data)
+func (s *mqSenderImp) SendNewDialogMessage(ctx context.Context, queuePostfix string, data []byte) error {
+	return s.sendDirectMessage(ctx, dialogWebsockQueueName+"_"+queuePostfix, data)
 }
 
 func (s *mqSenderImp) SendUnreadDialogMessageIds(ctx context.Context, data []byte) error {

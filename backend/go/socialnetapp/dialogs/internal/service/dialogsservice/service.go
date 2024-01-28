@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 
+	"socialnerworkapp.com/dialogs/internal/cache"
 	"socialnerworkapp.com/dialogs/internal/model"
 	"socialnerworkapp.com/dialogs/internal/repository"
 	"socialnerworkapp.com/dialogs/internal/service"
@@ -16,13 +17,20 @@ type dialogsServiceImp struct {
 	repository repository.DialogsRepository
 	mqSender   mq.MqSender
 	mqReceiver mq.MqReceiver
+	cacheSrv   cache.CacheService
 }
 
 func NewDialogsService(
 	repository repository.DialogsRepository,
 	mqSender mq.MqSender,
-	mqReceiver mq.MqReceiver) service.DialogsService {
-	srv := &dialogsServiceImp{repository: repository, mqSender: mqSender, mqReceiver: mqReceiver}
+	mqReceiver mq.MqReceiver,
+	cacheSrv cache.CacheService) service.DialogsService {
+	srv := &dialogsServiceImp{
+		repository: repository,
+		mqSender:   mqSender,
+		mqReceiver: mqReceiver,
+		cacheSrv:   cacheSrv,
+	}
 	mqReceiver.CreateUnreadDialogMessagesCountFailedReceiver(func(data []byte) {
 		message := &mqtypes.UnreadCountMessage{}
 		if err := json.Unmarshal(data, message); err != nil {
@@ -48,7 +56,19 @@ func (s *dialogsServiceImp) CreateMessage(ctx context.Context, authorId uint, us
 	if err != nil {
 		return nil, err
 	}
-	err = s.mqSender.SendDialogMessage(ctx, bytes)
+
+	wsAddress, err := s.cacheSrv.GetUserWebSocketAddress(ctx, userId)
+	if err != nil {
+		// increment unread counter
+		s.sendUnreadDialogMessageIds(ctx, &mqtypes.UnreadCountMessage{
+			MessageHeader:    mqtypes.MessageHeader{MessageType: mq.UpdateUnreadDialogMessages},
+			UserId:           userId,
+			IsIncrement:      true,
+			UnreadMessageIds: []int{int(message.Id)},
+		})
+	} else {
+		err = s.mqSender.SendNewDialogMessage(ctx, wsAddress, bytes)
+	}
 	return message, err
 }
 
@@ -69,19 +89,24 @@ func (s *dialogsServiceImp) SetUnreadMessagesFromUser(ctx context.Context, autho
 
 	count := len(unreadMsgIds)
 	if count > 0 {
-		message := &mqtypes.UnreadCountMessage{
+		s.sendUnreadDialogMessageIds(ctx, &mqtypes.UnreadCountMessage{
 			MessageHeader:    mqtypes.MessageHeader{MessageType: mq.UpdateUnreadDialogMessages},
 			UserId:           userId,
 			IsIncrement:      false,
 			UnreadMessageIds: unreadMsgIds,
-		}
-		bytes, err := json.Marshal(message)
-		if err != nil {
-			return 0, err
-		}
-
-		s.mqSender.SendUnreadDialogMessageIds(ctx, bytes)
+		})
 	}
 
 	return count, err
+}
+
+func (s *dialogsServiceImp) sendUnreadDialogMessageIds(ctx context.Context, message *mqtypes.UnreadCountMessage) error {
+	bytes, err := json.Marshal(message)
+	if err != nil {
+		return err
+	}
+
+	s.mqSender.SendUnreadDialogMessageIds(ctx, bytes)
+
+	return nil
 }
