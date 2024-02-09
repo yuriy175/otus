@@ -81,6 +81,28 @@ services:
       - "8405:8405"
       - "8404:8404"
 
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./config/prometheus:/etc/prometheus
+    ports:
+      - "9090:9090"
+ 
+  grafana:
+    image: grafana/grafana
+    user: root
+    volumes:
+      - ./config/grafana:/var/lib/grafana
+      - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+
+
   bff_go:
     container_name: bff_go
     image: bff_go:$APP_VERSION
@@ -126,7 +148,7 @@ services:
       - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
       - OTEL_EXPORTER_JAEGER_AGENT_HOST=jaeger
     ports:
-      - "8010:80"
+      - "8010:8010"
     depends_on:
       - postgres
       - rabbitmq
@@ -345,7 +367,6 @@ services:
       - REST_PORT=$REST_COUNTERS_PORT_GO
       - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_DIALOGDB_READ_CONNECTION
       - GRPC_PORT=$GRPC_COUNTERS_PORT_GO
-      - REDIS_HOST=$REDIS_HOST
     ports:
       - "8011:8011"
     depends_on:
@@ -365,7 +386,6 @@ services:
       - SECURITY_KEY=$SECURITY_KEY
       - POSTGRESQL_CONNECTION=$POSTGRESQL_CONNECTION_CS		
       - POSTGRESQL_READ_CONNECTION=$POSTGRESQL_DIALOGDB_READ_CONNECTION_CS
-      - REDIS_HOST=$REDIS_HOST
       - REST_PORT=$REST_COUNTERS_PORT_CS
       - GRPC_PORT=$GRPC_COUNTERS_PORT_CS
       - REDIS_HOST=$REDIS_HOST

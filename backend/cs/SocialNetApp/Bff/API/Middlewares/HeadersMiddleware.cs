@@ -15,7 +15,6 @@ namespace Bff.API.Middlewares
         {
             context.Response.OnStarting(() =>
             {
-                Console.WriteLine("!!!CSharp header");
                 context.Response.Headers["Server-Language"] = "CSharp";
                 return Task.CompletedTask;
             });

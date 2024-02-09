@@ -1,0 +1,13 @@
+scrape_configs:
+  - job_name: 'local_bff_cs'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['localhost:5298']
+  - job_name: 'local_bff_go'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['localhost:55297']
+  - job_name: 'bff_cs'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['bff_cs:5298']
