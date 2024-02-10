@@ -11,3 +11,7 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
     - targets: ['bff_cs:5298']
+  - job_name: 'bff_go'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['bff_go:8009']

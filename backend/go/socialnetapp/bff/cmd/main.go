@@ -10,6 +10,7 @@ import (
 	"socialnerworkapp.com/bff/internal/handler/friendhandler"
 	"socialnerworkapp.com/bff/internal/handler/posthandler"
 	"socialnerworkapp.com/bff/internal/handler/userhandler"
+	"socialnerworkapp.com/bff/internal/middleware"
 	"socialnerworkapp.com/bff/internal/service/counterservice"
 	"socialnerworkapp.com/bff/internal/service/dialogservice"
 	"socialnerworkapp.com/bff/internal/service/friendservice"
@@ -18,6 +19,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 	_ "socialnerworkapp.com/docs"
@@ -80,7 +82,9 @@ func main() {
 	router.HandleFunc("/dialog/{user_id}/send", dialogHandler.SendMessageToUser)
 	router.HandleFunc("/buddies", dialogHandler.GetDialogBuddies)
 	router.HandleFunc("/unread/count", counterHandler.GetUnReadCounterByUserId)
-	router.Use(headersMiddleware)
+	router.PathPrefix("/metrics").Handler(promhttp.Handler())
+	router.Use(middleware.MetricMiddleware)
+	router.Use(middleware.HeadersMiddleware)
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.Handle("/", router)
 
@@ -88,11 +92,4 @@ func main() {
 	if err := http.ListenAndServe(":"+restPort, handler); err != nil {
 		panic(err)
 	}
-}
-
-func headersMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Server-Language", "Golang")
-		next.ServeHTTP(w, r)
-	})
 }
