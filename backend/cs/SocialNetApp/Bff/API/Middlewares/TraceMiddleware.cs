@@ -15,7 +15,6 @@ namespace Bff.API.Middlewares
         {
             context.Response.OnStarting(() =>
             {
-                Console.WriteLine("!!!trace-id header" + Activity.Current?.TraceId.ToString());
                 context.Response.Headers["trace-id"] = Activity.Current?.TraceId.ToString();
                 return Task.CompletedTask;
             });

@@ -32,6 +32,9 @@
 /docker/pgslave1
 /docker/pgslave2
 
+#grafana
+/docker/config/grafana
+
 #frontend
 /frontend/socialnetfrontend/node_modules
 /frontend/socialnetfrontend/build

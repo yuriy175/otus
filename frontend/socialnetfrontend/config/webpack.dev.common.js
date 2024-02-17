@@ -55,10 +55,10 @@ module.exports = merge(common, {
       {
         path: '/api',
         changeOrigin: true,
-        target: 'http://localhost:5297',
+        //target: 'http://localhost:5297',
         //target: 'http://localhost:55297',
-        //target: 'http://localhost:8009',
-        //target: 'http://localhost:80', //8010
+        target: 'http://localhost:8009',
+        //target: 'http://localhost:8010',
         pathRewrite: { '/api': '' },
       },
     ],

@@ -74,6 +74,7 @@ namespace Bff
 
             app.UseHeadersMiddleware();
             app.UseTraceMiddleware();
+            app.UseMetricMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

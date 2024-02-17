@@ -10,7 +10,8 @@
             "GRPC_PROFILE": "http://localhost:5267",
             "GRPC_DIALOGS": "http://localhost:5093",
             "GRPC_POSTS": "http://localhost:5166",
-            "GRPC_COUNTERS": "http://localhost:5014"
+            "GRPC_COUNTERS": "http://localhost:5014",
+            "REST_PORT": "5297"
         },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5297"
