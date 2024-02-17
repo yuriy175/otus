@@ -1,0 +1,56 @@
+﻿@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 300
+LAYOUT_WITH_LEGEND()
+LAYOUT_LANDSCAPE()
+
+Person(user, "User")
+System(ui, "Web UI", "nginx")
+
+System_Boundary(app, "App backend") {
+    System(bff, "BFF backend")
+    System(users, "Users backend")
+    System(notifications, "Notifications backend")
+    System(measurements, "Measurements backend")
+    System(questions, "Questions backend")
+
+    SystemQueue(rabbit, "RabbitMQ")
+    System(redis, "Redis")
+}
+
+
+System_Boundary(db, "DB") {
+    System(dbBalancer, "DB Balancer", "HAProxy")
+    ContainerDb(dbMaster, "Master", "Postgres")
+    ContainerDb(replica1, "Replica 1", "Postgres")
+    ContainerDb(replica2, "Replica 2", "Postgres")
+}
+
+
+BiRel(user, ui, "uses")
+BiRel(bff, ui, "data", "REST")
+
+Rel(extNotify, notifications, "data", "socket")
+Rel(extData, dbMaster, "data", "INSERT")
+Rel(dbMaster, replica1, "data")
+Rel(dbMaster, replica2, "data")
+BiRel(dbBalancer, replica1, "data", "SELECT")
+BiRel(dbBalancer, replica2, "data", "SELECT")
+
+BiRel(bff, users, "data", "grpc")
+BiRel(bff, notifications, "data", "grpc")
+BiRel(bff, rabbit, "data")
+BiRel(rabbit, measurements, "data")
+BiRel(bff, questions, "data", "grpc")
+Rel(users, dbMaster, "data", "REGISTER")
+BiRel(users, dbBalancer, "data", "LOGIN")
+BiRel(notifications, dbBalancer, "data", "SELECT")
+
+Rel(notifications, email, "data", "SMTP")
+Rel(questions, email, "data", "SMTP")
+Rel(notifications, ui, "data", "websocket")
+
+BiRel(measurements, redis, "data", "INSERT/SELECT")
+BiRel(measurements, dbBalancer, "data", "SELECT")
+@enduml
