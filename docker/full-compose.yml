@@ -7,11 +7,32 @@ services:
       POSTGRES_DB: "otusdb"
       POSTGRES_USER: "sa"
       POSTGRES_PASSWORD: "medtex"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
     volumes:
       - ../migrations/profile:/docker-entrypoint-initdb.d
       - otusdb-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  postgres2:
+    container_name: postgres2
+    image: postgres:15.4-alpine3.18
+    environment:
+      POSTGRES_DB: "otusdb"
+      POSTGRES_USER: "sa"
+      POSTGRES_PASSWORD: "medtex"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+    volumes:
+      - ../migrations/profile:/docker-entrypoint-initdb.d
+      - otusdb-data2:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
 
   pgbouncer:
     image: edoburu/pgbouncer
@@ -29,6 +50,10 @@ services:
       POSTGRESQL_PASSWORD: medtex
       AUTH_TYPE: md5
       AUTH_FILE: /etc/pgbouncer/userlist.txt
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
     volumes:
       - ./config/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
       - ./config/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
@@ -77,6 +102,10 @@ services:
     container_name: haproxy
     volumes:
       - "./config/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
     ports:
       - "8405:8405"
       - "8404:8404"
@@ -409,5 +438,6 @@ services:
 
 volumes:                     
   otusdb-data:
+  otusdb-data2:
   redis-data:
   healthcheck-volume:

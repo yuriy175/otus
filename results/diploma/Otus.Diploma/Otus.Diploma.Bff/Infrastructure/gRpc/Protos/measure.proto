@@ -1,0 +1,20 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "MeasureGrpc";
+ 
+package measure;
+ 
+service Measure {
+  rpc GetMeasures (GetMeasuresRequest) returns (GetMeasuresReply);
+}
+ 
+message GetMeasuresRequest {
+  uint32 user_id = 1;
+}
+
+message GetMeasuresReply {
+  uint32 count = 1;
+}

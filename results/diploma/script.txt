@@ -1,0 +1,426 @@
+-- Table: public.account
+
+ 
+
+-- DROP TABLE IF EXISTS public.account;
+
+ 
+
+CREATE TABLE IF NOT EXISTS public.account
+
+(
+
+    id bigint NOT NULL DEFAULT nextval('account_id_seq'::regclass),
+
+    email character varying COLLATE pg_catalog."default" NOT NULL,
+
+    login character varying COLLATE pg_catalog."default" NOT NULL,
+
+    name character varying COLLATE pg_catalog."default",
+
+    address character varying COLLATE pg_catalog."default",
+
+    CONSTRAINT account_pkey PRIMARY KEY (id)
+
+)
+
+ 
+
+TABLESPACE pg_default;
+
+ 
+
+ALTER TABLE IF EXISTS public.account
+
+    OWNER to postgres;
+
+ 
+
+-- Table: public.device
+
+ 
+
+-- DROP TABLE IF EXISTS public.device;
+
+ 
+
+CREATE TABLE IF NOT EXISTS public.device
+
+(
+
+    id bigint NOT NULL DEFAULT nextval('device_id_seq'::regclass),
+
+    imei bigint NOT NULL,
+
+    setup_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    mod_id bigint NOT NULL,
+
+    CONSTRAINT device_pkey PRIMARY KEY (id),
+
+    CONSTRAINT fk_device_mod_device FOREIGN KEY (mod_id)
+
+        REFERENCES public.device_mod (id) MATCH SIMPLE
+
+        ON UPDATE NO ACTION
+
+        ON DELETE NO ACTION
+
+        NOT VALID
+
+)
+
+ 
+
+TABLESPACE pg_default;
+
+ 
+
+ALTER TABLE IF EXISTS public.device
+
+    OWNER to postgres;
+
+-- Index: fki_fk_device_mod_device
+
+ 
+
+-- DROP INDEX IF EXISTS public.fki_fk_device_mod_device;
+
+ 
+
+CREATE INDEX IF NOT EXISTS fki_fk_device_mod_device
+
+    ON public.device USING btree
+
+    (mod_id ASC NULLS LAST)
+
+    TABLESPACE pg_default;
+
+ 
+
+-- Table: public.device_mod
+
+ 
+
+-- DROP TABLE IF EXISTS public.device_mod;
+
+ 
+
+CREATE TABLE IF NOT EXISTS public.device_mod
+
+(
+
+    id bigint NOT NULL DEFAULT nextval('device_mod_id_seq'::regclass),
+
+    modification character varying COLLATE pg_catalog."default" NOT NULL,
+
+    image bytea,
+
+    CONSTRAINT device_mod_pkey PRIMARY KEY (id)
+
+)
+
+ 
+
+TABLESPACE pg_default;
+
+ 
+
+ALTER TABLE IF EXISTS public.device_mod
+
+    OWNER to postgres;
+
+ 
+
+-- Table: public.device_reg
+
+ 
+
+-- DROP TABLE IF EXISTS public.device_reg;
+
+ 
+
+CREATE TABLE IF NOT EXISTS public.device_reg
+
+(
+
+    account_id bigint NOT NULL,
+
+    device_id bigint NOT NULL,
+
+    reg_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_device_reg PRIMARY KEY (account_id)
+
+        INCLUDE(device_id),
+
+    CONSTRAINT fk_device_reg_account FOREIGN KEY (account_id)
+
+        REFERENCES public.account (id) MATCH SIMPLE
+
+        ON UPDATE NO ACTION
+
+        ON DELETE NO ACTION
+
+        NOT VALID,
+
+    CONSTRAINT fk_device_reg_device FOREIGN KEY (device_id)
+
+        REFERENCES public.device (id) MATCH SIMPLE
+
+        ON UPDATE NO ACTION
+
+        ON DELETE NO ACTION
+
+        NOT VALID
+
+)
+
+ 
+
+TABLESPACE pg_default;
+
+ 
+
+ALTER TABLE IF EXISTS public.device_reg
+
+    OWNER to postgres;
+
+-- Index: fki_fk_device_reg_account
+
+ 
+
+-- DROP INDEX IF EXISTS public.fki_fk_device_reg_account;
+
+ 
+
+CREATE INDEX IF NOT EXISTS fki_fk_device_reg_account
+
+    ON public.device_reg USING btree
+
+    (account_id ASC NULLS LAST)
+
+    TABLESPACE pg_default;
+
+-- Index: fki_fk_device_reg_device
+
+ 
+
+-- DROP INDEX IF EXISTS public.fki_fk_device_reg_device;
+
+ 
+
+CREATE INDEX IF NOT EXISTS fki_fk_device_reg_device
+
+    ON public.device_reg USING btree
+
+    (device_id ASC NULLS LAST)
+
+    TABLESPACE pg_default;
+
+ 
+
+-- Table: public.event
+
+ 
+
+-- DROP TABLE IF EXISTS public.event;
+
+ 
+
+CREATE TABLE IF NOT EXISTS public.event
+
+(
+
+    id bigint NOT NULL DEFAULT nextval('event_id_seq'::regclass),
+
+    device_id bigint NOT NULL,
+
+    device_mod_id bigint NOT NULL,
+
+    code smallint NOT NULL,
+
+    value bytea,
+
+    "isNotified" boolean NOT NULL DEFAULT false,
+
+    CONSTRAINT event_pkey PRIMARY KEY ("isNotified")
+
+)
+
+ 
+
+TABLESPACE pg_default;
+
+ 
+
+ALTER TABLE IF EXISTS public.event
+
+    OWNER to postgres;
+
+ 
+
+-- Table: public.measure
+
+ 
+
+-- DROP TABLE IF EXISTS public.measure;
+
+ 
+
+CREATE TABLE IF NOT EXISTS public.measure
+
+(
+
+    id bigint NOT NULL DEFAULT nextval('measure_id_seq'::regclass),
+
+    device_id bigint NOT NULL,
+
+    device_mod_id bigint NOT NULL,
+
+    type smallint NOT NULL,
+
+    date timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    value double precision NOT NULL,
+
+    CONSTRAINT measure_pkey PRIMARY KEY (id),
+
+    CONSTRAINT fk_measure_device FOREIGN KEY (device_id)
+
+        REFERENCES public.device (id) MATCH SIMPLE
+
+        ON UPDATE NO ACTION
+
+        ON DELETE NO ACTION
+
+        NOT VALID,
+
+    CONSTRAINT fk_measure_device_mod FOREIGN KEY (device_mod_id)
+
+        REFERENCES public.device_mod (id) MATCH SIMPLE
+
+        ON UPDATE NO ACTION
+
+        ON DELETE NO ACTION
+
+        NOT VALID
+
+)
+
+ 
+
+TABLESPACE pg_default;
+
+ 
+
+ALTER TABLE IF EXISTS public.measure
+
+    OWNER to postgres;
+
+-- Index: fki_fk_measure_device
+
+ 
+
+-- DROP INDEX IF EXISTS public.fki_fk_measure_device;
+
+ 
+
+CREATE INDEX IF NOT EXISTS fki_fk_measure_device
+
+    ON public.measure USING btree
+
+    (device_id ASC NULLS LAST)
+
+    TABLESPACE pg_default;
+
+-- Index: fki_fk_measure_device_mod
+
+ 
+
+-- DROP INDEX IF EXISTS public.fki_fk_measure_device_mod;
+
+ 
+
+CREATE INDEX IF NOT EXISTS fki_fk_measure_device_mod
+
+    ON public.measure USING btree
+
+    (device_mod_id ASC NULLS LAST)
+
+    TABLESPACE pg_default;
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+INSERT INTO public.device_mod(modification, image)
+
+                VALUES ('devices 1', null);
+
+INSERT INTO public.device_mod(modification, image)
+
+                VALUES ('devices 2', null);
+
+ 
+
+INSERT INTO device(imei, setup_at, mod_id)
+
+ (SELECT imei+(mod_id*100000), '2021-01-01 04:00:00' as setup_at, mod_id
+
+FROM generate_series(1,100000) as imei,
+
+generate_series(1,2) mod_id)
+
+ 
+
+ 
+
+INSERT INTO measure(device_id, device_mod_id, type, date, value)
+
+ (SELECT device_id, 1 as device_mod_id, type, date, random()*100 as value
+
+FROM
+
+  generate_series('2021-01-01 00:00:00','2021-02-01 00:00:00', INTERVAL '1 hour') as date,
+
+  generate_series(1,10) as type,
+
+  generate_series(58,10000) as device_id)
+
+ 
+
+SELECT id, device_id, device_mod_id, type, date, value
+
+                FROM public.measure
+
+                where device_id = 999 and date = (select max(date) from public.measure where device_id = 999)
+
+                order by date desc;
+
+ 
+
+-- SEQUENCE: public.device_id_seq
+
+-- DROP SEQUENCE IF EXISTS public.device_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.device_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1
+    OWNED BY device.id;
+
+ALTER SEQUENCE public.device_id_seq
+    OWNER TO sa;

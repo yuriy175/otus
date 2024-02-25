@@ -27,6 +27,18 @@
 /backend/cs/SocialNetApp/Counters/bin
 /backend/cs/SocialNetApp/Counters/obj
 
+/results/diploma/Otus.Diploma/.vs
+/results/diploma/Otus.Diploma/Common/bin
+/results/diploma/Otus.Diploma/Common/obj
+/results/diploma/Otus.Diploma/Common.MQ/bin
+/results/diploma/Otus.Diploma/Common.MQ/obj
+
+/results/diploma/Otus.Diploma/Otus.Diploma.Bff/bin
+/results/diploma/Otus.Diploma/Otus.Diploma.Bff/obj
+/results/diploma/Otus.Diploma/Otus.Diploma.Measure/bin
+/results/diploma/Otus.Diploma/Otus.Diploma.Measure/obj
+
+
 #docker
 /docker/pgslave
 /docker/pgslave1

@@ -1,3 +1,4 @@
+0. Make sure replicator is createds from posts migration
 1. Run script from master.txt
 
 2. Restart master

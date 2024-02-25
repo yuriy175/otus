@@ -1,0 +1,29 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "MeasureGrpc";
+ 
+package measure;
+ 
+service Measure {
+  rpc GetMeasures (GetMeasuresRequest) returns (GetMeasuresReply);
+}
+ 
+message GetMeasuresRequest {
+  uint64 device_id = 1;  
+  bool useReplica = 2;
+}
+
+message GetMeasuresReply {
+  repeated MeasureReply measures = 1;
+}
+
+message MeasureReply {
+  uint64 id = 1;
+  uint64 device_id = 2;
+  uint32 type = 3;
+  google.protobuf.Timestamp date = 4;
+  double value = 5;
+}

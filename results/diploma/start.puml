@@ -11,9 +11,11 @@ System(ui, "Web UI", "nginx")
 System_Boundary(app, "App backend") {
     System(bff, "BFF backend")
     System(users, "Users backend")
+    System(devices, "Devices backend")
     System(notifications, "Notifications backend")
     System(measurements, "Measurements backend")
     System(questions, "Questions backend")
+    System(email, "Email backend")
 
     SystemQueue(rabbit, "RabbitMQ")
     System(redis, "Redis")
@@ -39,6 +41,7 @@ BiRel(dbBalancer, replica1, "data", "SELECT")
 BiRel(dbBalancer, replica2, "data", "SELECT")
 
 BiRel(bff, users, "data", "grpc")
+BiRel(bff, devices, "data", "grpc")
 BiRel(bff, notifications, "data", "grpc")
 BiRel(bff, rabbit, "data")
 BiRel(rabbit, measurements, "data")
@@ -53,4 +56,13 @@ Rel(notifications, ui, "data", "websocket")
 
 BiRel(measurements, redis, "data", "INSERT/SELECT")
 BiRel(measurements, dbBalancer, "data", "SELECT")
+BiRel(devices, redis, "data", "INSERT/SELECT")
+BiRel(devices, dbBalancer, "data", "SELECT")
+Rel(email, emailExt, "data", "SMTP")
+
+BiRel(questions, rabbit, "data")
+BiRel(rabbit, email, "data")
+
+BiRel(notifications, rabbit, "data")
+BiRel(rabbit, email, "data")
 @enduml
