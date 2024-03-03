@@ -38,7 +38,8 @@ namespace Bff
             services.ConfigureSwaggerGen();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.AddSingleton<IMQueue, MQSender>();
+            services.AddSingleton<MQSender>();
+            services.AddSingleton<MQSender2>();
             services.AddSingleton<IMeasureService, MeasureService>();
             services.AddSingleton<IGrpcChannelsProvider, GrpcChannelsProvider>();
 
@@ -71,6 +72,7 @@ namespace Bff
 
             app.UseTraceMiddleware();
             app.UseMetricMiddleware();
+            var u = app.ApplicationServices.GetService<IMeasureService>();
 
             app.UseEndpoints(endpoints =>
             {

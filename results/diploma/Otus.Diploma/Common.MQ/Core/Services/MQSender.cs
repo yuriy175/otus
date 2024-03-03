@@ -14,4 +14,10 @@ namespace Common.MQ.Core.Services
         {
         }
     }
+    public class MQSender2 : MQueue
+    {
+        public MQSender2() : base(MQConstants.SendQueueName2, MQConstants.ReceiveQueueName2)
+        {
+        }
+    }
 }

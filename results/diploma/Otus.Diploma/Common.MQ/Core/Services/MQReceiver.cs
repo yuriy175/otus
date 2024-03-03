@@ -19,4 +19,10 @@ namespace Common.MQ.Core.Services
         {
         }
     }
+    public class MQReceiver2 : MQueue
+    {
+        public MQReceiver2() : base(MQConstants.ReceiveQueueName2, MQConstants.SendQueueName2)
+        {
+        }
+    }
 }

@@ -54,7 +54,7 @@ namespace Measure
 
             //var t = new MeasureRepository(new DataContext(Environment.GetEnvironmentVariable("POSTGRESQL_READ_CONNECTION")));
             //var tt = t.GetMeasuresAsync(999, CancellationToken.None).Result;
-            app.ApplicationServices.GetService<IMeasureService>();
+            var u = app.ApplicationServices.GetService<IMeasureService>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

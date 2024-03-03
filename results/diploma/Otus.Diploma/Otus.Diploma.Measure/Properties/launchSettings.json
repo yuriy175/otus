@@ -18,8 +18,8 @@
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development",
             "RABBITMQ_CONNECTION": "amqp://guest:guest@localhost:5672/",
-            "POSTGRESQL_READ_CONNECTION": "Server=localhost;Port=5432;User Id=sa;Password=medtex;Database=diploma;",
-            "POSTGRESQL_READ_CONNECTION2": "Server=localhost;Port=5433;User Id=sa;Password=medtex;Database=diploma;",
+            "POSTGRESQL_READ_CONNECTION": "Server=localhost;Port=6432;User Id=sa;Password=medtex;Database=diploma",
+            "POSTGRESQL_READ_CONNECTION2": "Server=localhost;Port=6433;User Id=sa;Password=medtex;Database=diploma",
             "GRPC_PORT": "5119",
             "REST_PORT": "5118"
         }

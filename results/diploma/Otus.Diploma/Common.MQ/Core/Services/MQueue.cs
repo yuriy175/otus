@@ -3,8 +3,10 @@ using Common.MQ.Core.Model.Interfaces;
 using Common.MQ.Core.Model.Types;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Data;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Channels;
 
 namespace Common.MQ.Core.Services
@@ -35,8 +37,15 @@ namespace Common.MQ.Core.Services
                      arguments: null);
         }
 
-        public void SendRequest<T>(T data)
+        private List<ulong> _items = new List<ulong> { };
+        public void SendRequest<T>(ulong deviceId, T data)
         {
+            if (_items.Contains(deviceId))
+            {
+                var i = 0;
+            }
+            _items.Add(deviceId);
+
             var text = JsonSerializer.Serialize(data);
             var body = Encoding.UTF8.GetBytes(text);
             _sendChannel.BasicPublish(exchange: string.Empty,
@@ -44,8 +53,9 @@ namespace Common.MQ.Core.Services
                                  basicProperties: null,
                                  body: body);
         }
-
-        public void CreateDirectReceiver(Action<byte[]> action)
+        private int _rejects = 0;
+        private SemaphoreSlim _semaphore = new SemaphoreSlim(20, 20);
+        public void CreateDirectReceiver(Func<byte[], Task> action)
         {
             var queueName = _receiveQueueName;
             lock (_lock)
@@ -64,14 +74,25 @@ namespace Common.MQ.Core.Services
             Console.WriteLine(" [*] Waiting for messages.");
 
             var consumer = new EventingBasicConsumer(_rcvChannel);
-            consumer.Received += (model, ea) =>
+            consumer.Received += async (model, ea) =>
             {
+                _semaphore.Wait();
                 var body = ea.Body.ToArray();
                 var text = Encoding.UTF8.GetString(body);
-                action(body);
+                try
+                {
+                    await action(body);
+                    _rcvChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                }
+                catch (Exception ex)
+                {
+                    ++_rejects;
+                    _rcvChannel.BasicReject(deliveryTag: ea.DeliveryTag, true);
+                }
+                _semaphore.Release();
             };
             _rcvChannel.BasicConsume(queue: queueName,
-                                 autoAck: true,
+                                 autoAck: false,
                                  consumer: consumer);
         }
     }

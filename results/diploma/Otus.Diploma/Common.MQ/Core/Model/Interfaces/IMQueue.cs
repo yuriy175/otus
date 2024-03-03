@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.MQ.Core.Model.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ namespace Common.MQ.Core.Model.Interfaces
 {
     public interface IMQueue
     {
-        void SendRequest<T>(T data);
-        void CreateDirectReceiver(Action<byte[]> action);
+        void SendRequest<T>(ulong deviceId, T data);
+        //void CreateDirectReceiver(Action<byte[]> action);
+        void CreateDirectReceiver(Func<byte[], Task> action);        
     }
 }

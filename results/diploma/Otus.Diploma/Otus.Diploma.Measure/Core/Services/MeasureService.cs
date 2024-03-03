@@ -15,6 +15,7 @@ namespace Measure.Core.Services
         private readonly IMeasureRepository _measureRepository;
         private readonly IMQueue _mqReceiver;
 
+        private List<ulong> _items = new List<ulong> { };
         public MeasureService(
             IMeasureRepository measureRepository,
             IMQueue mqReceiver)
@@ -30,9 +31,14 @@ namespace Measure.Core.Services
                 {
                     return;
                 }
+                if (_items.Contains(message.DeviceId))
+                {
+                    var i = 0;
+                }
+                _items.Add(message.DeviceId);
 
                 var measures = await _measureRepository.GetMeasuresAsync(message.DeviceId, message.UseReplica, CancellationToken.None);
-                _mqReceiver.SendRequest(measures);
+                _mqReceiver.SendRequest(message.DeviceId, measures);
             });
         }
 

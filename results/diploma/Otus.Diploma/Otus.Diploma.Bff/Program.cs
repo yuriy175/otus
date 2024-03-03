@@ -30,6 +30,8 @@ public static class Program
                     Environment.NewLine +
                     "GRPC_MEASURES: " + Environment.GetEnvironmentVariable("GRPC_MEASURES") +
                     Environment.NewLine +
+                    "GRPC_MEASURES2: " + Environment.GetEnvironmentVariable("GRPC_MEASURES2") +
+                    Environment.NewLine +
                     "RABBITMQ_CONNECTION: " + Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION") +
                     Environment.NewLine +
                     "OTEL_EXPORTER_JAEGER_ENDPOINT: " + Environment.GetEnvironmentVariable("OTEL_EXPORTER_JAEGER_ENDPOINT") +

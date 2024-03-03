@@ -9,7 +9,7 @@ namespace Measure.Infrastructure.Repositories
     public class MeasureRepository : IMeasureRepository
     {
         private DataContext _context;
-
+        private List<ulong> _items = new List<ulong> { };
         public MeasureRepository(DataContext context)
         {
             _context = context;
@@ -22,10 +22,26 @@ namespace Measure.Infrastructure.Repositories
                         "FROM public.measure " +
                         "where device_id = @deviceId and date = (select max(date) from public.measure where device_id = @deviceId)";
 
-            return await connection.QueryAsync<Model.Measure>(new CommandDefinition(
-                sql,
-                new { deviceId = (long)deviceId },
-                cancellationToken: cancellationToken));
+            try
+            {
+                if(_items.Contains(deviceId))
+                {
+                    var i = 0;
+                }
+                _items.Add(deviceId);
+                return await connection.QueryAsync<Model.Measure>(new CommandDefinition(
+                    sql,
+                    new { deviceId = (long)deviceId },
+                    cancellationToken: cancellationToken));
+            }
+            catch(Exception ex)
+            {
+                var e = 90;
+                //return new Model.Measure[] { 
+                //    new Model.Measure { DeviceId = deviceId }
+                //    };
+                throw;
+            }
         }
     }
 }
